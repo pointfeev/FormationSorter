@@ -26,7 +26,7 @@ namespace FormationSorter
             if (numUnitsSorted > 0)
             {
                 UpdateFormations();
-                InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "unit" : "units")} between selected formations", Colors.Cyan, "FormationEdit"));
+                InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "unit" : "units")} between selected formations", Colors.Cyan, "FormationSorter"));
             }
             MissionOrderVM.TryCloseToggleOrder();
         }
@@ -97,17 +97,7 @@ namespace FormationSorter
                 {
                     if (!agent.IsHuman) continue;
                     FormationClass formationClass = GetBestFormationClassForAgent(agent);
-                    if (formationClass == FormationClass.Unset)
-                    {
-                        /* to retreat agents that don't have weapons? may cause unintended behaviour so it's commented out for now
-                        if (!agent.IsRetreating())
-                        {
-                            agent.Retreat(agent.Mission.GetClosestFleePositionForAgent(agent));
-                            numUnitsSorted++;
-                            continue;
-                        }*/
-                    }
-                    else if (TrySetAgentFormation(agent, formations.Find(f => f.FormationIndex == formationClass)))
+                    if (TrySetAgentFormation(agent, formations.Find(f => f.PrimaryClass == formationClass)))
                     {
                         numUnitsSorted++;
                     }
