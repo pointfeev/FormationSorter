@@ -62,7 +62,6 @@ namespace FormationSorter
 
         public static List<Agent> GetAllAgentsInFormations(List<Formation> formations)
         {
-            UpdateFormations();
             List<Agent> agents = new List<Agent>();
             foreach (Formation formation in formations)
             {

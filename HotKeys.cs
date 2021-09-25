@@ -46,7 +46,7 @@ namespace FormationSorter
 
         private static void ProcessKey(InputKey inputKey, Action action)
         {
-            if (OrderGameKey.KeyboardKey.InputKey.IsPressed())
+            if (inputKey.IsPressed())
             {
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
