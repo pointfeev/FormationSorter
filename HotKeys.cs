@@ -52,7 +52,6 @@ namespace FormationSorter
             List<Formation> selections = new List<Formation>();
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
-                if (formation.CountOfUnits <= 0) continue;
                 if (formationClasses.Contains(formation.PrimaryClass))
                 {
                     selections.Add(formation);
