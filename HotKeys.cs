@@ -41,6 +41,11 @@ namespace FormationSorter
 
         private static void SelectFormationsOfClasses(List<FormationClass> formationClasses)
         {
+            typeof(OrderController).GetMethod("UpdateTroops", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM.OrderController, new object[0]);
+            if (!Order.MissionOrderVM.IsToggleOrderShown)
+            {
+                previousSelections.Clear();
+            }
             Order.MissionOrderVM.OrderController.ClearSelectedFormations();
             foreach (OrderTroopItemVM orderTroopItemVM in Order.MissionOrderVM?.TroopController?.TroopList)
             {
@@ -48,6 +53,9 @@ namespace FormationSorter
             }
             Order.MissionOrderVM.TryCloseToggleOrder();
             Order.MissionOrderVM.OpenToggleOrder(false);
+            typeof(MissionOrderVM).GetMethod("SetActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM, new object[0]);
+            typeof(OrderController).GetMethod("UpdateTroops", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM.OrderController, new object[0]);
+            typeof(OrderController).GetMethod("OnSelectedFormationsCollectionChanged", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM.OrderController, new object[0]);
             List<FormationClass> selections = new List<FormationClass>();
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
@@ -70,6 +78,9 @@ namespace FormationSorter
                     }
                 }
             }
+            typeof(MissionOrderVM).GetMethod("SetActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM, new object[0]);
+            typeof(OrderController).GetMethod("UpdateTroops", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM.OrderController, new object[0]);
+            typeof(OrderController).GetMethod("OnSelectedFormationsCollectionChanged", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM.OrderController, new object[0]);
             previousSelections = selections;
         }
 
@@ -93,10 +104,6 @@ namespace FormationSorter
             MBBindingList<OrderTroopItemVM> troopList = Order.MissionOrderVM.TroopController.TroopList;
             OrderTroopItemVM orderTroopItemVM = troopList.SingleOrDefault(t => t.InitialFormationClass == formation.InitialClass);
             if (!(orderTroopItemVM is null)) orderTroopItemVM.IsSelected = selected;
-            if (troopList.Any(item => item.IsSelected && item.IsSelectable))
-            {
-                typeof(MissionOrderVM).GetMethod("SetActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Order.MissionOrderVM, new object[0]);
-            }
         }
 
         private static void ProcessKey(InputKey inputKey, Action action)

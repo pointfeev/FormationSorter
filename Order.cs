@@ -41,7 +41,7 @@ namespace FormationSorter
                 {
                     return FormationClass.HorseArcher;
                 }
-                else if (agent.HasMeleeWeaponCached)
+                else// if (agent.HasMeleeWeaponCached)
                 {
                     return FormationClass.Cavalry;
                 }
@@ -52,12 +52,12 @@ namespace FormationSorter
                 {
                     return FormationClass.Ranged;
                 }
-                else if (agent.HasMeleeWeaponCached)
+                else// if (agent.HasMeleeWeaponCached)
                 {
                     return FormationClass.Infantry;
                 }
             }
-            return FormationClass.Unset;
+            //return FormationClass.Unset;
         }
 
         public static List<Agent> GetAllAgentsInFormations(List<Formation> formations)
