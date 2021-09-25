@@ -4,9 +4,7 @@ using System.Linq;
 using System.Reflection;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
-using TaleWorlds.MountAndBlade.ViewModelCollection;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
@@ -28,6 +26,11 @@ namespace FormationSorter
         public static InputKey SelectRangedKey = InputKey.J;
         public static InputKey SelectCavalryKey = InputKey.C;
         public static InputKey SelectHorseArchersKey = InputKey.V;
+
+        /* hotkey ideas:
+         * Y: Infantry + Cavalry
+         * U: Archers + Horse Archers
+        */
 
         private static Dictionary<InputKey, bool> pressedLastTick = new Dictionary<InputKey, bool>();
 
