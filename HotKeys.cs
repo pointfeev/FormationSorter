@@ -45,10 +45,8 @@ namespace FormationSorter
             {
                 previousSelections.Clear();
             }
-            Order.MissionOrderVM.OrderController.ClearSelectedFormations();
-            Order.MissionOrderVM.TryCloseToggleOrder();
-            Order.MissionOrderVM.OpenToggleOrder(false);
-            List<FormationClass> selections = new List<FormationClass>();
+            SetFormationSelections();
+            List<Formation> selections = new List<Formation>();
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
                 if (formation.CountOfUnits <= 0) continue;
@@ -56,29 +54,43 @@ namespace FormationSorter
                 bool shouldDoOpposite = ModifierKey.IsDown() && wasSelectedPreviously;
                 if (formationClasses.Contains(formation.InitialClass))
                 {
-                    SetFormationSelected(formation, !shouldDoOpposite);
                     if (!shouldDoOpposite)
                     {
-                        selections.Add(formation.InitialClass);
+                        selections.Add(formation);
                     }
                 }
                 else
                 {
-                    SetFormationSelected(formation, shouldDoOpposite);
                     if (shouldDoOpposite)
                     {
-                        selections.Add(formation.InitialClass);
+                        selections.Add(formation);
                     }
                 }
             }
-            previousSelections = selections;
+            SetFormationSelections(selections);
+            previousSelections = selections.ToList().ConvertAll(new Converter<Formation, FormationClass>(f => f.InitialClass));
         }
 
-        private static void SetFormationSelected(Formation formation, bool selected = true)
+        private static void SetFormationSelections(List<Formation> selections = null)
         {
-            if (selected)
+            if (selections is null || !selections.Any())
             {
-                Order.MissionOrderVM.OnSelect((int)formation.InitialClass);
+                Order.MissionOrderVM.OrderController.ClearSelectedFormations();
+                Order.MissionOrderVM.TryCloseToggleOrder();
+                Order.MissionOrderVM.OpenToggleOrder(false);
+                return;
+            }
+            Order.MissionOrderVM.OnSelect((int)selections.Last().InitialClass);
+            MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
+            for (int i = 0; i < selections.Count - 1; i++)
+            {
+                Formation formation = selections[i];
+                OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.InitialFormationClass == formation.InitialClass);
+                if (!(orderTroopItemVM is null))
+                {
+                    typeof(MissionOrderTroopControllerVM).GetMethod("AddSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Invoke(troopController, new object[] { orderTroopItemVM });
+                }
             }
         }
 
