@@ -11,12 +11,12 @@ namespace FormationSorter
         [HarmonyPostfix]
         public static void RefreshValues(OrderSetVM __instance, int ____index)
         {
-            if (____index == Formations.OrderSetIndex)
+            if (____index == Order.OrderSetIndex)
             {
                 __instance.TitleText = "Sort Units Between Formations";
                 __instance.TitleOrder.OrderIconID = "ToggleAI";
                 __instance.TitleOrder.TooltipText = "Sort Units Between Formations";
-                __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Formations.Hotkey, false);
+                __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(HotKeys.OrderGameKey, false);
                 __instance.TitleOrder.ShortcutKey = __instance.TitleOrderKey;
             }
         }

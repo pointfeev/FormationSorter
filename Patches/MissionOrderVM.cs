@@ -21,11 +21,11 @@ namespace FormationSorter
         [HarmonyPostfix]
         public static void MissionOrderVM(MissionOrderVM __instance)
         {
-            Formations.OrderSetIndex = __instance.OrderSets.Count;
-            Formations.MissionOrderVM = __instance;
+            Order.OrderSetIndex = __instance.OrderSets.Count;
+            Order.MissionOrderVM = __instance;
             OrderSetVM OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-            }, null).Invoke(new object[] { OrderSubType.FormClose, Formations.OrderSetIndex, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
+            }, null).Invoke(new object[] { OrderSubType.FormClose, Order.OrderSetIndex, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
             __instance.OrderSets.Add(OrderSetVM);
         }
     }

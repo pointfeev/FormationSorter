@@ -10,20 +10,17 @@ using TaleWorlds.MountAndBlade.ViewModelCollection;
 
 namespace FormationSorter
 {
-    public static class Formations
+    public static class Order
     {
-        public static int UniqueId;
-        public static GameKey Hotkey;
         public static int OrderSetIndex;
         public static MissionOrderVM MissionOrderVM;
 
-        public static void OnHotkeyPressed()
+        public static void OnOrderHotKeyPressed()
         {
             if (MissionOrderVM is null) return;
             UpdateFormations();
-            List<Formation> selectedFormations = GetSelectedFormations();
+            List<Formation> selectedFormations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
             if (!selectedFormations.Any()) return;
-            MissionOrderVM.OrderController.ClearSelectedFormations();
             Mission.Current?.PlayerTeam?.Leader?.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
             int numUnitsSorted = SortAgentsBetweenFormations(selectedFormations);
             if (numUnitsSorted > 0)
@@ -34,22 +31,60 @@ namespace FormationSorter
             MissionOrderVM.TryCloseToggleOrder();
         }
 
-        public static List<Formation> GetSelectedFormations()
+        public static FormationClass GetBestFormationClassForAgent(Agent agent)
         {
-            return Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList() ?? new List<Formation>();
+            Agent mount = agent.MountAgent;
+            Agent rider = mount?.RiderAgent;
+            if (rider == agent && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount))
+            {
+                if (AgentHasProperRangedWeaponWithAmmo(agent))
+                {
+                    return FormationClass.HorseArcher;
+                }
+                else if (agent.HasMeleeWeaponCached)
+                {
+                    return FormationClass.Cavalry;
+                }
+            }
+            else
+            {
+                if (AgentHasProperRangedWeaponWithAmmo(agent) || (HotKeys.ModifierKey.IsDown() && agent.GetHasRangedWeapon(true)))
+                {
+                    return FormationClass.Ranged;
+                }
+                else if (agent.HasMeleeWeaponCached)
+                {
+                    return FormationClass.Infantry;
+                }
+            }
+            return FormationClass.Unset;
+        }
+
+        public static List<Agent> GetAllAgentsInFormations(List<Formation> formations)
+        {
+            UpdateFormations();
+            List<Agent> agents = new List<Agent>();
+            foreach (Formation formation in formations)
+            {
+                if (formation.IsAIControlled) continue;
+                agents.AddRange(((List<Agent>)typeof(Formation).GetField("_detachedUnits", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetValue(formation)).FindAll(agent => !agents.Contains(agent) && agent.IsHuman));
+                agents.AddRange(from unit in formation.Arrangement.GetAllUnits()
+                                where !(unit as Agent is null) && !agents.Contains(unit as Agent) && (unit as Agent).IsHuman
+                                select unit as Agent);
+            }
+            return agents.Distinct().ToList();
         }
 
         private static void UpdateFormations()
         {
-            Mission mission = Mission.Current;
-            if (mission is null) return;
-            foreach (Formation formation in mission.PlayerTeam.FormationsIncludingSpecialAndEmpty)
+            foreach (Formation formation in Mission.Current?.PlayerTeam.FormationsIncludingSpecialAndEmpty)
             {
                 formation.ApplyActionOnEachUnit(delegate (Agent agent)
                 {
                     agent.UpdateCachedAndFormationValues(false, false);
                 });
-                mission?.SetRandomDecideTimeOfAgentsWithIndices(formation.CollectUnitIndices(), null, null);
+                Mission.Current.SetRandomDecideTimeOfAgentsWithIndices(formation.CollectUnitIndices(), null, null);
             }
         }
 
@@ -59,54 +94,23 @@ namespace FormationSorter
             {
                 if (formations is null || formations.Count < 2) return 0;
                 int numUnitsSorted = 0;
-                foreach (Formation formation in formations)
+                foreach (Agent agent in GetAllAgentsInFormations(formations))
                 {
-                    if (formation.IsAIControlled) continue;
-                    List<Agent> agents = ((List<Agent>)typeof(Formation).GetField("_detachedUnits", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(formation)).ToList();
-                    agents.AddRange(from unit in formation.Arrangement.GetAllUnits()
-                                    where !(unit as Agent is null)
-                                    select unit as Agent);
-                    foreach (Agent agent in agents.Distinct())
+                    if (!agent.IsHuman) continue;
+                    FormationClass formationClass = GetBestFormationClassForAgent(agent);
+                    if (formationClass == FormationClass.Unset)
                     {
-                        if (!agent.IsHuman) continue;
-                        Agent mount = agent.MountAgent;
-                        Agent rider = mount?.RiderAgent;
-                        if (rider == agent && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount))
-                        {
-                            Formation horseArcher = formations.Find(f => f.FormationIndex == FormationClass.HorseArcher);
-                            Formation cavalry = formations.Find(f => f.FormationIndex == FormationClass.Cavalry);
-                            if (AgentHasProperRangedWeaponWithAmmo(agent))
-                            {
-                                if (TrySetAgentFormation(agent, horseArcher)) numUnitsSorted++;
-                                continue;
-                            }
-                            else if (agent.HasMeleeWeaponCached)
-                            {
-                                if (TrySetAgentFormation(agent, cavalry)) numUnitsSorted++;
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            Formation ranged = formations.Find(f => f.FormationIndex == FormationClass.Ranged);
-                            Formation infantry = formations.Find(f => f.FormationIndex == FormationClass.Infantry);
-                            if (AgentHasProperRangedWeaponWithAmmo(agent))
-                            {
-                                if (TrySetAgentFormation(agent, ranged)) numUnitsSorted++;
-                                continue;
-                            }
-                            else if (agent.HasMeleeWeaponCached)
-                            {
-                                if (TrySetAgentFormation(agent, infantry)) numUnitsSorted++;
-                                continue;
-                            }
-                        }
-                        /*if (!agent.IsRetreating()) // to retreat agents that don't have weapons? may cause unintended behaviour so it's commented out for now
+                        /* to retreat agents that don't have weapons? may cause unintended behaviour so it's commented out for now
+                        if (!agent.IsRetreating())
                         {
                             agent.Retreat(agent.Mission.GetClosestFleePositionForAgent(agent));
                             numUnitsSorted++;
                             continue;
                         }*/
+                    }
+                    else if (TrySetAgentFormation(agent, formations.Find(f => f.FormationIndex == formationClass)))
+                    {
+                        numUnitsSorted++;
                     }
                 }
                 return numUnitsSorted;
