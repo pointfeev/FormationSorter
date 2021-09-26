@@ -22,10 +22,10 @@ namespace FormationSorter
         public static InputKey SelectAllKey = InputKey.F;
 
         public static InputKey SelectAllMeleeCavalryKey = InputKey.C;
-        public static InputKey SelectHorseArchersKey = InputKey.V;
+        public static InputKey SelectAllHorseArchersKey = InputKey.V;
 
         public static InputKey SelectAllInfantryKey = InputKey.H;
-        public static InputKey SelectArchersAndSkirmishersKey = InputKey.J;
+        public static InputKey SelectAllArchersAndSkirmishersKey = InputKey.J;
 
         public static InputKey SelectAllMeleeKey = InputKey.Y;
         public static InputKey SelectAllRangedKey = InputKey.U;
@@ -44,7 +44,7 @@ namespace FormationSorter
             if (!IsMissionOrderVMActive()) return;
             List<FormationClass> allFormationClasses = new List<FormationClass>();
             allFormationClasses.AddRange((IEnumerable<FormationClass>)Enum.GetValues(typeof(FormationClass)));
-            SelectFormationsOfClasses(allFormationClasses);
+            SelectFormationsOfClasses(allFormationClasses, "all");
         }
 
         public static void AddAllFormationOrderTroopItemVMs()
@@ -69,17 +69,17 @@ namespace FormationSorter
 
                 ProcessKey(SelectAllKey, () => SelectAllFormations());
 
-                ProcessKey(SelectAllMeleeCavalryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry }));
-                ProcessKey(SelectHorseArchersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }));
+                ProcessKey(SelectAllMeleeCavalryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry }, "melee cavalry"));
+                ProcessKey(SelectAllHorseArchersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }, "horse archer"));
 
-                ProcessKey(SelectAllInfantryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry }));
-                ProcessKey(SelectArchersAndSkirmishersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher }));
+                ProcessKey(SelectAllInfantryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry }, "infantry"));
+                ProcessKey(SelectAllArchersAndSkirmishersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher }, "archer and skirmisher"));
 
-                ProcessKey(SelectAllMeleeKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.Cavalry }));
-                ProcessKey(SelectAllRangedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.HorseArcher }));
+                ProcessKey(SelectAllMeleeKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.Cavalry }, "melee"));
+                ProcessKey(SelectAllRangedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.HorseArcher }, "archer"));
 
-                ProcessKey(SelectAllGroundedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher }));
-                ProcessKey(SelectAllMountedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }));
+                ProcessKey(SelectAllGroundedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher }, "grounded"));
+                ProcessKey(SelectAllMountedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }, "mounted"));
             }
             catch (Exception e)
             {
@@ -121,7 +121,7 @@ namespace FormationSorter
 
         private static List<Formation> previousSelections = new List<Formation>();
 
-        private static void SelectFormationsOfClasses(List<FormationClass> formationClasses)
+        private static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
         {
             if (!Order.MissionOrderVM.IsToggleOrderShown || !ModifierKey.IsDown())
             {
@@ -147,13 +147,17 @@ namespace FormationSorter
                     selections.Add(formation);
                 }
             }
-            if (selections.Any())
+            if (!(feedback is null))
             {
-                InformationManager.DisplayMessage(new InformationMessage($"Selected " + string.Join(", ", formationClasses) + (formationClasses.Count == 1 ? " formation" : " formations"), Colors.Cyan, "FormationSorter"));
-            }
-            else
-            {
-                InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in the " + string.Join(", ", formationClasses) + (formationClasses.Count == 1 ? " formation" : " formations"), Colors.Cyan, "FormationSorter"));
+                if (feedback == "all") feedback = ""; else feedback += " ";
+                if (selections.Any(f => f.CountOfUnits > 0))
+                {
+                    InformationManager.DisplayMessage(new InformationMessage($"Selected all {feedback}formations", Colors.Cyan, "FormationSorter"));
+                }
+                else
+                {
+                    InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in any {feedback}formations", Colors.Cyan, "FormationSorter"));
+                }
             }
             SetFormationSelections(selections);
             previousSelections = selections.ToList();
@@ -163,7 +167,7 @@ namespace FormationSorter
         {
             Order.MissionOrderVM.OrderController.ClearSelectedFormations();
             Order.MissionOrderVM.TryCloseToggleOrder();
-            if (selections is null || !selections.Any() || selections.All(f => f.CountOfUnits <= 0)) return;
+            if (selections is null || !selections.Any(f => f.CountOfUnits > 0)) return;
             Order.MissionOrderVM.OpenToggleOrder(false);
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
             OrderTroopItemVM orderTroopItemVM = GetOrderTroopItemVM(selections.First());
