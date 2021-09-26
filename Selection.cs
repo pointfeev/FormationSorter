@@ -52,7 +52,7 @@ namespace FormationSorter
             if (!IsMissionOrderVMActive()) return;
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
-                GetOrderTroopItemVM(formation, false);
+                GetOrderTroopItemVM(formation);
             }
             SortOrderTroopItemVMs();
         }
@@ -185,7 +185,7 @@ namespace FormationSorter
             SortOrderTroopItemVMs();
         }
 
-        private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation, bool setSelected = true)
+        private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation)
         {
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
             OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.Formation == formation);
@@ -199,11 +199,11 @@ namespace FormationSorter
                 troopController.TroopList.Add(orderTroopItemVM);
                 SortOrderTroopItemVMs();
             }
-            orderTroopItemVM.IsSelectable = true;
-            if (setSelected)
+            typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders").Invoke(Order.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
+            orderTroopItemVM.IsSelectable = Order.MissionOrderVM.OrderController.IsFormationSelectable(formation);
+            if (orderTroopItemVM.IsSelectable && Order.MissionOrderVM.OrderController.IsFormationListening(formation))
             {
                 orderTroopItemVM.IsSelected = true;
-                orderTroopItemVM.IsSelectionActive = true;
             }
             return orderTroopItemVM;
         }
@@ -211,7 +211,10 @@ namespace FormationSorter
         private static void SortOrderTroopItemVMs()
         {
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
-            if (troopController.TroopList.Any()) troopController.TroopList.OrderBy(item => item.InitialFormationClass);
+            if (troopController.TroopList.Any())
+            {
+                troopController.TroopList = (MBBindingList<OrderTroopItemVM>)troopController.TroopList.OrderBy(item => item.InitialFormationClass);
+            }
         }
     }
 }
