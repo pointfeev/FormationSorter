@@ -87,6 +87,7 @@ namespace FormationSorter
                     new Action<OrderTroopItemVM>(item => typeof(MissionOrderTroopControllerVM).GetMethod("OnSelectFormation", BindingFlags.NonPublic | BindingFlags.Instance)
                         .Invoke(troopController, new object[] { item })),
                     (int)Mission.Current.GetAverageMoraleOfAgentsWithIndices(formation.CollectUnitIndices()));
+                orderTroopItemVM.FormationClass = (int)formation.InitialClass;
                 troopController.TroopList.Add(orderTroopItemVM);
             }
             orderTroopItemVM.IsSelectable = true;
