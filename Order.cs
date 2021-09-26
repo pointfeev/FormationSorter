@@ -31,7 +31,7 @@ namespace FormationSorter
             MissionOrderVM.TryCloseToggleOrder();
         }
 
-        public static FormationClass GetBestFormationClassForAgent(Agent agent)
+        private static FormationClass GetBestFormationClassForAgent(Agent agent)
         {
             Agent mount = agent.MountAgent;
             Agent rider = mount?.RiderAgent;
@@ -63,7 +63,7 @@ namespace FormationSorter
             }
         }
 
-        public static List<Agent> GetAllAgentsInFormations(List<Formation> formations)
+        private static List<Agent> GetAllAgentsInFormations(List<Formation> formations)
         {
             List<Agent> agents = new List<Agent>();
             foreach (Formation formation in formations)
