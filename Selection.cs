@@ -214,10 +214,11 @@ namespace FormationSorter
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
             if (troopController.TroopList.Any())
             {
+                List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.InitialFormationClass).ToList();
                 troopController.TroopList.Clear();
-                foreach (OrderTroopItemVM item in troopController.TroopList.OrderBy(item => item.InitialFormationClass))
+                for (int i = 0; i <= sorted.Count(); i++)
                 {
-                    troopController.TroopList.Add(item);
+                    troopController.TroopList.Insert(i, sorted[i]);
                 }
             }
         }
