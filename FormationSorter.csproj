@@ -334,6 +334,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HotKeys.cs" />
+    <Compile Include="Patches\OrderController.cs" />
+    <Compile Include="Patches\OrderTroopItemWidget.cs" />
     <Compile Include="Patches\OrderSetVM.cs" />
     <Compile Include="Patches\MissionOrderVM.cs" />
     <Compile Include="Patches\CharacterObject.cs" />
