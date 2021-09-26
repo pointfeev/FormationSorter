@@ -137,14 +137,22 @@ namespace FormationSorter
                     selections.Add(formation);
                 }
             }
+            List<Formation> invertedSelections = new List<Formation>();
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
                 bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 bool wasPreviouslySelected = previousSelections.Contains(formation);
                 bool shouldInvertSelection = ModifierKey.IsDown() && wasPreviouslySelected;
-                if (isCorrectFormation && !shouldInvertSelection)
+                if (isCorrectFormation)
                 {
-                    selections.Add(formation);
+                    if (shouldInvertSelection)
+                    {
+                        invertedSelections.Add(formation);
+                    }
+                    else
+                    {
+                        selections.Add(formation);
+                    }
                 }
             }
             if (!(feedback is null))
@@ -152,12 +160,11 @@ namespace FormationSorter
                 if (feedback == "all") feedback = ""; else feedback += " ";
                 if (selections.Any(f => f.CountOfUnits > 0))
                 {
-                    InformationManager.DisplayMessage(new InformationMessage($"Selected all {feedback}formations", Colors.Cyan, "FormationSorter"));
+                    InformationManager.DisplayMessage(new InformationMessage($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.Cyan, "FormationSorter"));
                 }
                 else
                 {
-                    feedback = feedback.Replace("and", "or");
-                    InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in any {feedback}formations", Colors.Cyan, "FormationSorter"));
+                    InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in any {feedback.Replace("and", "or")}formations", Colors.Cyan, "FormationSorter"));
                 }
             }
             SetFormationSelections(selections);
