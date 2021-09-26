@@ -199,7 +199,8 @@ namespace FormationSorter
                 troopController.TroopList.Add(orderTroopItemVM);
                 SortOrderTroopItemVMs();
             }
-            typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders").Invoke(Order.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
+            typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(Order.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
             orderTroopItemVM.IsSelectable = Order.MissionOrderVM.OrderController.IsFormationSelectable(formation);
             if (orderTroopItemVM.IsSelectable && Order.MissionOrderVM.OrderController.IsFormationListening(formation))
             {
@@ -211,10 +212,7 @@ namespace FormationSorter
         private static void SortOrderTroopItemVMs()
         {
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
-            if (troopController.TroopList.Any())
-            {
-                troopController.TroopList = (MBBindingList<OrderTroopItemVM>)troopController.TroopList.OrderBy(item => item.InitialFormationClass);
-            }
+            if (troopController.TroopList.Any()) troopController.TroopList.Sort();
         }
     }
 }
