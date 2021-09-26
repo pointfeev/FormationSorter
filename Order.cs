@@ -26,7 +26,11 @@ namespace FormationSorter
             if (numUnitsSorted > 0)
             {
                 UpdateFormations();
-                InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "unit" : "units")} between selected formations", Colors.Cyan, "FormationSorter"));
+                InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "unit" : "units")} between the selected formations", Colors.Cyan, "FormationSorter"));
+            }
+            else
+            {
+                InformationManager.DisplayMessage(new InformationMessage($"No units needed sorting between the selected formations", Colors.Cyan, "FormationSorter"));
             }
             MissionOrderVM.TryCloseToggleOrder();
         }
