@@ -158,7 +158,7 @@ namespace FormationSorter
             if (!(feedback is null))
             {
                 if (feedback == "all") feedback = ""; else feedback += " ";
-                if (selections.Any(f => f.CountOfUnits > 0))
+                if (invertedSelections.Any() || selections.Any(f => f.CountOfUnits > 0))
                 {
                     InformationManager.DisplayMessage(new InformationMessage($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.Cyan, "FormationSorter"));
                 }
