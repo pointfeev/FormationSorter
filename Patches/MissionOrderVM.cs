@@ -27,16 +27,15 @@ namespace FormationSorter
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null).Invoke(new object[] { OrderSubType.FormClose, Order.OrderSetIndex, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
             __instance.OrderSets.Add(OrderSetVM);
-            HotKeys.SelectAllFormations();
-            Order.MissionOrderVM.TryCloseToggleOrder();
+            Selection.AddAllFormationOrderTroopItemVMs();
         }
 
         [HarmonyPatch("OnTransferFinished")]
+        [HarmonyPatch("OpenToggleOrder")]
         [HarmonyPostfix]
-        public static void OnTransferFinished()
+        public static void OnTransferFinished_OnOpenToggleOrder()
         {
-            HotKeys.SelectAllFormations();
-            Order.MissionOrderVM.TryCloseToggleOrder();
+            Selection.AddAllFormationOrderTroopItemVMs();
         }
     }
 }

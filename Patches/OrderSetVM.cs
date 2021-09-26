@@ -16,7 +16,7 @@ namespace FormationSorter
                 __instance.TitleText = "Sort Units Between Formations";
                 __instance.TitleOrder.OrderIconID = "ToggleAI";
                 __instance.TitleOrder.TooltipText = "Sort Units Between Formations";
-                __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(HotKeys.OrderGameKey, false);
+                __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Selection.OrderGameKey, false);
                 __instance.TitleOrder.ShortcutKey = __instance.TitleOrderKey;
             }
         }

@@ -9,7 +9,7 @@ using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
 {
-    public static class HotKeys
+    public static class Selection
     {
         public static int UniqueId;
 
@@ -84,7 +84,7 @@ namespace FormationSorter
             SelectFormationsOfClasses(allFormationClasses);
         }
 
-        private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation)
+        private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation, bool setSelected = true)
         {
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
             OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.Formation == formation);
@@ -98,9 +98,21 @@ namespace FormationSorter
                 troopController.TroopList.Add(orderTroopItemVM);
             }
             orderTroopItemVM.IsSelectable = true;
-            orderTroopItemVM.IsSelected = true;
-            orderTroopItemVM.IsSelectionActive = true;
+            if (setSelected)
+            {
+                orderTroopItemVM.IsSelected = true;
+                orderTroopItemVM.IsSelectionActive = true;
+            }
             return orderTroopItemVM;
+        }
+
+        public static void AddAllFormationOrderTroopItemVMs()
+        {
+            if (!IsMissionOrderVMActive()) return;
+            foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
+            {
+                GetOrderTroopItemVM(formation, false);
+            }
         }
 
         private static void SetFormationSelections(List<Formation> selections = null)
@@ -140,7 +152,7 @@ namespace FormationSorter
             }
         }
 
-        public static bool IsMissionOrderVMActive()
+        private static bool IsMissionOrderVMActive()
         {
             if (Mission.Current is null) return false;
             if (Mission.Current.PlayerTeam is null) return false;

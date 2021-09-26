@@ -52,7 +52,7 @@ namespace FormationSorter
                 {
                     return FormationClass.Ranged;
                 }
-                else if (HotKeys.ModifierKey.IsDown() && agent.GetHasRangedWeapon(true))
+                else if (Selection.ModifierKey.IsDown() && agent.GetHasRangedWeapon(true))
                 {
                     return FormationClass.Skirmisher;
                 }
