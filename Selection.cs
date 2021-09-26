@@ -215,10 +215,9 @@ namespace FormationSorter
             if (troopController.TroopList.Any())
             {
                 troopController.TroopList.Clear();
-                List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.InitialFormationClass).ToList();
-                for (int i = 0; i < sorted.Count; i++)
+                foreach (OrderTroopItemVM item in troopController.TroopList.OrderBy(item => item.InitialFormationClass))
                 {
-                    troopController.TroopList.Insert(i, sorted[i]);
+                    troopController.TroopList.Add(item);
                 }
             }
         }
