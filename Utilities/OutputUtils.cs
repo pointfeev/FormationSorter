@@ -49,7 +49,6 @@ namespace FormationSorter
                 "BUG REPORTING: The easiest way to report this error is to snap an image of this message box with Snipping Tool or Lightshot, " +
                 "upload the image to imgur.com, and paste the link to the image in a new bug report on Nexus Mods (along with any helpful details)." +
                 "\n\nNOTE: This is not a game crash; press OK to continue playing.";
-            ;
             if (!outputs.Contains(output))
             {
                 outputs.Add(output);
