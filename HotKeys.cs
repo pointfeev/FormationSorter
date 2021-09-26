@@ -77,6 +77,13 @@ namespace FormationSorter
             previousSelections = selections.ToList();
         }
 
+        public static void SelectAllFormations()
+        {
+            List<FormationClass> allFormationClasses = new List<FormationClass>();
+            allFormationClasses.AddRange((IEnumerable<FormationClass>)Enum.GetValues(typeof(FormationClass)));
+            SelectFormationsOfClasses(allFormationClasses);
+        }
+
         private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation)
         {
             MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
@@ -114,17 +121,7 @@ namespace FormationSorter
                 typeof(MissionOrderTroopControllerVM).GetMethod("AddSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
                     .Invoke(troopController, new object[] { orderTroopItemVM });
             }
-            if (troopController.TroopList.Any())
-            {
-                try
-                {
-                    troopController.TroopList.OrderBy(item => item.InitialFormationClass);
-                }
-                catch (Exception e)
-                {
-                    OutputUtils.DoOutputForException(e);
-                }
-            }
+            if (troopController.TroopList.Any()) troopController.TroopList.OrderBy(item => item.InitialFormationClass);
         }
 
         private static void ProcessKey(InputKey inputKey, Action action)
@@ -143,20 +140,26 @@ namespace FormationSorter
             }
         }
 
+        public static bool IsMissionOrderVMActive()
+        {
+            if (Mission.Current is null) return false;
+            if (Mission.Current.PlayerTeam is null) return false;
+            if (Order.MissionOrderVM is null) return false;
+            if (Order.MissionOrderVM.OrderController is null) return false;
+            if (Order.MissionOrderVM.TroopController is null) return false;
+            if (Order.MissionOrderVM.DeploymentController is null) return false;
+            return true;
+        }
+
         public static void HotKeysTick(float dt)
         {
             try
             {
-                if (Mission.Current is null) return;
-                if (Mission.Current.PlayerTeam is null) return;
-                if (Order.MissionOrderVM is null) return;
-                if (Order.MissionOrderVM.OrderController is null) return;
-                if (Order.MissionOrderVM.TroopController is null) return;
-                if (Order.MissionOrderVM.DeploymentController is null) return;
+                if (!IsMissionOrderVMActive()) return;
 
                 ProcessKey(OrderKey, () => Order.OnOrderHotKeyPressed());
 
-                ProcessKey(SelectAllKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher, FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }));
+                ProcessKey(SelectAllKey, () => SelectAllFormations());
 
                 ProcessKey(SelectAllMeleeCavalryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry }));
                 ProcessKey(SelectHorseArchersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }));
