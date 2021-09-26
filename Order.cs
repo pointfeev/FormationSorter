@@ -41,23 +41,26 @@ namespace FormationSorter
                 {
                     return FormationClass.HorseArcher;
                 }
-                else// if (agent.HasMeleeWeaponCached)
+                else
                 {
                     return FormationClass.Cavalry;
                 }
             }
             else
             {
-                if (AgentHasProperRangedWeaponWithAmmo(agent) || (HotKeys.ModifierKey.IsDown() && agent.GetHasRangedWeapon(true)))
+                if (AgentHasProperRangedWeaponWithAmmo(agent))
                 {
                     return FormationClass.Ranged;
                 }
-                else// if (agent.HasMeleeWeaponCached)
+                else if (HotKeys.ModifierKey.IsDown() && agent.GetHasRangedWeapon(true))
+                {
+                    return FormationClass.Skirmisher;
+                }
+                else
                 {
                     return FormationClass.Infantry;
                 }
             }
-            //return FormationClass.Unset;
         }
 
         public static List<Agent> GetAllAgentsInFormations(List<Formation> formations)

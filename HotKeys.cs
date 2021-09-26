@@ -19,23 +19,28 @@ namespace FormationSorter
         public static InputKey ModifierKey = InputKey.LeftControl;
 
         public static InputKey SelectAllKey = InputKey.F;
-        public static InputKey SelectAllGroundedKey = InputKey.N;
-        public static InputKey SelectAllMountedKey = InputKey.M;
 
-        public static InputKey SelectInfantryKey = InputKey.H;
-        public static InputKey SelectRangedKey = InputKey.J;
-        public static InputKey SelectCavalryKey = InputKey.C;
+        public static InputKey SelectAllMeleeCavalryKey = InputKey.C;
         public static InputKey SelectHorseArchersKey = InputKey.V;
 
-        /* hotkey ideas:
-         * Y: Infantry + Cavalry
-         * U: Archers + Horse Archers
-        */
+        public static InputKey SelectAllInfantryKey = InputKey.H;
+        public static InputKey SelectArchersAndSkirmishersKey = InputKey.J;
+
+        public static InputKey SelectAllMeleeKey = InputKey.Y;
+        public static InputKey SelectAllRangedKey = InputKey.U;
+
+        public static InputKey SelectAllGroundedKey = InputKey.N;
+        public static InputKey SelectAllMountedKey = InputKey.M;
 
         public static void Initialize()
         {
             UniqueId = 'F' + 'o' + 'r' + 'm' + 'a' + 't' + 'i' + 'o' + 'n' + 'E' + 'd' + 'i' + 't'; // 1333
             OrderGameKey = new GameKey(UniqueId, "FormationSorterOrderHotKey", "FormationSorterHotKeyGroup", OrderKey);
+        }
+
+        private static bool IsFormationOneOfFormationClasses(Formation formation, List<FormationClass> formationClasses)
+        {
+            return formation.CountOfUnits > 0 ? formationClasses.Contains(formation.PrimaryClass) : formationClasses.Contains(formation.InitialClass);
         }
 
         private static Dictionary<InputKey, bool> pressedLastTick = new Dictionary<InputKey, bool>();
@@ -52,8 +57,7 @@ namespace FormationSorter
             List<Formation> selections = new List<Formation>();
             foreach (Formation formation in previousSelections)
             {
-                bool isCorrectFormation = (formation.CountOfUnits > 0 && formationClasses.Contains(formation.PrimaryClass)) ||
-                    formationClasses.Contains(formation.InitialClass);
+                bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 if (!isCorrectFormation)
                 {
                     selections.Add(formation);
@@ -61,8 +65,7 @@ namespace FormationSorter
             }
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
-                bool isCorrectFormation = (formation.CountOfUnits > 0 && formationClasses.Contains(formation.PrimaryClass)) ||
-                    formationClasses.Contains(formation.InitialClass);
+                bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 bool wasPreviouslySelected = previousSelections.Contains(formation);
                 bool shouldInvertSelection = ModifierKey.IsDown() && wasPreviouslySelected;
                 if (isCorrectFormation && !shouldInvertSelection)
@@ -137,14 +140,22 @@ namespace FormationSorter
                 if (Order.MissionOrderVM.OrderController is null) return;
                 if (Order.MissionOrderVM.TroopController is null) return;
                 if (Order.MissionOrderVM.DeploymentController is null) return;
+
                 ProcessKey(OrderKey, () => Order.OnOrderHotKeyPressed());
+
                 ProcessKey(SelectAllKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher, FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }));
+
+                ProcessKey(SelectAllMeleeCavalryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry }));
+                ProcessKey(SelectHorseArchersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }));
+
+                ProcessKey(SelectAllInfantryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry }));
+                ProcessKey(SelectArchersAndSkirmishersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher }));
+
+                ProcessKey(SelectAllMeleeKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.Cavalry }));
+                ProcessKey(SelectAllRangedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.HorseArcher }));
+
                 ProcessKey(SelectAllGroundedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher }));
                 ProcessKey(SelectAllMountedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }));
-                ProcessKey(SelectInfantryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry }));
-                ProcessKey(SelectRangedKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher }));
-                ProcessKey(SelectCavalryKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry }));
-                ProcessKey(SelectHorseArchersKey, () => SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }));
             }
             catch (Exception e)
             {
