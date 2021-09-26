@@ -30,5 +30,13 @@ namespace FormationSorter
             HotKeys.SelectAllFormations();
             Order.MissionOrderVM.TryCloseToggleOrder();
         }
+
+        [HarmonyPatch("OnTransferFinished")]
+        [HarmonyPostfix]
+        public static void OnTransferFinished()
+        {
+            HotKeys.SelectAllFormations();
+            Order.MissionOrderVM.TryCloseToggleOrder();
+        }
     }
 }
