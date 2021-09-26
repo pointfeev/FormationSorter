@@ -92,6 +92,7 @@ namespace FormationSorter
             }
             orderTroopItemVM.IsSelectable = true;
             orderTroopItemVM.IsSelected = true;
+            orderTroopItemVM.IsSelectionActive = true;
             return orderTroopItemVM;
         }
 
@@ -112,6 +113,17 @@ namespace FormationSorter
                 orderTroopItemVM = GetOrderTroopItemVM(formation);
                 typeof(MissionOrderTroopControllerVM).GetMethod("AddSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
                     .Invoke(troopController, new object[] { orderTroopItemVM });
+            }
+            if (troopController.TroopList.Any())
+            {
+                try
+                {
+                    troopController.TroopList.OrderBy(item => item.InitialFormationClass);
+                }
+                catch (Exception e)
+                {
+                    OutputUtils.DoOutputForException(e);
+                }
             }
         }
 
