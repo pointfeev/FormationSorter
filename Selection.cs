@@ -156,6 +156,7 @@ namespace FormationSorter
                 }
                 else
                 {
+                    feedback.Replace("and", "or");
                     InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in any {feedback}formations", Colors.Cyan, "FormationSorter"));
                 }
             }
