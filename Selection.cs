@@ -156,7 +156,7 @@ namespace FormationSorter
                 }
                 else
                 {
-                    feedback.Replace("and", "or");
+                    feedback = feedback.Replace("and", "or");
                     InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in any {feedback}formations", Colors.Cyan, "FormationSorter"));
                 }
             }
@@ -216,7 +216,7 @@ namespace FormationSorter
             {
                 List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.InitialFormationClass).ToList();
                 troopController.TroopList.Clear();
-                for (int i = 0; i <= sorted.Count(); i++)
+                for (int i = 0; i < sorted.Count; i++)
                 {
                     troopController.TroopList.Insert(i, sorted[i]);
                 }
