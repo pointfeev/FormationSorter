@@ -15,8 +15,17 @@ namespace FormationSorter
         [HarmonyPrefix]
         public static bool IsFormationSelectable(Formation formation, Agent selectorAgent, ref bool __result)
         {
-            __result = selectorAgent == null || formation.PlayerOwner == selectorAgent;
-            return false;
+            try
+            {
+                if (!MissionOrder.IsMissionValid() || MissionOrder.IsMissionSiege()) return true;
+                __result = selectorAgent == null || formation.PlayerOwner == selectorAgent;
+                return false;
+            }
+            catch (Exception e)
+            {
+                OutputUtils.DoOutputForException(e);
+            }
+            return true;
         }
 
         [HarmonyPatch("SetOrderWithFormationAndNumber")]

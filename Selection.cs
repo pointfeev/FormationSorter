@@ -41,7 +41,7 @@ namespace FormationSorter
 
         public static void SelectAllFormations()
         {
-            if (!IsMissionOrderVMActive()) return;
+            if (!MissionOrder.IsMissionValid()) return;
             List<FormationClass> allFormationClasses = new List<FormationClass>();
             allFormationClasses.AddRange((IEnumerable<FormationClass>)Enum.GetValues(typeof(FormationClass)));
             SelectFormationsOfClasses(allFormationClasses, "all");
@@ -49,7 +49,8 @@ namespace FormationSorter
 
         public static void AddAllFormationOrderTroopItemVMs()
         {
-            if (!IsMissionOrderVMActive()) return;
+            if (!MissionOrder.IsMissionValid()) return;
+            if (MissionOrder.IsMissionSiege()) return;
             foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
             {
                 GetOrderTroopItemVM(formation);
@@ -63,9 +64,9 @@ namespace FormationSorter
         {
             try
             {
-                if (!IsMissionOrderVMActive()) return;
+                if (!MissionOrder.IsMissionValid()) return;
 
-                ProcessKey(OrderKey, () => Order.OnOrderHotKeyPressed());
+                ProcessKey(OrderKey, () => MissionOrder.OnOrderHotKeyPressed());
 
                 ProcessKey(SelectAllKey, () => SelectAllFormations());
 
@@ -103,17 +104,6 @@ namespace FormationSorter
             }
         }
 
-        private static bool IsMissionOrderVMActive()
-        {
-            if (Mission.Current is null) return false;
-            if (Mission.Current.PlayerTeam is null) return false;
-            if (Order.MissionOrderVM is null) return false;
-            if (Order.MissionOrderVM.OrderController is null) return false;
-            if (Order.MissionOrderVM.TroopController is null) return false;
-            if (Order.MissionOrderVM.DeploymentController is null) return false;
-            return true;
-        }
-
         private static bool IsFormationOneOfFormationClasses(Formation formation, List<FormationClass> formationClasses)
         {
             return formation.CountOfUnits > 0 ? formationClasses.Contains(formation.PrimaryClass) : formationClasses.Contains(formation.InitialClass);
@@ -123,7 +113,7 @@ namespace FormationSorter
 
         private static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
         {
-            if (!Order.MissionOrderVM.IsToggleOrderShown || !ModifierKey.IsDown())
+            if (!MissionOrder.MissionOrderVM.IsToggleOrderShown || !ModifierKey.IsDown())
             {
                 previousSelections.Clear();
             }
@@ -173,30 +163,36 @@ namespace FormationSorter
 
         private static void SetFormationSelections(List<Formation> selections = null)
         {
-            Order.MissionOrderVM.OrderController.ClearSelectedFormations();
-            Order.MissionOrderVM.TryCloseToggleOrder();
+            MissionOrder.MissionOrderVM.OrderController.ClearSelectedFormations();
+            MissionOrder.MissionOrderVM.TryCloseToggleOrder();
             if (selections is null || !selections.Any(f => f.CountOfUnits > 0)) return;
-            Order.MissionOrderVM.OpenToggleOrder(false);
-            MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
+            MissionOrder.MissionOrderVM.OpenToggleOrder(false);
+            MissionOrderTroopControllerVM troopController = MissionOrder.MissionOrderVM.TroopController;
             OrderTroopItemVM orderTroopItemVM = GetOrderTroopItemVM(selections.First());
-            Order.MissionOrderVM.OnSelect((int)selections.First().FormationIndex);
-            typeof(MissionOrderTroopControllerVM).GetMethod("SetSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(troopController, new object[] { orderTroopItemVM });
+            if (!(orderTroopItemVM is null))
+            {
+                MissionOrder.MissionOrderVM.OnSelect((int)selections.First().FormationIndex);
+                typeof(MissionOrderTroopControllerVM).GetMethod("SetSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(troopController, new object[] { orderTroopItemVM });
+            }
             for (int i = 1; i <= selections.Count - 1; i++)
             {
                 Formation formation = selections[i];
                 orderTroopItemVM = GetOrderTroopItemVM(formation);
-                typeof(MissionOrderTroopControllerVM).GetMethod("AddSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(troopController, new object[] { orderTroopItemVM });
+                if (!(orderTroopItemVM is null))
+                {
+                    typeof(MissionOrderTroopControllerVM).GetMethod("AddSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Invoke(troopController, new object[] { orderTroopItemVM });
+                }
             }
             SortOrderTroopItemVMs();
         }
 
         private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation)
         {
-            MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
+            MissionOrderTroopControllerVM troopController = MissionOrder.MissionOrderVM.TroopController;
             OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.Formation == formation);
-            if (orderTroopItemVM is null)
+            if (orderTroopItemVM is null && !MissionOrder.IsMissionSiege())
             {
                 orderTroopItemVM = new OrderTroopItemVM(formation,
                     new Action<OrderTroopItemVM>(item => typeof(MissionOrderTroopControllerVM).GetMethod("OnSelectFormation", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -206,19 +202,23 @@ namespace FormationSorter
                 troopController.TroopList.Add(orderTroopItemVM);
                 SortOrderTroopItemVMs();
             }
-            typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(Order.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
-            orderTroopItemVM.IsSelectable = Order.MissionOrderVM.OrderController.IsFormationSelectable(formation);
-            if (orderTroopItemVM.IsSelectable && Order.MissionOrderVM.OrderController.IsFormationListening(formation))
+            if (!(orderTroopItemVM is null))
             {
-                orderTroopItemVM.IsSelected = true;
+                typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(MissionOrder.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
+                orderTroopItemVM.IsSelectable = MissionOrder.MissionOrderVM.OrderController.IsFormationSelectable(formation);
+                if (orderTroopItemVM.IsSelectable && MissionOrder.MissionOrderVM.OrderController.IsFormationListening(formation))
+                {
+                    orderTroopItemVM.IsSelected = true;
+                }
             }
             return orderTroopItemVM;
         }
 
         private static void SortOrderTroopItemVMs()
         {
-            MissionOrderTroopControllerVM troopController = Order.MissionOrderVM.TroopController;
+            if (MissionOrder.IsMissionSiege()) return;
+            MissionOrderTroopControllerVM troopController = MissionOrder.MissionOrderVM.TroopController;
             if (troopController.TroopList.Any())
             {
                 List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.InitialFormationClass).ToList();

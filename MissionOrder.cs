@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
@@ -10,14 +10,15 @@ using TaleWorlds.MountAndBlade.ViewModelCollection;
 
 namespace FormationSorter
 {
-    public static class Order
+    public static class MissionOrder
     {
         public static int OrderSetIndex;
         public static MissionOrderVM MissionOrderVM;
 
         public static void OnOrderHotKeyPressed()
         {
-            if (MissionOrderVM is null) return;
+            if (!IsMissionValid()) return;
+            if (IsMissionSiege()) return;
             UpdateFormations();
             List<Formation> selectedFormations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
             if (!selectedFormations.Any()) return;
@@ -33,6 +34,22 @@ namespace FormationSorter
                 InformationManager.DisplayMessage(new InformationMessage($"No troops needed sorting between the selected formations", Colors.Cyan, "FormationSorter"));
             }
             MissionOrderVM.TryCloseToggleOrder();
+        }
+
+        public static bool IsMissionSiege()
+        {
+            return !(PlayerSiege.PlayerSiegeEvent is null);
+        }
+
+        public static bool IsMissionValid()
+        {
+            if (Mission.Current is null) return false;
+            if (Mission.Current.PlayerTeam is null) return false;
+            if (MissionOrderVM is null) return false;
+            if (MissionOrderVM.OrderController is null) return false;
+            if (MissionOrderVM.TroopController is null) return false;
+            if (MissionOrderVM.DeploymentController is null) return false;
+            return true;
         }
 
         private static FormationClass GetBestFormationClassForAgent(Agent agent)
@@ -96,26 +113,18 @@ namespace FormationSorter
 
         private static int SortAgentsBetweenFormations(List<Formation> formations)
         {
-            try
+            if (formations is null || formations.Count < 2) return 0;
+            int numUnitsSorted = 0;
+            foreach (Agent agent in GetAllAgentsInFormations(formations))
             {
-                if (formations is null || formations.Count < 2) return 0;
-                int numUnitsSorted = 0;
-                foreach (Agent agent in GetAllAgentsInFormations(formations))
+                if (!agent.IsHuman) continue;
+                FormationClass formationClass = GetBestFormationClassForAgent(agent);
+                if (TrySetAgentFormation(agent, formations.Find(f => f.PrimaryClass == formationClass)))
                 {
-                    if (!agent.IsHuman) continue;
-                    FormationClass formationClass = GetBestFormationClassForAgent(agent);
-                    if (TrySetAgentFormation(agent, formations.Find(f => f.PrimaryClass == formationClass)))
-                    {
-                        numUnitsSorted++;
-                    }
+                    numUnitsSorted++;
                 }
-                return numUnitsSorted;
             }
-            catch (Exception e)
-            {
-                OutputUtils.DoOutputForException(e);
-                return 0;
-            }
+            return numUnitsSorted;
         }
 
         private static bool AgentHasProperRangedWeaponWithAmmo(Agent agent)

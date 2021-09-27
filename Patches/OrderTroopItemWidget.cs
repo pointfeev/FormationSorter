@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using TaleWorlds.MountAndBlade.GauntletUI.Widgets;
 
 namespace FormationSorter
@@ -10,9 +11,17 @@ namespace FormationSorter
         [HarmonyPostfix]
         public static void UpdateBackgroundState(OrderTroopItemWidget __instance)
         {
-            if (__instance.IsSelectable && __instance.CurrentMemberCount <= 0)
+            try
             {
-                __instance.SetState(__instance.IsSelected ? "Selected" : "Disabled");
+                if (!MissionOrder.IsMissionValid() || MissionOrder.IsMissionSiege()) return;
+                if (__instance.IsSelectable && __instance.CurrentMemberCount <= 0)
+                {
+                    __instance.SetState(__instance.IsSelected ? "Selected" : "Disabled");
+                }
+            }
+            catch (Exception e)
+            {
+                OutputUtils.DoOutputForException(e);
             }
         }
     }

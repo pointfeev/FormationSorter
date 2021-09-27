@@ -339,7 +339,7 @@
     <Compile Include="Patches\OrderSetVM.cs" />
     <Compile Include="Patches\MissionOrderVM.cs" />
     <Compile Include="Patches\CharacterObject.cs" />
-    <Compile Include="Order.cs" />
+    <Compile Include="MissionOrder.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\OutputUtils.cs" />
