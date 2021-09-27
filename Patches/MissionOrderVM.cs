@@ -23,9 +23,9 @@ namespace FormationSorter
         {
             try
             {
-                if (MissionOrder.IsMissionSiege()) return;
                 MissionOrder.OrderSetIndex = __instance.OrderSets.Count;
                 MissionOrder.MissionOrderVM = __instance;
+                if (MissionOrder.IsMissionSiege()) return;
                 OrderSetVM OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                     typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
                 }, null).Invoke(new object[] { OrderSubType.FormClose, MissionOrder.OrderSetIndex, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });

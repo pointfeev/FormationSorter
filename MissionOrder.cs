@@ -48,7 +48,6 @@ namespace FormationSorter
             if (MissionOrderVM is null) return false;
             if (MissionOrderVM.OrderController is null) return false;
             if (MissionOrderVM.TroopController is null) return false;
-            if (MissionOrderVM.DeploymentController is null) return false;
             return true;
         }
 
