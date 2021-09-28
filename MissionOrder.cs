@@ -21,11 +21,11 @@ namespace FormationSorter
             UpdateFormations();
             List<Formation> selectedFormations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
             if (selectedFormations is null || !selectedFormations.Any()) return;
-            Mission.Current?.PlayerTeam?.Leader?.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
             int numUnitsSorted = SortAgentsBetweenFormations(selectedFormations);
             if (numUnitsSorted == -1) return;
             if (numUnitsSorted > 0)
             {
+                Mission.Current?.PlayerTeam?.Leader?.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                 UpdateFormations();
                 InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.Cyan, "FormationSorter"));
             }
