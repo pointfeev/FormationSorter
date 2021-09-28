@@ -23,10 +23,15 @@ namespace FormationSorter
             if (selectedFormations is null || !selectedFormations.Any()) return;
             Mission.Current?.PlayerTeam?.Leader?.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
             int numUnitsSorted = SortAgentsBetweenFormations(selectedFormations);
+            if (numUnitsSorted == -1) return;
             if (numUnitsSorted > 0)
             {
                 UpdateFormations();
                 InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.Cyan, "FormationSorter"));
+            }
+            else if (numUnitsSorted == -2)
+            {
+                InformationManager.DisplayMessage(new InformationMessage($"Formations controlled by AI cannot be sorted", Colors.Cyan, "FormationSorter"));
             }
             else
             {
@@ -37,15 +42,15 @@ namespace FormationSorter
 
         public static bool CanSortOrderBeUsedInCurrentMission()
         {
-            return !IsCurrentMissionSiege();
+            return true;
         }
 
         public static bool IsCurrentMissionSiege()
         {
             if (Mission.Current is null) return false;
-            SiegeMissionController siegeMissionController = Mission.Current.GetMissionBehaviour<SiegeMissionController>();
+            SiegeMissionController siegeMissionController = Mission.Current?.GetMissionBehaviour<SiegeMissionController>();
             if (siegeMissionController is null) return false;
-            if (siegeMissionController.IsSallyOut) return false;
+            if (siegeMissionController?.IsSallyOut is true) return false;
             return true;
         }
 
@@ -53,8 +58,8 @@ namespace FormationSorter
         {
             if (Mission.Current is null) return false;
             if (MissionOrderVM is null) return false;
-            if (MissionOrderVM.OrderController is null) return false;
-            if (MissionOrderVM.TroopController is null) return false;
+            if (MissionOrderVM?.OrderController is null) return false;
+            if (MissionOrderVM?.TroopController is null) return false;
             return true;
         }
 
@@ -72,7 +77,9 @@ namespace FormationSorter
 
         private static int SortAgentsBetweenFormations(List<Formation> formations)
         {
-            if (formations is null || formations.Count < 2) return 0;
+            if (!CanSortOrderBeUsedInCurrentMission()) return -1;
+            if (formations is null || formations.Count < 2) return -1;
+            if (formations.All(f => f.IsAIControlled)) return -2;
             int numUnitsSorted = 0;
             foreach (Agent agent in GetAllAgentsInFormations(formations))
             {
@@ -89,6 +96,7 @@ namespace FormationSorter
         private static List<Agent> GetAllAgentsInFormations(List<Formation> formations)
         {
             List<Agent> agents = new List<Agent>();
+            if (!CanSortOrderBeUsedInCurrentMission()) return agents;
             foreach (Formation formation in formations)
             {
                 if (formation.IsAIControlled) continue;
@@ -98,7 +106,12 @@ namespace FormationSorter
                                 where !(unit as Agent is null) && !agents.Contains(unit as Agent) && (unit as Agent).IsHuman
                                 select unit as Agent);
             }
-            return agents.Distinct().ToList();
+            agents = agents.Distinct().ToList();
+            foreach (Agent agent in agents)
+            {
+                agent.StopUsingGameObject(true, true);
+            }
+            return agents;
         }
 
         private static FormationClass GetBestFormationClassForAgent(Agent agent)
@@ -144,6 +157,7 @@ namespace FormationSorter
 
         private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
         {
+            if (!CanSortOrderBeUsedInCurrentMission()) return false;
             if (agent is null || desiredFormation is null || agent.Formation == desiredFormation) return false;
             agent.Formation = desiredFormation;
             switch (agent.Formation.PrimaryClass) // units will yell out the formation they change to, because why not?

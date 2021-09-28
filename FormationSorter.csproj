@@ -334,6 +334,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Hotkeys.cs" />
+    <Compile Include="Patches\UsableMachine.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="Patches\OrderController.cs" />
     <Compile Include="Patches\OrderTroopItemWidget.cs" />
@@ -343,6 +344,7 @@
     <Compile Include="MissionOrder.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ReflectionUtils.cs" />
     <Compile Include="Utilities\OutputUtils.cs" />
   </ItemGroup>
   <ItemGroup>
