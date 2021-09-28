@@ -15,14 +15,14 @@ namespace FormationSorter
             {
                 initialized = true;
                 new Harmony("pointfeev.formationsorter").PatchAll();
-                Selection.Initialize();
+                Hotkeys.Initialize();
                 InformationManager.DisplayMessage(new InformationMessage("Formation Sorter initialized", Colors.Cyan, "FormationSorter"));
             }
         }
 
         protected override void OnApplicationTick(float dt)
         {
-            Selection.HotKeysTick(dt);
+            Hotkeys.OnApplicationTick(dt);
         }
     }
 }

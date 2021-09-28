@@ -14,13 +14,13 @@ namespace FormationSorter
         {
             try
             {
-                if (!MissionOrder.IsMissionValid() || MissionOrder.IsMissionSiege()) return;
+                if (!MissionOrder.IsCurrentMissionReady() || !MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
                 if (____index == MissionOrder.OrderSetIndex)
                 {
                     __instance.TitleText = "Sort Units Between Formations";
                     __instance.TitleOrder.OrderIconID = "ToggleAI";
                     __instance.TitleOrder.TooltipText = "Sort Units Between Formations";
-                    __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Selection.OrderGameKey, false);
+                    __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Hotkeys.OrderGameKey, false);
                     __instance.TitleOrder.ShortcutKey = __instance.TitleOrderKey;
                 }
             }

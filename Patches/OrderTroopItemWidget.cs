@@ -13,7 +13,7 @@ namespace FormationSorter
         {
             try
             {
-                if (!MissionOrder.IsMissionValid() || MissionOrder.IsMissionSiege()) return;
+                if (!MissionOrder.IsCurrentMissionReady() || !MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
                 if (__instance.IsSelectable && __instance.CurrentMemberCount <= 0)
                 {
                     __instance.SetState(__instance.IsSelected ? "Selected" : "Disabled");

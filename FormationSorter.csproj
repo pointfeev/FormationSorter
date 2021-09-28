@@ -333,6 +333,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hotkeys.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="Patches\OrderController.cs" />
     <Compile Include="Patches\OrderTroopItemWidget.cs" />
