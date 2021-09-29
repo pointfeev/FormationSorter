@@ -56,10 +56,14 @@ namespace FormationSorter
 
         public static bool IsCurrentMissionReady()
         {
-            if (Mission.Current is null) return false;
-            if (MissionOrderVM is null) return false;
-            if (MissionOrderVM?.OrderController is null) return false;
-            if (MissionOrderVM?.TroopController is null) return false;
+            try
+            {
+                if (Mission.Current is null) return false;
+                if (MissionOrderVM is null) return false;
+                if (MissionOrderVM?.OrderController is null) return false;
+                if (MissionOrderVM?.TroopController is null) return false;
+            }
+            catch { }
             return true;
         }
 
