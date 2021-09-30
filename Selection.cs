@@ -33,7 +33,7 @@ namespace FormationSorter
 
         public static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
         {
-            if (!MissionOrder.MissionOrderVM.IsToggleOrderShown || !Hotkeys.ModifierKey.IsDown())
+            if (!MissionOrder.MissionOrderVM.IsToggleOrderShown || !Hotkeys.ControlKey.IsDown())
             {
                 previousSelections.Clear();
             }
@@ -52,7 +52,7 @@ namespace FormationSorter
             {
                 bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 bool wasPreviouslySelected = previousSelections.Contains(formation);
-                bool shouldInvertSelection = Hotkeys.ModifierKey.IsDown() && wasPreviouslySelected;
+                bool shouldInvertSelection = Hotkeys.ControlKey.IsDown() && wasPreviouslySelected;
                 if (isCorrectFormation)
                 {
                     if (shouldInvertSelection)

@@ -12,7 +12,8 @@ namespace FormationSorter
         public static GameKey OrderGameKey;
         public static InputKey OrderKey = InputKey.X;
 
-        public static InputKey ModifierKey = InputKey.LeftControl;
+        public static InputKey ControlKey = InputKey.LeftControl;
+        public static InputKey AlternateKey = InputKey.LeftAlt;
 
         public static InputKey SelectAllKey = InputKey.F;
 

@@ -334,6 +334,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Hotkeys.cs" />
+    <Compile Include="Patches\MissionFormationMarkerVM.cs" />
     <Compile Include="Patches\UsableMachine.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="Patches\OrderController.cs" />
