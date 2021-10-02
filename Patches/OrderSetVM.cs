@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System;
-using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
@@ -17,11 +16,7 @@ namespace FormationSorter
                 if (!MissionOrder.IsCurrentMissionReady() || !MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
                 if (____index == MissionOrder.OrderSetIndex)
                 {
-                    __instance.TitleText = "Sort Units Between Formations";
-                    __instance.TitleOrder.OrderIconID = "ToggleAI";
-                    __instance.TitleOrder.TooltipText = "Sort Units Between Formations";
-                    __instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Hotkeys.OrderGameKey, false);
-                    __instance.TitleOrder.ShortcutKey = __instance.TitleOrderKey;
+                    MissionOrder.RefreshOrderButton(__instance);
                 }
             }
             catch (Exception e)

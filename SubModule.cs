@@ -11,6 +11,7 @@ namespace FormationSorter
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
+            base.OnBeforeInitialModuleScreenSetAsRoot();
             if (!initialized)
             {
                 initialized = true;

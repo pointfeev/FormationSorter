@@ -6,6 +6,8 @@ using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
+using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
+using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
 {
@@ -37,6 +39,15 @@ namespace FormationSorter
                 InformationManager.DisplayMessage(new InformationMessage($"No troops need sorting between the selected formations", Colors.Cyan, "FormationSorter"));
             }
             MissionOrderVM.TryCloseToggleOrder();
+        }
+
+        public static void RefreshOrderButton(OrderSetVM instance)
+        {
+            instance.TitleText = "Sort Units Between Formations";
+            instance.TitleOrder.OrderIconID = "ToggleAI";
+            instance.TitleOrder.TooltipText = "Sort Units Between Formations";
+            instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Hotkeys.OrderGameKey, false);
+            instance.TitleOrder.ShortcutKey = instance.TitleOrderKey;
         }
 
         public static bool CanSortOrderBeUsedInCurrentMission()
@@ -81,7 +92,7 @@ namespace FormationSorter
             if (formations.All(f => f.IsAIControlled)) return -2;
             int numAgentsSorted = 0;
             List<Agent> agents = GetAllHumanAgentsInFormations(formations);
-            if (Hotkeys.AlternateKey.IsDown())
+            if (Settings.EqualSortingModifierKey.IsDown())
             {
                 Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                 foreach (Agent agent in agents)
@@ -184,7 +195,7 @@ namespace FormationSorter
                 {
                     return FormationClass.Ranged;
                 }
-                else if (Hotkeys.ControlKey.IsDown() && agent.GetHasRangedWeapon(true))
+                else if (Settings.SkirmisherSortingModifierKey.IsDown() && agent.GetHasRangedWeapon(true))
                 {
                     return FormationClass.Skirmisher;
                 }
