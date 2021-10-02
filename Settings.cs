@@ -21,7 +21,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Order Key", Order = 1, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
-        public DropdownDefault<InputKey> OrderKeySetting
+        private DropdownDefault<InputKey> OrderKeySetting
         {
             get
             {
@@ -49,7 +49,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Equal Sorting Modifier Key", Order = 3, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
-        public DropdownDefault<InputKey> EqualSortingModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftAlt);
+        private DropdownDefault<InputKey> EqualSortingModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftAlt);
 
         public static InputKey EqualSortingModifierKey => Instance.EqualSortingModifierKeySetting.SelectedValue;
 
@@ -59,7 +59,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Skirmisher Sorting Modifier Key", Order = 2, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
-        public DropdownDefault<InputKey> SkirmisherSortingModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftControl);
+        private DropdownDefault<InputKey> SkirmisherSortingModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftControl);
 
         public static InputKey SkirmisherSortingModifierKey => Instance.SkirmisherSortingModifierKeySetting.SelectedValue;
 
@@ -69,7 +69,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Inverse Selection Modifier Key", Order = 4, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> InverseSelectionModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftControl);
+        private DropdownDefault<InputKey> InverseSelectionModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftControl);
 
         public static InputKey InverseSelectionModifierKey => Instance.InverseSelectionModifierKeySetting.SelectedValue;
 
@@ -79,7 +79,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Formations Key", Order = 5, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.F);
+        private DropdownDefault<InputKey> SelectAllKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.F);
 
         public static InputKey SelectAllKey => Instance.SelectAllKeySetting.SelectedValue;
 
@@ -89,7 +89,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Melee Cavalry Formations Key", Order = 6, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllMeleeCavalryKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.C);
+        private DropdownDefault<InputKey> SelectAllMeleeCavalryKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.C);
 
         public static InputKey SelectAllMeleeCavalryKey => Instance.SelectAllMeleeCavalryKeySetting.SelectedValue;
 
@@ -99,7 +99,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Horse Archer Formations Key", Order = 7, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllHorseArchersKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.V);
+        private DropdownDefault<InputKey> SelectAllHorseArchersKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.V);
 
         public static InputKey SelectAllHorseArchersKey => Instance.SelectAllHorseArchersKeySetting.SelectedValue;
 
@@ -109,7 +109,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Infantry Formations Key", Order = 8, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllInfantryKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.H);
+        private DropdownDefault<InputKey> SelectAllInfantryKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.H);
 
         public static InputKey SelectAllInfantryKey => Instance.SelectAllInfantryKeySetting.SelectedValue;
 
@@ -119,7 +119,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Archer and Skirmisher Formations Key", Order = 9, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllArchersAndSkirmishersKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.J);
+        private DropdownDefault<InputKey> SelectAllArchersAndSkirmishersKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.J);
 
         public static InputKey SelectAllArchersAndSkirmishersKey => Instance.SelectAllArchersAndSkirmishersKeySetting.SelectedValue;
 
@@ -129,7 +129,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Normal Melee Formations Key", Order = 10, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllNormalMeleeKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.Y);
+        private DropdownDefault<InputKey> SelectAllNormalMeleeKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.Y);
 
         public static InputKey SelectAllNormalMeleeKey => Instance.SelectAllNormalMeleeKeySetting.SelectedValue;
 
@@ -139,7 +139,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Ranged Formations Key", Order = 11, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllRangedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.U);
+        private DropdownDefault<InputKey> SelectAllRangedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.U);
 
         public static InputKey SelectAllRangedKey => Instance.SelectAllRangedKeySetting.SelectedValue;
 
@@ -149,7 +149,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Grounded Formations Key", Order = 12, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllGroundedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.N);
+        private DropdownDefault<InputKey> SelectAllGroundedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.N);
 
         public static InputKey SelectAllGroundedKey => Instance.SelectAllGroundedKeySetting.SelectedValue;
 
@@ -159,7 +159,7 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Mounted Formations Key", Order = 13, RequireRestart = false, HintText = "")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        public DropdownDefault<InputKey> SelectAllMountedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.M);
+        private DropdownDefault<InputKey> SelectAllMountedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.M);
 
         public static InputKey SelectAllMountedKey => Instance.SelectAllMountedKeySetting.SelectedValue;
 
@@ -234,5 +234,33 @@ namespace FormationSorter
         }
 
         #endregion Get Usable Keys
+
+        #region Spacers for Dropdown Menus
+
+        [SettingPropertyDropdown("", Order = 14, RequireRestart = false, HintText = "")]
+        [SettingPropertyGroup("Selection", GroupOrder = 2)]
+        private DropdownDefault<InputKey> s1 { get; set; } = null;
+
+        [SettingPropertyDropdown("", Order = 15, RequireRestart = false, HintText = "")]
+        [SettingPropertyGroup("Selection", GroupOrder = 2)]
+        private DropdownDefault<InputKey> s2 { get; set; } = null;
+
+        [SettingPropertyDropdown("", Order = 16, RequireRestart = false, HintText = "")]
+        [SettingPropertyGroup("Selection", GroupOrder = 2)]
+        private DropdownDefault<InputKey> s3 { get; set; } = null;
+
+        [SettingPropertyDropdown("", Order = 17, RequireRestart = false, HintText = "")]
+        [SettingPropertyGroup("Selection", GroupOrder = 2)]
+        private DropdownDefault<InputKey> s4 { get; set; } = null;
+
+        [SettingPropertyDropdown("", Order = 18, RequireRestart = false, HintText = "")]
+        [SettingPropertyGroup("Selection", GroupOrder = 2)]
+        private DropdownDefault<InputKey> s5 { get; set; } = null;
+
+        [SettingPropertyDropdown("", Order = 19, RequireRestart = false, HintText = "")]
+        [SettingPropertyGroup("Selection", GroupOrder = 2)]
+        private DropdownDefault<InputKey> s6 { get; set; } = null;
+
+        #endregion Spacers for Dropdown Menus
     }
 }
