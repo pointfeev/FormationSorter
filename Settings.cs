@@ -212,7 +212,7 @@ namespace FormationSorter
 
         private static int[] GetRangeOfIntegers(int from, int to)
         {
-            return Enumerable.Range(from, to - from).ToArray();
+            return Enumerable.Range(from, 1 + to - from).ToArray();
         }
 
         private static (InputKey[], int) GetUsableKeysAndDefaultIndexFromKeyValues(InputKey defaultKey, int[] keyValues)
