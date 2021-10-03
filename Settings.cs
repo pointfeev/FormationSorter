@@ -27,7 +27,7 @@ namespace FormationSorter
             {
                 if (orderKeySetting is null)
                 {
-                    orderKeySetting = GetModifierKeysDropdown(InputKey.X);
+                    orderKeySetting = GetNormalKeysDropdown(InputKey.X);
                 }
                 return orderKeySetting;
             }
@@ -234,33 +234,5 @@ namespace FormationSorter
         }
 
         #endregion Get Usable Keys
-
-        #region Spacers for Dropdown Menus
-
-        [SettingPropertyDropdown("", Order = 14, RequireRestart = false, HintText = "")]
-        [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> s1 { get; set; } = null;
-
-        [SettingPropertyDropdown("", Order = 15, RequireRestart = false, HintText = "")]
-        [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> s2 { get; set; } = null;
-
-        [SettingPropertyDropdown("", Order = 16, RequireRestart = false, HintText = "")]
-        [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> s3 { get; set; } = null;
-
-        [SettingPropertyDropdown("", Order = 17, RequireRestart = false, HintText = "")]
-        [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> s4 { get; set; } = null;
-
-        [SettingPropertyDropdown("", Order = 18, RequireRestart = false, HintText = "")]
-        [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> s5 { get; set; } = null;
-
-        [SettingPropertyDropdown("", Order = 19, RequireRestart = false, HintText = "")]
-        [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> s6 { get; set; } = null;
-
-        #endregion Spacers for Dropdown Menus
     }
 }
