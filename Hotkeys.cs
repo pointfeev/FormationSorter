@@ -23,6 +23,12 @@ namespace FormationSorter
             if (MissionOrder.IsCurrentMissionReady()) MissionOrder.MissionOrderVM.RefreshValues();
         }
 
+        public static bool IsKeyDown(this InputKey inputKey)
+        {
+            if (inputKey is InputKey.Invalid) return false;
+            return inputKey.IsDown();
+        }
+
         private static Dictionary<InputKey, bool> pressedLastTick = new Dictionary<InputKey, bool>();
 
         public static void OnApplicationTick(float dt)
@@ -36,16 +42,16 @@ namespace FormationSorter
                 ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
 
                 ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry }, "melee cavalry"));
-                ProcessKey(Settings.SelectAllHorseArchersKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }, "horse archer"));
+                ProcessKey(Settings.SelectAllRangedCavalryKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.HorseArcher }, "ranged cavalry"));
 
-                ProcessKey(Settings.SelectAllInfantryKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry }, "infantry"));
-                ProcessKey(Settings.SelectAllArchersAndSkirmishersKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher }, "archer and skirmisher"));
+                ProcessKey(Settings.SelectAllGroundMeleeKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry }, "ground melee"));
+                ProcessKey(Settings.SelectAllGroundRangedKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher }, "ground ranged"));
 
-                ProcessKey(Settings.SelectAllNormalMeleeKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.Cavalry }, "normal melee"));
-                ProcessKey(Settings.SelectAllRangedKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.HorseArcher }, "archer"));
+                ProcessKey(Settings.SelectAllBasicMeleeKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.Cavalry }, "basic melee"));
+                ProcessKey(Settings.SelectAllBasicRangedKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Ranged, FormationClass.HorseArcher }, "basic ranged"));
 
-                ProcessKey(Settings.SelectAllGroundedKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher }, "grounded"));
-                ProcessKey(Settings.SelectAllMountedKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }, "mounted"));
+                ProcessKey(Settings.SelectAllGroundKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher }, "ground"));
+                ProcessKey(Settings.SelectAllCavalryKey, () => Selection.SelectFormationsOfClasses(new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher }, "cavalry"));
             }
             catch (Exception e)
             {

@@ -92,7 +92,7 @@ namespace FormationSorter
             if (formations.All(f => f.IsAIControlled)) return -2;
             int numAgentsSorted = 0;
             List<Agent> agents = GetAllHumanAgentsInFormations(formations);
-            if (Settings.EqualSortingModifierKey.IsDown())
+            if (Settings.EqualSortingModifierKey.IsKeyDown())
             {
                 Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                 foreach (Agent agent in agents)
@@ -195,7 +195,7 @@ namespace FormationSorter
                 {
                     return FormationClass.Ranged;
                 }
-                else if (Settings.SkirmisherSortingModifierKey.IsDown() && agent.GetHasRangedWeapon(true))
+                else if (Settings.SkirmisherSortingModifierKey.IsKeyDown() && agent.GetHasRangedWeapon(true))
                 {
                     return FormationClass.Skirmisher;
                 }
