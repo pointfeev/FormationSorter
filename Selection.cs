@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.Core;
-using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
@@ -12,6 +11,15 @@ namespace FormationSorter
 {
     public static class Selection
     {
+        public static readonly List<FormationClass> MeleeCavalryFormationClasses = new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry };
+        public static readonly List<FormationClass> RangedCavalryFormationClasses = new List<FormationClass>() { FormationClass.HorseArcher };
+        public static readonly List<FormationClass> GroundMeleeFormationClasses = new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry };
+        public static readonly List<FormationClass> GroundRangedFormationClasses = new List<FormationClass>() { FormationClass.Ranged, FormationClass.Skirmisher };
+        public static readonly List<FormationClass> BasicMeleeFormationClasses = new List<FormationClass>() { FormationClass.Infantry, FormationClass.Cavalry };
+        public static readonly List<FormationClass> BasicRangedFormationClasses = new List<FormationClass>() { FormationClass.Ranged, FormationClass.HorseArcher };
+        public static readonly List<FormationClass> GroundFormationClasses = new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher };
+        public static readonly List<FormationClass> CavalryFormationClasses = new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher };
+
         public static void SelectAllFormations()
         {
             if (!MissionOrder.IsCurrentMissionReady()) return;

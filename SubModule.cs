@@ -23,6 +23,7 @@ namespace FormationSorter
 
         protected override void OnApplicationTick(float dt)
         {
+            base.OnApplicationTick(dt);
             Hotkeys.OnApplicationTick(dt);
         }
     }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.Core;
-using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
