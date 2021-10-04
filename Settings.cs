@@ -167,29 +167,29 @@ namespace FormationSorter
 
         #region Selection Spacers
 
-        [SettingPropertyDropdown("", Order = 14, RequireRestart = false, HintText = "")]
+        [SettingPropertyBool("", Order = 14, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SpacerSetting1 { get; set; } = new DropdownDefault<InputKey>(new InputKey[0], 0);
+        private bool S1 { get { return false; } set { } }
 
-        [SettingPropertyDropdown("", Order = 15, RequireRestart = false, HintText = "")]
+        [SettingPropertyBool("", Order = 15, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SpacerSetting2 { get; set; } = new DropdownDefault<InputKey>(new InputKey[0], 0);
+        private bool S2 { get { return false; } set { } }
 
-        [SettingPropertyDropdown("", Order = 16, RequireRestart = false, HintText = "")]
+        [SettingPropertyBool("", Order = 16, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SpacerSetting3 { get; set; } = new DropdownDefault<InputKey>(new InputKey[0], 0);
+        private bool S3 { get { return false; } set { } }
 
-        [SettingPropertyDropdown("", Order = 17, RequireRestart = false, HintText = "")]
+        [SettingPropertyBool("", Order = 17, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SpacerSetting4 { get; set; } = new DropdownDefault<InputKey>(new InputKey[0], 0);
+        private bool S4 { get { return false; } set { } }
 
-        [SettingPropertyDropdown("", Order = 18, RequireRestart = false, HintText = "")]
+        [SettingPropertyBool("", Order = 18, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SpacerSetting5 { get; set; } = new DropdownDefault<InputKey>(new InputKey[0], 0);
+        private bool S5 { get { return false; } set { } }
 
-        [SettingPropertyDropdown("", Order = 19, RequireRestart = false, HintText = "")]
+        [SettingPropertyBool("", Order = 19, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SpacerSetting6 { get; set; } = new DropdownDefault<InputKey>(new InputKey[0], 0);
+        private bool S6 { get { return false; } set { } }
 
         #endregion Selection Spacers
 
