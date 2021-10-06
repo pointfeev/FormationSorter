@@ -142,10 +142,7 @@ namespace FormationSorter
                 typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
                     .Invoke(MissionOrder.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
                 orderTroopItemVM.IsSelectable = MissionOrder.MissionOrderVM.OrderController.IsFormationSelectable(formation);
-                if (orderTroopItemVM.IsSelectable && MissionOrder.MissionOrderVM.OrderController.IsFormationListening(formation))
-                {
-                    orderTroopItemVM.IsSelected = true;
-                }
+                orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && MissionOrder.MissionOrderVM.OrderController.IsFormationListening(formation);
             }
             return orderTroopItemVM;
         }
