@@ -30,7 +30,7 @@ namespace FormationSorter
                     typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
                 }, null).Invoke(new object[] { OrderSubType.FormClose, MissionOrder.OrderSetIndex, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
                 __instance.OrderSets.Add(OrderSetVM);
-                Selection.AddAllFormationOrderTroopItemVMs();
+                Update();
             }
             catch (Exception e)
             {
@@ -39,18 +39,12 @@ namespace FormationSorter
         }
 
         [HarmonyPatch("OnTransferFinished")]
-        [HarmonyPatch("OpenToggleOrder")]
+        [HarmonyPatch("SetActiveOrders")]
+        [HarmonyPatch("OnOrder")]
         [HarmonyPostfix]
-        public static void OnTransferFinished_OnOpenToggleOrder()
+        public static void Update()
         {
-            try
-            {
-                Selection.AddAllFormationOrderTroopItemVMs();
-            }
-            catch (Exception e)
-            {
-                OutputUtils.DoOutputForException(e);
-            }
+            Selection.UpdateAllFormationOrderTroopItemVMs();
         }
     }
 }

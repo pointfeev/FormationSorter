@@ -28,15 +28,23 @@ namespace FormationSorter
             SelectFormationsOfClasses(allFormationClasses, "all");
         }
 
-        public static void AddAllFormationOrderTroopItemVMs()
+        public static void UpdateAllFormationOrderTroopItemVMs()
         {
-            if (!MissionOrder.IsCurrentMissionReady()) return;
-            if (!MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
-            foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
+            try
             {
-                GetOrderTroopItemVM(formation);
+                if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod())) return;
+                if (!MissionOrder.IsCurrentMissionReady()) return;
+                if (!MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
+                foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
+                {
+                    GetOrderTroopItemVM(formation);
+                }
+                SortOrderTroopItemVMs();
             }
-            SortOrderTroopItemVMs();
+            catch (Exception e)
+            {
+                OutputUtils.DoOutputForException(e);
+            }
         }
 
         public static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
@@ -126,23 +134,35 @@ namespace FormationSorter
         private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation)
         {
             MissionOrderTroopControllerVM troopController = MissionOrder.MissionOrderVM.TroopController;
+            bool selectable = MissionOrder.MissionOrderVM.OrderController.IsFormationSelectable(formation);
             OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.Formation == formation);
-            if (orderTroopItemVM is null && MissionOrder.CanSortOrderBeUsedInCurrentMission())
+            if (orderTroopItemVM is null && MissionOrder.CanSortOrderBeUsedInCurrentMission() && selectable)
             {
                 orderTroopItemVM = new OrderTroopItemVM(formation,
                     new Action<OrderTroopItemVM>(item => typeof(MissionOrderTroopControllerVM).GetMethod("OnSelectFormation", BindingFlags.NonPublic | BindingFlags.Instance)
                         .Invoke(troopController, new object[] { item })),
                     (int)Mission.Current.GetAverageMoraleOfAgentsWithIndices(formation.CollectUnitIndices()));
-                orderTroopItemVM.FormationClass = (int)formation.InitialClass;
                 troopController.TroopList.Add(orderTroopItemVM);
                 SortOrderTroopItemVMs();
             }
             if (!(orderTroopItemVM is null))
             {
-                typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(MissionOrder.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
-                orderTroopItemVM.IsSelectable = MissionOrder.MissionOrderVM.OrderController.IsFormationSelectable(formation);
-                orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && MissionOrder.MissionOrderVM.OrderController.IsFormationListening(formation);
+                if (selectable)
+                {
+                    typeof(MissionOrderTroopControllerVM).GetMethod("SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Invoke(MissionOrder.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
+                    orderTroopItemVM.IsSelectable = selectable;
+                    orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && MissionOrder.MissionOrderVM.OrderController.IsFormationListening(formation);
+                    if (formation.CountOfUnits <= 0)
+                    {
+                        orderTroopItemVM.FormationClass = (int)formation.InitialClass;
+                    }
+                }
+                else
+                {
+                    troopController.TroopList.Remove(orderTroopItemVM);
+                    SortOrderTroopItemVMs();
+                }
             }
             return orderTroopItemVM;
         }

@@ -65,5 +65,12 @@ namespace FormationSorter
                 }
             }
         }
+
+        [HarmonyPatch("OnSelectedFormationsCollectionChanged")]
+        [HarmonyPostfix]
+        public static void Update()
+        {
+            Selection.UpdateAllFormationOrderTroopItemVMs();
+        }
     }
 }
