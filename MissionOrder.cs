@@ -42,9 +42,9 @@ namespace FormationSorter
 
         public static void RefreshOrderButton(OrderSetVM instance)
         {
-            instance.TitleText = "Sort Units Between Formations";
+            instance.TitleText = "Sort Troops Between Formations";
             instance.TitleOrder.OrderIconID = "ToggleAI";
-            instance.TitleOrder.TooltipText = "Sort Units Between Formations";
+            instance.TitleOrder.TooltipText = "Sort Troops Between Formations";
             instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Hotkeys.OrderGameKey, false);
             instance.TitleOrder.ShortcutKey = instance.TitleOrderKey;
         }

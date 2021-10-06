@@ -90,7 +90,7 @@ namespace FormationSorter
                 }
                 else
                 {
-                    InformationManager.DisplayMessage(new InformationMessage($"There are no units to be selected in any {feedback.Replace("and", "or")}formations", Colors.Cyan, "FormationSorter"));
+                    InformationManager.DisplayMessage(new InformationMessage($"There are no troops to be selected in any {feedback.Replace("and", "or")}formations", Colors.Cyan, "FormationSorter"));
                 }
             }
             SetFormationSelections(selections);

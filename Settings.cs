@@ -19,7 +19,7 @@ namespace FormationSorter
 
         private DropdownDefault<InputKey> orderKeySetting = null;
 
-        [SettingPropertyDropdown("Order Key", Order = 1, RequireRestart = false, HintText = "Sort Units Between Formations order menu key; troops in selected formations will be sorted into their single best formation if one of its kind is among the selected formations.")]
+        [SettingPropertyDropdown("Order Key", Order = 1, RequireRestart = false, HintText = "Sort Troops Between Formations order menu key; troops in selected formations will be sorted into their single best formation if one of its kind is among the selected formations.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
         private DropdownDefault<InputKey> OrderKeySetting
         {
