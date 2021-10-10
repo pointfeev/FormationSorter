@@ -54,17 +54,29 @@ namespace FormationSorter
 
         private static void ProcessKey(InputKey inputKey, Action action)
         {
-            if (inputKey.IsPressed())
+            try
             {
-                if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
+                if (inputKey is null || action is null) return;
+                if (pressedLastTick is null)
                 {
-                    pressedLastTick[inputKey] = true;
-                    action();
+                    pressedLastTick = new Dictionary<InputKey, bool>();
+                }
+                if (inputKey.IsPressed())
+                {
+                    if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
+                    {
+                        pressedLastTick[inputKey] = true;
+                        action();
+                    }
+                }
+                else
+                {
+                    pressedLastTick[inputKey] = false;
                 }
             }
-            else
+            catch (Exception e)
             {
-                pressedLastTick[inputKey] = false;
+                OutputUtils.DoOutputForException(e);
             }
         }
     }
