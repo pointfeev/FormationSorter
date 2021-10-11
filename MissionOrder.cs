@@ -90,7 +90,7 @@ namespace FormationSorter
             if (formations is null || formations.Count < 2) return -1;
             if (formations.All(f => f.IsAIControlled)) return -2;
             int numAgentsSorted = 0;
-            List<Agent> agents = GetAllHumanAgentsInFormations(formations);
+            List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
             if (Settings.EqualSortingModifierKey.IsKeyDown())
             {
                 Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
@@ -147,7 +147,7 @@ namespace FormationSorter
             return numAgentsSorted;
         }
 
-        private static List<Agent> GetAllHumanAgentsInFormations(List<Formation> formations)
+        private static List<Agent> GetAllPlayerControlledHumanAgentsInFormations(List<Formation> formations)
         {
             List<Agent> readAgents = new List<Agent>();
             if (!CanSortOrderBeUsedInCurrentMission()) return readAgents;
