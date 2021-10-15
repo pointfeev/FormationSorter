@@ -20,12 +20,33 @@ namespace FormationSorter
         public static readonly List<FormationClass> GroundFormationClasses = new List<FormationClass>() { FormationClass.Infantry, FormationClass.HeavyInfantry, FormationClass.Ranged, FormationClass.Skirmisher };
         public static readonly List<FormationClass> CavalryFormationClasses = new List<FormationClass>() { FormationClass.Cavalry, FormationClass.LightCavalry, FormationClass.HeavyCavalry, FormationClass.HorseArcher };
 
+        private static List<FormationClass> allFormationClasses = AllFormationClasses;
+
+        public static List<FormationClass> AllFormationClasses
+        {
+            get
+            {
+                if (allFormationClasses is null)
+                {
+                    try
+                    {
+                        allFormationClasses = new List<FormationClass>();
+                        allFormationClasses.AddRange((IEnumerable<FormationClass>)Enum.GetValues(typeof(FormationClass)));
+                    }
+                    catch (Exception e)
+                    {
+                        OutputUtils.DoOutputForException(e);
+                        return new List<FormationClass>();
+                    }
+                }
+                return allFormationClasses;
+            }
+        }
+
         public static void SelectAllFormations()
         {
             if (!MissionOrder.IsCurrentMissionReady()) return;
-            List<FormationClass> allFormationClasses = new List<FormationClass>();
-            allFormationClasses.AddRange((IEnumerable<FormationClass>)Enum.GetValues(typeof(FormationClass)));
-            SelectFormationsOfClasses(allFormationClasses, "all");
+            SelectFormationsOfClasses(AllFormationClasses, "all");
         }
 
         public static void UpdateAllFormationOrderTroopItemVMs()
@@ -49,7 +70,8 @@ namespace FormationSorter
 
         public static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
         {
-            if (!MissionOrder.MissionOrderVM.IsToggleOrderShown || !Settings.InverseSelectionModifierKey.IsKeyDown())
+            if (formationClasses is null || !formationClasses.Any()) return;
+            if (!MissionOrder.MissionOrderVM.IsToggleOrderShown || !Settings.InverseSelectionModifierKey.IsDefinedAndDown())
             {
                 previousSelections.Clear();
             }
@@ -64,11 +86,12 @@ namespace FormationSorter
                 }
             }
             List<Formation> invertedSelections = new List<Formation>();
-            foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
+            foreach (Formation formation in Mission.Current?.PlayerTeam?.FormationsIncludingEmpty)
             {
+                if (formation is null) continue;
                 bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 bool wasPreviouslySelected = previousSelections.Contains(formation);
-                bool shouldInvertSelection = Settings.InverseSelectionModifierKey.IsKeyDown() && wasPreviouslySelected;
+                bool shouldInvertSelection = Settings.InverseSelectionModifierKey.IsDefinedAndDown() && wasPreviouslySelected;
                 if (isCorrectFormation)
                 {
                     if (shouldInvertSelection)

@@ -6,26 +6,19 @@ namespace FormationSorter
 {
     public static class Hotkeys
     {
-        public static int UniqueId;
+        private static Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
 
-        public static GameKey OrderGameKey;
-
-        public static void Initialize()
+        private static bool IsDefined(this InputKey inputKey)
         {
-            UniqueId = 'F' + 'o' + 'r' + 'm' + 'a' + 't' + 'i' + 'o' + 'n' + 'S' + 'o' + 'r' + 't' + 'e' + 'r';
-            RefreshOrderGameKey();
+            if (isKeyDefined.TryGetValue(inputKey, out bool defined)) return defined;
+            defined = Enum.IsDefined(typeof(InputKey), inputKey);
+            isKeyDefined.Add(inputKey, defined);
+            return defined;
         }
 
-        public static void RefreshOrderGameKey()
+        public static bool IsDefinedAndDown(this InputKey inputKey)
         {
-            OrderGameKey = new GameKey(UniqueId, "FormationSorterOrderHotkey", "FormationSorterHotkeyGroup", Settings.OrderKey);
-            if (MissionOrder.IsCurrentMissionReady()) MissionOrder.MissionOrderVM.RefreshValues();
-        }
-
-        public static bool IsKeyDown(this InputKey inputKey)
-        {
-            if (inputKey is InputKey.Invalid) return false;
-            return inputKey.IsDown();
+            return inputKey.IsDefined() && inputKey.IsDown();
         }
 
         public static void OnApplicationTick(float dt)
@@ -45,12 +38,11 @@ namespace FormationSorter
 
         private static void ProcessKey(InputKey inputKey, Action action)
         {
-            if (inputKey < 0 || action is null) return;
             if (pressedLastTick is null)
             {
                 pressedLastTick = new Dictionary<InputKey, bool>();
             }
-            if (inputKey.IsPressed())
+            if (inputKey.IsDefinedAndDown())
             {
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {

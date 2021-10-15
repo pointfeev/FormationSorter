@@ -9,15 +9,11 @@ namespace FormationSorter
     {
         [HarmonyPatch("RefreshValues")]
         [HarmonyPostfix]
-        public static void RefreshValues(OrderSetVM __instance, int ____index)
+        public static void RefreshValues(OrderSetVM __instance)
         {
             try
             {
-                if (!MissionOrder.IsCurrentMissionReady() || !MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
-                if (____index == MissionOrder.OrderSetIndex)
-                {
-                    MissionOrder.RefreshOrderButton(__instance);
-                }
+                if (__instance == MissionOrder.OrderSetVM) MissionOrder.RefreshOrderButton();
             }
             catch (Exception e)
             {

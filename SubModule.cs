@@ -19,7 +19,6 @@ namespace FormationSorter
                 {
                     initialized = true;
                     new Harmony("pointfeev.formationsorter").PatchAll();
-                    Hotkeys.Initialize();
                     InformationManager.DisplayMessage(new InformationMessage("Formation Sorter initialized", Colors.Cyan, "FormationSorter"));
                 }
             }

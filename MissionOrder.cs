@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
@@ -12,8 +14,8 @@ namespace FormationSorter
 {
     public static class MissionOrder
     {
-        public static int OrderSetIndex;
         public static MissionOrderVM MissionOrderVM;
+        public static OrderSetVM OrderSetVM;
 
         public static void OnOrderHotkeyPressed()
         {
@@ -40,13 +42,26 @@ namespace FormationSorter
             MissionOrderVM.TryCloseToggleOrder();
         }
 
-        public static void RefreshOrderButton(OrderSetVM instance)
+        public static void RefreshOrderButton()
         {
-            instance.TitleText = "Sort Troops Between Formations";
-            instance.TitleOrder.OrderIconID = "ToggleAI";
-            instance.TitleOrder.TooltipText = "Sort Troops Between Formations";
-            instance.TitleOrderKey = InputKeyItemVM.CreateFromGameKey(Hotkeys.OrderGameKey, false);
-            instance.TitleOrder.ShortcutKey = instance.TitleOrderKey;
+            if (MissionOrderVM is null) return;
+            OrderSetVM OrderSetVM = MissionOrder.OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, types: new Type[] {
+                typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
+            }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
+            MissionOrder.OrderSetVM = OrderSetVM;
+            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM)) MissionOrderVM.OrderSets.Add(OrderSetVM);
+            OrderSetVM.TitleOrder.IsTitle = true;
+            OrderSetVM.TitleText = "Sort Troops Between Formations";
+            OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
+            OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
+            string orderKey = Settings.OrderKey.ToString();
+            OrderSetVM.TitleOrderKey.KeyID = orderKey;
+            OrderSetVM.TitleOrderKey.KeyName = orderKey;
+            OrderSetVM.TitleOrder.ShortcutKey.KeyID = orderKey;
+            OrderSetVM.TitleOrder.ShortcutKey.KeyName = orderKey;
+            OrderSetVM.TitleOrder.IsActive = true;
+            MBTextManager.SetTextVariable("SHORTCUT", "", false);
+            OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
         }
 
         public static bool CanSortOrderBeUsedInCurrentMission()
@@ -56,7 +71,7 @@ namespace FormationSorter
 
         public static bool IsCurrentMissionSiege()
         {
-            if (Mission.Current is null) return false;
+            if (!IsCurrentMissionReady()) return false;
             SiegeMissionController siegeMissionController = Mission.Current?.GetMissionBehaviour<SiegeMissionController>();
             if (siegeMissionController is null) return false;
             if (siegeMissionController?.IsSallyOut is true) return false;
@@ -65,12 +80,12 @@ namespace FormationSorter
 
         public static bool IsCurrentMissionReady()
         {
+            if (MissionOrderVM is null) return false;
+            if (Mission.Current is null) return false;
             try
             {
-                if (Mission.Current is null) return false;
-                if (MissionOrderVM is null) return false;
-                if (MissionOrderVM?.OrderController is null) return false;
-                if (MissionOrderVM?.TroopController is null) return false;
+                if (MissionOrderVM.OrderController is null) return false;
+                if (MissionOrderVM.TroopController is null) return false;
             }
             catch { }
             return true;
@@ -91,7 +106,7 @@ namespace FormationSorter
             if (formations.All(f => f.IsAIControlled)) return -2;
             int numAgentsSorted = 0;
             List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
-            if (Settings.EqualSortingModifierKey.IsKeyDown())
+            if (Settings.EqualSortingModifierKey.IsDefinedAndDown())
             {
                 Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                 foreach (Agent agent in agents)
@@ -194,7 +209,7 @@ namespace FormationSorter
                 {
                     return FormationClass.Ranged;
                 }
-                else if (Settings.SkirmisherSortingModifierKey.IsKeyDown() && agent.GetHasRangedWeapon(true))
+                else if (Settings.SkirmisherSortingModifierKey.IsDefinedAndDown() && agent.GetHasRangedWeapon(true))
                 {
                     return FormationClass.Skirmisher;
                 }
