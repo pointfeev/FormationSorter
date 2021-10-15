@@ -7,7 +7,6 @@ using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
-using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
