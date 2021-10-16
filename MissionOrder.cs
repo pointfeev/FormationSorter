@@ -21,19 +21,20 @@ namespace FormationSorter
         public static void OnApplicationTick(float dt)
         {
             if (MissionOrderVM is null) return;
-            OrderSetVM = OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
-                typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-            }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
+            GetOrderButtonReflectionInfo();
+            OrderSetVM = OrderSetVM ?? (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
+                OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
+            });
             if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
             {
-                typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
+                indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
                 MissionOrderVM.OrderSets.Add(OrderSetVM);
             }
             OrderSetVM.TitleOrder.IsTitle = true;
             OrderSetVM.TitleText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
             OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
-            InputKeyItemVM = InputKeyItemVM ?? (InputKeyItemVM)typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null).Invoke(new object[0]);
+            InputKeyItemVM = InputKeyItemVM ?? (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
             string orderKey = Settings.OrderKey.ToString();
             InputKeyItemVM.KeyID = orderKey;
             InputKeyItemVM.KeyName = orderKey;
@@ -44,6 +45,19 @@ namespace FormationSorter
             MBTextManager.SetTextVariable("SHORTCUT", "", false);
             OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
         }
+
+        private static void GetOrderButtonReflectionInfo()
+        {
+            ctorOrderSetVM = ctorOrderSetVM ?? typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
+                typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
+            }, null);
+            indexFieldOrderSetVM = indexFieldOrderSetVM ?? typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
+            ctorInputKeyItemVM = ctorInputKeyItemVM ?? typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
+        }
+
+        private static ConstructorInfo ctorOrderSetVM;
+        private static FieldInfo indexFieldOrderSetVM;
+        private static ConstructorInfo ctorInputKeyItemVM;
 
         public static void OnOrderHotkeyPressed()
         {
