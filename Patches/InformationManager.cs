@@ -18,6 +18,11 @@ namespace FormationSorter
 
         private static Mission checkedMission;
 
+        public static void SetCheckDirty()
+        {
+            checkedMission = null;
+        }
+
         public static List<string> IgnoredMessages
         {
             get

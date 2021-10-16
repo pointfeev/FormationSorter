@@ -15,33 +15,52 @@ namespace FormationSorter
         public override string FolderName => "FormationSorter";
         public override string FormatType => "xml";
 
-        #region Order Key
+        private static DropdownDefault<InputKey> GetNormalSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
+        {
+            if (setting is null)
+            {
+                setting = GetNormalKeysDropdown(defaultKey);
+            }
+            return setting;
+        }
 
-        private DropdownDefault<InputKey> orderKeySetting = null;
+        private static DropdownDefault<InputKey> GetModifierSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
+        {
+            if (setting is null)
+            {
+                setting = GetModifierKeysDropdown(defaultKey);
+            }
+            return setting;
+        }
+
+        private static void SetSetting(ref DropdownDefault<InputKey> setting, DropdownDefault<InputKey> value)
+        {
+            if (setting != value)
+            {
+                setting = value;
+                MissionOrder.RefreshOrderButton();
+                PatchInformationManager.SetCheckDirty();
+            }
+        }
+
+        private static InputKey GetValue(DropdownDefault<InputKey> setting, InputKey defaultKey)
+        {
+            return (setting?.SelectedValue).GetValueOrDefault(InputKey.X);
+        }
+
+        #region Order Key
 
         [SettingPropertyDropdown("Order Key", Order = 1, RequireRestart = false, HintText = "Sort Troops Between Formations order menu key; troops in selected formations will be sorted into their single best formation if one of its kind is among the selected formations.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
         private DropdownDefault<InputKey> OrderKeySetting
         {
-            get
-            {
-                if (orderKeySetting is null)
-                {
-                    orderKeySetting = GetNormalKeysDropdown(InputKey.X);
-                }
-                return orderKeySetting;
-            }
-            set
-            {
-                if (orderKeySetting != value)
-                {
-                    orderKeySetting = value;
-                    MissionOrder.RefreshOrderButton();
-                }
-            }
+            get => GetNormalSetting(ref orderKeySetting, InputKey.X);
+            set => SetSetting(ref orderKeySetting, value);
         }
 
-        public static InputKey OrderKey => (Instance?.OrderKeySetting?.SelectedValue).GetValueOrDefault(InputKey.X);
+        private DropdownDefault<InputKey> orderKeySetting = null;
+
+        public static InputKey OrderKey => GetValue(Instance?.OrderKeySetting, InputKey.X);
 
         #endregion Order Key
 
@@ -49,9 +68,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Skirmisher Sorting Modifier Key", Order = 2, RequireRestart = false, HintText = "When combined with the Order Key javelineers, rock throwers, etc. get put into the Skirmisher formation instead of Infantry.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
-        private DropdownDefault<InputKey> SkirmisherSortingModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftControl);
+        private DropdownDefault<InputKey> SkirmisherSortingModifierKeySetting
+        {
+            get => GetModifierSetting(ref skirmisherSortingModifierKeySetting, InputKey.LeftControl);
+            set => SetSetting(ref skirmisherSortingModifierKeySetting, value);
+        }
 
-        public static InputKey SkirmisherSortingModifierKey => (Instance?.SkirmisherSortingModifierKeySetting?.SelectedValue).GetValueOrDefault(InputKey.LeftControl);
+        private DropdownDefault<InputKey> skirmisherSortingModifierKeySetting = null;
+
+        public static InputKey SkirmisherSortingModifierKey => GetValue(Instance?.SkirmisherSortingModifierKeySetting, InputKey.LeftControl);
 
         #endregion Skirmisher Sorting Modifier Key
 
@@ -59,9 +84,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Equal Sorting Modifier Key", Order = 3, RequireRestart = false, HintText = "When combined with the Order Key troops will be sorted equally amongst the selected formations instead of being put in only their single best formation.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
-        private DropdownDefault<InputKey> EqualSortingModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftAlt);
+        private DropdownDefault<InputKey> EqualSortingModifierKeySetting
+        {
+            get => GetModifierSetting(ref equalSortingModifierKeySetting, InputKey.LeftAlt);
+            set => SetSetting(ref equalSortingModifierKeySetting, value);
+        }
 
-        public static InputKey EqualSortingModifierKey => (Instance?.EqualSortingModifierKeySetting?.SelectedValue).GetValueOrDefault(InputKey.LeftAlt);
+        private DropdownDefault<InputKey> equalSortingModifierKeySetting;
+
+        public static InputKey EqualSortingModifierKey => GetValue(Instance?.EqualSortingModifierKeySetting, InputKey.LeftAlt);
 
         #endregion Equal Sorting Modifier Key
 
@@ -69,9 +100,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Inverse Selection Modifier Key", Order = 4, RequireRestart = false, HintText = "When combined with any of the selection keys below, the formations it encompasses will be inverted from their current state, potentially being added or removed from the current selection.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> InverseSelectionModifierKeySetting { get; set; } = GetModifierKeysDropdown(InputKey.LeftControl);
+        private DropdownDefault<InputKey> InverseSelectionModifierKeySetting
+        {
+            get => GetModifierSetting(ref inverseSelectionModifierKeySetting, InputKey.LeftControl);
+            set => SetSetting(ref inverseSelectionModifierKeySetting, value);
+        }
 
-        public static InputKey InverseSelectionModifierKey => (Instance?.InverseSelectionModifierKeySetting?.SelectedValue).GetValueOrDefault(InputKey.LeftControl);
+        private DropdownDefault<InputKey> inverseSelectionModifierKeySetting;
+
+        public static InputKey InverseSelectionModifierKey => GetValue(Instance?.InverseSelectionModifierKeySetting, InputKey.LeftControl);
 
         #endregion Inverse Selection Modifier Key
 
@@ -79,9 +116,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Formations Key", Order = 5, RequireRestart = false, HintText = "This key will select all formations.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.F);
+        private DropdownDefault<InputKey> SelectAllKeySetting
+        {
+            get => GetNormalSetting(ref selectAllKeySetting, InputKey.F);
+            set => SetSetting(ref selectAllKeySetting, value);
+        }
 
-        public static InputKey SelectAllKey => (Instance?.SelectAllKeySetting?.SelectedValue).GetValueOrDefault(InputKey.F);
+        private DropdownDefault<InputKey> selectAllKeySetting;
+
+        public static InputKey SelectAllKey => GetValue(Instance?.SelectAllKeySetting, InputKey.F);
 
         #endregion Select All Formations Key
 
@@ -89,9 +132,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Melee Cavalry Formations Key", Order = 6, RequireRestart = false, HintText = "This key will select all melee cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllMeleeCavalryKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.C);
+        private DropdownDefault<InputKey> SelectAllMeleeCavalryKeySetting
+        {
+            get => GetNormalSetting(ref selectAllMeleeCavalryKeySetting, InputKey.C);
+            set => SetSetting(ref selectAllMeleeCavalryKeySetting, value);
+        }
 
-        public static InputKey SelectAllMeleeCavalryKey => (Instance?.SelectAllMeleeCavalryKeySetting?.SelectedValue).GetValueOrDefault(InputKey.C);
+        private DropdownDefault<InputKey> selectAllMeleeCavalryKeySetting;
+
+        public static InputKey SelectAllMeleeCavalryKey => GetValue(Instance?.SelectAllMeleeCavalryKeySetting, InputKey.C);
 
         #endregion Select All Melee Cavalry Formations Key
 
@@ -99,9 +148,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Ranged Cavalry Formations Key", Order = 7, RequireRestart = false, HintText = "This key will select all ranged cavalry formations: Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllHorseArchersKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.V);
+        private DropdownDefault<InputKey> SelectAllHorseArchersKeySetting
+        {
+            get => GetNormalSetting(ref selectAllHorseArchersKeySetting, InputKey.V);
+            set => SetSetting(ref selectAllHorseArchersKeySetting, value);
+        }
 
-        public static InputKey SelectAllRangedCavalryKey => (Instance?.SelectAllHorseArchersKeySetting?.SelectedValue).GetValueOrDefault(InputKey.V);
+        private DropdownDefault<InputKey> selectAllHorseArchersKeySetting;
+
+        public static InputKey SelectAllRangedCavalryKey => GetValue(Instance?.SelectAllHorseArchersKeySetting, InputKey.V);
 
         #endregion Select All Ranged Cavalry Formations Key
 
@@ -109,9 +164,14 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Ground Melee Formations Key", Order = 8, RequireRestart = false, HintText = "This key will select all ground melee formations: Infantry, Heavy Infantry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllInfantryKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.H);
+        private DropdownDefault<InputKey> SelectAllInfantryKeySetting
+        {
+            get => GetNormalSetting(ref selectAllInfantryKeySetting, InputKey.H);
+            set => SetSetting(ref selectAllInfantryKeySetting, value);
+        }
 
-        public static InputKey SelectAllGroundMeleeKey => (Instance?.SelectAllInfantryKeySetting?.SelectedValue).GetValueOrDefault(InputKey.H);
+        private DropdownDefault<InputKey> selectAllInfantryKeySetting;
+        public static InputKey SelectAllGroundMeleeKey => GetValue(Instance?.SelectAllInfantryKeySetting, InputKey.H);
 
         #endregion Select All Ground Melee Formations Key
 
@@ -119,9 +179,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Ground Ranged Formations Key", Order = 9, RequireRestart = false, HintText = "This key will select all ground ranged formations: Archers, Skirmishers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllArchersAndSkirmishersKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.J);
+        private DropdownDefault<InputKey> SelectAllArchersAndSkirmishersKeySetting
+        {
+            get => GetNormalSetting(ref selectAllArchersAndSkirmishersKeySetting, InputKey.J);
+            set => SetSetting(ref selectAllArchersAndSkirmishersKeySetting, value);
+        }
 
-        public static InputKey SelectAllGroundRangedKey => (Instance?.SelectAllArchersAndSkirmishersKeySetting?.SelectedValue).GetValueOrDefault(InputKey.J);
+        private DropdownDefault<InputKey> selectAllArchersAndSkirmishersKeySetting;
+
+        public static InputKey SelectAllGroundRangedKey => GetValue(Instance?.SelectAllArchersAndSkirmishersKeySetting, InputKey.J);
 
         #endregion Select All Ground Ranged Formations Key
 
@@ -129,9 +195,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Basic Melee Formations Key", Order = 10, RequireRestart = false, HintText = "This key will select all basic melee formations: Infantry, Cavalry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllNormalMeleeKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.Y);
+        private DropdownDefault<InputKey> SelectAllNormalMeleeKeySetting
+        {
+            get => GetNormalSetting(ref selectAllNormalMeleeKeySetting, InputKey.Y);
+            set => SetSetting(ref selectAllNormalMeleeKeySetting, value);
+        }
 
-        public static InputKey SelectAllBasicMeleeKey => (Instance?.SelectAllNormalMeleeKeySetting?.SelectedValue).GetValueOrDefault(InputKey.Y);
+        private DropdownDefault<InputKey> selectAllNormalMeleeKeySetting;
+
+        public static InputKey SelectAllBasicMeleeKey => GetValue(Instance?.SelectAllNormalMeleeKeySetting, InputKey.Y);
 
         #endregion Select All Basic Melee Formations Key
 
@@ -139,9 +211,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Ranged Formations Key", Order = 11, RequireRestart = false, HintText = "This key will select all basic ranged formations: Archers, Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllRangedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.U);
+        private DropdownDefault<InputKey> SelectAllRangedKeySetting
+        {
+            get => GetNormalSetting(ref selectAllRangedKeySetting, InputKey.U);
+            set => SetSetting(ref selectAllRangedKeySetting, value);
+        }
 
-        public static InputKey SelectAllBasicRangedKey => (Instance?.SelectAllRangedKeySetting?.SelectedValue).GetValueOrDefault(InputKey.U);
+        private DropdownDefault<InputKey> selectAllRangedKeySetting;
+
+        public static InputKey SelectAllBasicRangedKey => GetValue(Instance?.SelectAllRangedKeySetting, InputKey.U);
 
         #endregion Select All Basic Ranged Formations Key
 
@@ -149,9 +227,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Ground Formations Key", Order = 12, RequireRestart = false, HintText = "This key will select all ground formations: Infantry, Heavy Infantry, Archers, Skirmishers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllGroundedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.N);
+        private DropdownDefault<InputKey> SelectAllGroundedKeySetting
+        {
+            get => GetNormalSetting(ref selectAllGroundedKeySetting, InputKey.N);
+            set => SetSetting(ref selectAllGroundedKeySetting, value);
+        }
 
-        public static InputKey SelectAllGroundKey => (Instance?.SelectAllGroundedKeySetting?.SelectedValue).GetValueOrDefault(InputKey.N);
+        private DropdownDefault<InputKey> selectAllGroundedKeySetting;
+
+        public static InputKey SelectAllGroundKey => GetValue(Instance?.SelectAllGroundedKeySetting, InputKey.N);
 
         #endregion Select All Ground Formations Key
 
@@ -159,9 +243,15 @@ namespace FormationSorter
 
         [SettingPropertyDropdown("Select All Cavalry Formations Key", Order = 13, RequireRestart = false, HintText = "This key will select all cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry, Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private DropdownDefault<InputKey> SelectAllMountedKeySetting { get; set; } = GetNormalKeysDropdown(InputKey.M);
+        private DropdownDefault<InputKey> SelectAllMountedKeySetting
+        {
+            get => GetNormalSetting(ref selectAllMountedKeySetting, InputKey.M);
+            set => SetSetting(ref selectAllMountedKeySetting, value);
+        }
 
-        public static InputKey SelectAllCavalryKey => (Instance?.SelectAllMountedKeySetting?.SelectedValue).GetValueOrDefault(InputKey.M);
+        private DropdownDefault<InputKey> selectAllMountedKeySetting;
+
+        public static InputKey SelectAllCavalryKey => GetValue(Instance?.SelectAllMountedKeySetting, InputKey.M);
 
         #endregion Select All Cavalry Formations Key
 
