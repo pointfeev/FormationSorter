@@ -33,7 +33,9 @@ namespace FormationSorter
             InputKeyItemVM.KeyID = orderKey;
             InputKeyItemVM.KeyName = orderKey;
             InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
-            if (MissionOrderVM.OrderSets.Contains(OrderSetVM)) return;
+            OrderSetVM.TitleOrderKey = InputKeyItemVM;
+            OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
+            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM)) return;
             indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
             MissionOrderVM.OrderSets.Add(OrderSetVM);
             OrderSetVM.TitleOrder.IsTitle = true;
@@ -41,8 +43,6 @@ namespace FormationSorter
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
             OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.IsActive = true;
-            OrderSetVM.TitleOrderKey = InputKeyItemVM;
-            OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
             OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
         }
 
