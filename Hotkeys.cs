@@ -17,7 +17,7 @@ namespace FormationSorter
                 Settings.SelectAllBasicRangedKey == inputKey || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey;
         }
 
-        private static bool IsDefined(this InputKey inputKey)
+        public static bool IsDefined(this InputKey inputKey)
         {
             if (isKeyDefined.TryGetValue(inputKey, out bool defined)) return defined;
             defined = Enum.IsDefined(typeof(InputKey), inputKey);

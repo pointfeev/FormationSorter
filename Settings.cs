@@ -47,7 +47,7 @@ namespace FormationSorter
 
         private static InputKey GetValue(DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
-            return (setting?.SelectedValue).GetValueOrDefault(InputKey.X);
+            return (setting?.SelectedValue).GetValueOrDefault(defaultKey);
         }
 
         #endregion Get & Set

@@ -7,6 +7,7 @@ using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
+using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
@@ -15,6 +16,7 @@ namespace FormationSorter
     {
         public static MissionOrderVM MissionOrderVM;
         public static OrderSetVM OrderSetVM;
+        public static InputKeyItemVM InputKeyItemVM;
 
         public static void OnOrderHotkeyPressed()
         {
@@ -44,7 +46,7 @@ namespace FormationSorter
         public static void RefreshOrderButton()
         {
             if (MissionOrderVM is null) return;
-            OrderSetVM OrderSetVM = MissionOrder.OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, types: new Type[] {
+            OrderSetVM OrderSetVM = MissionOrder.OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
             MissionOrder.OrderSetVM = OrderSetVM;
@@ -57,11 +59,14 @@ namespace FormationSorter
             OrderSetVM.TitleText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
             OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
+            InputKeyItemVM InputKeyItemVM = MissionOrder.InputKeyItemVM ?? (InputKeyItemVM)typeof(InputKeyItemVM)
+                .GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null).Invoke(new object[0]);
             string orderKey = Settings.OrderKey.ToString();
-            OrderSetVM.TitleOrderKey.KeyID = orderKey;
-            OrderSetVM.TitleOrderKey.KeyName = orderKey;
-            OrderSetVM.TitleOrder.ShortcutKey.KeyID = orderKey;
-            OrderSetVM.TitleOrder.ShortcutKey.KeyName = orderKey;
+            InputKeyItemVM.KeyID = orderKey;
+            InputKeyItemVM.KeyName = orderKey;
+            InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
+            OrderSetVM.TitleOrderKey = InputKeyItemVM;
+            OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
             OrderSetVM.TitleOrder.IsActive = true;
             MBTextManager.SetTextVariable("SHORTCUT", "", false);
             OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
