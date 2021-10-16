@@ -19,7 +19,7 @@ namespace FormationSorter
 
         public static void OnApplicationTick(float dt)
         {
-            if (MissionOrderVM is null) return;
+            if (!IsCurrentMissionReady()) return;
             GetOrderButtonReflectionInfo();
             if (OrderSetVM is null) OrderSetVM = (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
                 OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
