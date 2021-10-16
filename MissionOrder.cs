@@ -48,7 +48,11 @@ namespace FormationSorter
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
             MissionOrder.OrderSetVM = OrderSetVM;
-            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM)) MissionOrderVM.OrderSets.Add(OrderSetVM);
+            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
+            {
+                typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
+                MissionOrderVM.OrderSets.Add(OrderSetVM);
+            }
             OrderSetVM.TitleOrder.IsTitle = true;
             OrderSetVM.TitleText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";

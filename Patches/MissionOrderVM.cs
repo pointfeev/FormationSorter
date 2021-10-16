@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TaleWorlds.Engine;
+using TaleWorlds.InputSystem;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
 

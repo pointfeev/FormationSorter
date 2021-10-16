@@ -8,6 +8,15 @@ namespace FormationSorter
     {
         private static Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
 
+        public static bool IsKeyBound(this InputKey inputKey)
+        {
+            return Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
+                Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey ||
+                Settings.SelectAllKey == inputKey || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey ||
+                Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey || Settings.SelectAllBasicMeleeKey == inputKey ||
+                Settings.SelectAllBasicRangedKey == inputKey || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey;
+        }
+
         private static bool IsDefined(this InputKey inputKey)
         {
             if (isKeyDefined.TryGetValue(inputKey, out bool defined)) return defined;
