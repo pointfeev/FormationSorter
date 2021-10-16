@@ -18,6 +18,32 @@ namespace FormationSorter
         public static OrderSetVM OrderSetVM;
         public static InputKeyItemVM InputKeyItemVM;
 
+        public static void OnApplicationTick(float dt)
+        {
+            OrderSetVM = OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
+                typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
+            }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
+            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
+            {
+                typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
+                MissionOrderVM.OrderSets.Add(OrderSetVM);
+            }
+            OrderSetVM.TitleOrder.IsTitle = true;
+            OrderSetVM.TitleText = "Sort Troops Between Formations";
+            OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
+            OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
+            InputKeyItemVM = InputKeyItemVM ?? (InputKeyItemVM)typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null).Invoke(new object[0]);
+            string orderKey = Settings.OrderKey.ToString();
+            InputKeyItemVM.KeyID = orderKey;
+            InputKeyItemVM.KeyName = orderKey;
+            InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
+            OrderSetVM.TitleOrderKey = InputKeyItemVM;
+            OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
+            OrderSetVM.TitleOrder.IsActive = true;
+            MBTextManager.SetTextVariable("SHORTCUT", "", false);
+            OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
+        }
+
         public static void OnOrderHotkeyPressed()
         {
             if (!IsCurrentMissionReady()) return;
@@ -41,35 +67,6 @@ namespace FormationSorter
                 InformationManager.DisplayMessage(new InformationMessage($"No troops need sorting between the selected formations", Colors.White, "FormationSorter"));
             }
             MissionOrderVM.TryCloseToggleOrder();
-        }
-
-        public static void RefreshOrderButton()
-        {
-            if (MissionOrderVM is null) return;
-            OrderSetVM OrderSetVM = MissionOrder.OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
-                typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-            }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
-            MissionOrder.OrderSetVM = OrderSetVM;
-            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
-            {
-                typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
-                MissionOrderVM.OrderSets.Add(OrderSetVM);
-            }
-            OrderSetVM.TitleOrder.IsTitle = true;
-            OrderSetVM.TitleText = "Sort Troops Between Formations";
-            OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
-            OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
-            InputKeyItemVM InputKeyItemVM = MissionOrder.InputKeyItemVM ?? (InputKeyItemVM)typeof(InputKeyItemVM)
-                .GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null).Invoke(new object[0]);
-            string orderKey = Settings.OrderKey.ToString();
-            InputKeyItemVM.KeyID = orderKey;
-            InputKeyItemVM.KeyName = orderKey;
-            InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
-            OrderSetVM.TitleOrderKey = InputKeyItemVM;
-            OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
-            OrderSetVM.TitleOrder.IsActive = true;
-            MBTextManager.SetTextVariable("SHORTCUT", "", false);
-            OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
         }
 
         public static bool CanSortOrderBeUsedInCurrentMission()

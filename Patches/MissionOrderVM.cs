@@ -23,7 +23,6 @@ namespace FormationSorter
             {
                 MissionOrder.MissionOrderVM = __instance;
                 if (!MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
-                MissionOrder.RefreshOrderButton();
                 Update();
             }
             catch (Exception e)

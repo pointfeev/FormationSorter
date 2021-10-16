@@ -40,7 +40,6 @@ namespace FormationSorter
             if (setting != value)
             {
                 setting = value;
-                MissionOrder.RefreshOrderButton();
                 PatchInformationManager.SetCheckDirty();
             }
         }

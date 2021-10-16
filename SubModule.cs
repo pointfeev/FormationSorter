@@ -39,6 +39,14 @@ namespace FormationSorter
             {
                 OutputUtils.DoOutputForException(e);
             }
+            try
+            {
+                MissionOrder.OnApplicationTick(dt);
+            }
+            catch (Exception e)
+            {
+                OutputUtils.DoOutputForException(e);
+            }
         }
     }
 }
