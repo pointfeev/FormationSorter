@@ -116,7 +116,9 @@ namespace FormationSorter
                     InformationManager.DisplayMessage(new InformationMessage($"There are no troops to be selected in any {feedback.Replace("and", "or")}formations", Colors.Cyan, "FormationSorter"));
                 }
             }
+            PatchInformationManager.SuppressSelectAllFormations = true;
             SetFormationSelections(selections);
+            PatchInformationManager.SuppressSelectAllFormations = false;
             previousSelections = selections.ToList();
         }
 

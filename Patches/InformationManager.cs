@@ -4,6 +4,7 @@ using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
+using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter
@@ -11,6 +12,8 @@ namespace FormationSorter
     [HarmonyPatch(typeof(InformationManager))]
     public static class PatchInformationManager
     {
+        public static bool SuppressSelectAllFormations = false;
+
         private static List<string> ignoredMessages;
 
         private static Mission checkedMission;
@@ -44,7 +47,7 @@ namespace FormationSorter
                 {
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_encyclopedia", null).ToString());
                 }
-                if (!mission.IsKingdomWindowAccessAllowed || !Hero.MainHero.MapFaction.IsKingdomFaction && gameKeys[39].KeyboardKey.InputKey.IsKeyBound())
+                if ((!mission.IsKingdomWindowAccessAllowed || !Hero.MainHero.MapFaction.IsKingdomFaction) && gameKeys[39].KeyboardKey.InputKey.IsKeyBound())
                 {
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_kingdom", null).ToString());
                 }
@@ -56,7 +59,7 @@ namespace FormationSorter
                 {
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_character", null).ToString());
                 }
-                if (!mission.IsBannerWindowAccessAllowed || !Campaign.Current.IsBannerEditorEnabled && gameKeys[35].KeyboardKey.InputKey.IsKeyBound())
+                if ((!mission.IsBannerWindowAccessAllowed || !Campaign.Current.IsBannerEditorEnabled) && gameKeys[35].KeyboardKey.InputKey.IsKeyBound())
                 {
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_banner", null).ToString());
                 }
@@ -68,7 +71,11 @@ namespace FormationSorter
         [HarmonyPrefix]
         public static bool DisplayMessage(InformationMessage message)
         {
-            if (MissionOrder.IsCurrentMissionReady() && IgnoredMessages.Contains(message.Information)) return false;
+            if (MissionOrder.IsCurrentMissionReady())
+            {
+                if (IgnoredMessages.Contains(message.Information)) return false;
+                if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString()) return false;
+            }
             return true;
         }
     }
