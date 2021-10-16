@@ -20,6 +20,7 @@ namespace FormationSorter
 
         public static void OnApplicationTick(float dt)
         {
+            if (MissionOrderVM is null) return;
             OrderSetVM = OrderSetVM ?? (OrderSetVM)typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null).Invoke(new object[] { OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false });
