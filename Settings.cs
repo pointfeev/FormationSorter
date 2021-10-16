@@ -15,6 +15,8 @@ namespace FormationSorter
         public override string FolderName => "FormationSorter";
         public override string FormatType => "xml";
 
+        #region Get & Set
+
         private static DropdownDefault<InputKey> GetNormalSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
             if (setting is null)
@@ -47,6 +49,8 @@ namespace FormationSorter
         {
             return (setting?.SelectedValue).GetValueOrDefault(InputKey.X);
         }
+
+        #endregion Get & Set
 
         #region Order Key
 
