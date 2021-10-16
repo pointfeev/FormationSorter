@@ -26,17 +26,17 @@ namespace FormationSorter
             if (numUnitsSorted == -1) return;
             else if (numUnitsSorted == -2)
             {
-                InformationManager.DisplayMessage(new InformationMessage($"Formations controlled by AI cannot be sorted", Colors.Cyan, "FormationSorter"));
+                InformationManager.DisplayMessage(new InformationMessage($"Formations controlled by AI cannot be sorted", Colors.White, "FormationSorter"));
                 return;
             }
             else if (numUnitsSorted > 0)
             {
                 Mission.Current.MainAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.Cyan, "FormationSorter"));
+                InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.White, "FormationSorter"));
             }
             else
             {
-                InformationManager.DisplayMessage(new InformationMessage($"No troops need sorting between the selected formations", Colors.Cyan, "FormationSorter"));
+                InformationManager.DisplayMessage(new InformationMessage($"No troops need sorting between the selected formations", Colors.White, "FormationSorter"));
             }
             MissionOrderVM.TryCloseToggleOrder();
         }

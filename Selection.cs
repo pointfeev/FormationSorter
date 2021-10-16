@@ -109,11 +109,11 @@ namespace FormationSorter
                 if (feedback == "all") feedback = ""; else feedback += " ";
                 if (invertedSelections.Any() || selections.Any(f => f.CountOfUnits > 0))
                 {
-                    InformationManager.DisplayMessage(new InformationMessage($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.Cyan, "FormationSorter"));
+                    InformationManager.DisplayMessage(new InformationMessage($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.White, "FormationSorter"));
                 }
                 else
                 {
-                    InformationManager.DisplayMessage(new InformationMessage($"There are no troops to be selected in any {feedback.Replace("and", "or")}formations", Colors.Cyan, "FormationSorter"));
+                    InformationManager.DisplayMessage(new InformationMessage($"There are no troops to be selected in any {feedback.Replace("and", "or")}formations", Colors.White, "FormationSorter"));
                 }
             }
             PatchInformationManager.SuppressSelectAllFormations = true;
