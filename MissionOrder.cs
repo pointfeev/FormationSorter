@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.Core;
+using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
@@ -32,10 +33,11 @@ namespace FormationSorter
             if (ctorInputKeyItemVM is null) ctorInputKeyItemVM = typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
             if (InputKeyItemVM is null) InputKeyItemVM = (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
 
-            string orderKey = Settings.OrderKey.ToString();
-            InputKeyItemVM.KeyID = orderKey;
-            InputKeyItemVM.KeyName = orderKey;
-            InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
+            InputKey OrderKey = Settings.OrderKey;
+            string Key = OrderKey.ToString();
+            InputKeyItemVM.KeyID = Key;
+            InputKeyItemVM.KeyName = Key;
+            InputKeyItemVM.IsVisible = OrderKey.IsDefined();
 
             OrderSetVM.TitleOrderKey = InputKeyItemVM;
             OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
