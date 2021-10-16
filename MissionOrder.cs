@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
-using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
@@ -22,11 +21,11 @@ namespace FormationSorter
         {
             if (MissionOrderVM is null) return;
             GetOrderButtonReflectionInfo();
-            OrderSetVM = OrderSetVM ?? (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
+            if (OrderSetVM is null) OrderSetVM = (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
                 OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
             UpdateOrderSetVM();
-            InputKeyItemVM = InputKeyItemVM ?? (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
+            if (InputKeyItemVM is null) InputKeyItemVM = (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
             UpdateInputKeyItemVM();
         }
 
