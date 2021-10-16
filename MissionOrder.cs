@@ -25,6 +25,14 @@ namespace FormationSorter
             OrderSetVM = OrderSetVM ?? (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
                 OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
+            UpdateOrderSetVM();
+            InputKeyItemVM = InputKeyItemVM ?? (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
+            UpdateInputKeyItemVM();
+        }
+
+        private static void UpdateOrderSetVM()
+        {
+            if (OrderSetVM.TitleText == "Sort Troops Between Formations") return;
             if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
             {
                 indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
@@ -34,25 +42,28 @@ namespace FormationSorter
             OrderSetVM.TitleText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
             OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
-            InputKeyItemVM = InputKeyItemVM ?? (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
+            OrderSetVM.TitleOrder.IsActive = true;
+            OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
+        }
+
+        private static void UpdateInputKeyItemVM()
+        {
             string orderKey = Settings.OrderKey.ToString();
+            if (InputKeyItemVM.KeyID == orderKey) return;
             InputKeyItemVM.KeyID = orderKey;
             InputKeyItemVM.KeyName = orderKey;
             InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
             OrderSetVM.TitleOrderKey = InputKeyItemVM;
             OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
-            OrderSetVM.TitleOrder.IsActive = true;
-            MBTextManager.SetTextVariable("SHORTCUT", "", false);
-            OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
         }
 
         private static void GetOrderButtonReflectionInfo()
         {
-            ctorOrderSetVM = ctorOrderSetVM ?? typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
+            if (ctorOrderSetVM is null) ctorOrderSetVM = typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null);
-            indexFieldOrderSetVM = indexFieldOrderSetVM ?? typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
-            ctorInputKeyItemVM = ctorInputKeyItemVM ?? typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
+            if (indexFieldOrderSetVM is null) indexFieldOrderSetVM = typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (ctorInputKeyItemVM is null) ctorInputKeyItemVM = typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
         }
 
         private static ConstructorInfo ctorOrderSetVM;
