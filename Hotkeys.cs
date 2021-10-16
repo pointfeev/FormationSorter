@@ -6,30 +6,6 @@ namespace FormationSorter
 {
     public static class Hotkeys
     {
-        private static Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
-
-        public static bool IsKeyBound(this InputKey inputKey)
-        {
-            return Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
-                Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey ||
-                Settings.SelectAllKey == inputKey || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey ||
-                Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey || Settings.SelectAllBasicMeleeKey == inputKey ||
-                Settings.SelectAllBasicRangedKey == inputKey || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey;
-        }
-
-        public static bool IsDefined(this InputKey inputKey)
-        {
-            if (isKeyDefined.TryGetValue(inputKey, out bool defined)) return defined;
-            defined = Enum.IsDefined(typeof(InputKey), inputKey);
-            isKeyDefined.Add(inputKey, defined);
-            return defined;
-        }
-
-        public static bool IsDefinedAndDown(this InputKey inputKey)
-        {
-            return inputKey.IsDefined() && inputKey.IsDown();
-        }
-
         public static void OnApplicationTick(float dt)
         {
             if (!MissionOrder.IsCurrentMissionReady()) return;
@@ -66,5 +42,29 @@ namespace FormationSorter
         }
 
         private static Dictionary<InputKey, bool> pressedLastTick;
+
+        public static bool IsKeyBound(this InputKey inputKey)
+        {
+            return Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
+                Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey ||
+                Settings.SelectAllKey == inputKey || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey ||
+                Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey || Settings.SelectAllBasicMeleeKey == inputKey ||
+                Settings.SelectAllBasicRangedKey == inputKey || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey;
+        }
+
+        public static bool IsDefined(this InputKey inputKey)
+        {
+            if (isKeyDefined.TryGetValue(inputKey, out bool defined)) return defined;
+            defined = Enum.IsDefined(typeof(InputKey), inputKey);
+            isKeyDefined.Add(inputKey, defined);
+            return defined;
+        }
+
+        private static Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
+
+        public static bool IsDefinedAndDown(this InputKey inputKey)
+        {
+            return inputKey.IsDefined() && inputKey.IsDown();
+        }
     }
 }
