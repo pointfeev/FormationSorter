@@ -20,30 +20,37 @@ namespace FormationSorter
         public static void OnApplicationTick(float dt)
         {
             if (!IsCurrentMissionReady()) return;
+
             if (ctorOrderSetVM is null) ctorOrderSetVM = typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null);
-            if (indexFieldOrderSetVM is null) indexFieldOrderSetVM = typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (ctorInputKeyItemVM is null) ctorInputKeyItemVM = typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
             if (OrderSetVM is null) OrderSetVM = (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
                 OrderSubType.None, MissionOrderVM.OrderSets.Count, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
+
+            if (ctorInputKeyItemVM is null) ctorInputKeyItemVM = typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
             if (InputKeyItemVM is null) InputKeyItemVM = (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
+
             string orderKey = Settings.OrderKey.ToString();
             InputKeyItemVM.KeyID = orderKey;
             InputKeyItemVM.KeyName = orderKey;
             InputKeyItemVM.IsVisible = Settings.OrderKey.IsDefined();
+
             OrderSetVM.TitleOrderKey = InputKeyItemVM;
             OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
-            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM)) return;
-            indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
-            MissionOrderVM.OrderSets.Add(OrderSetVM);
             OrderSetVM.TitleOrder.IsTitle = true;
             OrderSetVM.TitleText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
             OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.IsActive = true;
             OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
+
+            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
+            {
+                if (indexFieldOrderSetVM is null) indexFieldOrderSetVM = typeof(OrderSetVM).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
+                indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
+                MissionOrderVM.OrderSets.Add(OrderSetVM);
+            }
         }
 
         private static ConstructorInfo ctorOrderSetVM;
