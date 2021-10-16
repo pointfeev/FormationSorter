@@ -31,12 +31,9 @@ namespace FormationSorter
 
         private static void UpdateOrderSetVM()
         {
-            if (OrderSetVM.TitleText == "Sort Troops Between Formations") return;
-            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM))
-            {
-                indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
-                MissionOrderVM.OrderSets.Add(OrderSetVM);
-            }
+            if (MissionOrderVM.OrderSets.Contains(OrderSetVM)) return;
+            indexFieldOrderSetVM.SetValue(OrderSetVM, MissionOrderVM.OrderSets.Count);
+            MissionOrderVM.OrderSets.Add(OrderSetVM);
             OrderSetVM.TitleOrder.IsTitle = true;
             OrderSetVM.TitleText = "Sort Troops Between Formations";
             OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
