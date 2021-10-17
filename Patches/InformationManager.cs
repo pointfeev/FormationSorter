@@ -5,7 +5,6 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Localization;
-using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter
 {
@@ -16,9 +15,9 @@ namespace FormationSorter
 
         private static List<string> ignoredMessages;
 
-        private static Mission checkedMission;
+        private static TaleWorlds.MountAndBlade.Mission checkedMission;
 
-        public static void SetCheckDirty()
+        public static void SetIgnoredMessagesDirty()
         {
             checkedMission = null;
         }
@@ -31,7 +30,7 @@ namespace FormationSorter
                 {
                     ignoredMessages = new List<string>();
                 }
-                Mission mission = Mission.Current;
+                TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
                 List<GameKey> gameKeys = (List<GameKey>)typeof(InputContext).GetField("_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(mission.InputManager);
                 if (mission is null || checkedMission == mission) return ignoredMessages;
                 checkedMission = mission;
@@ -76,7 +75,7 @@ namespace FormationSorter
         [HarmonyPrefix]
         public static bool DisplayMessage(InformationMessage message)
         {
-            if (MissionOrder.IsCurrentMissionReady())
+            if (Mission.IsCurrentOrderable())
             {
                 if (IgnoredMessages.Contains(message.Information)) return false;
                 if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString()) return false;

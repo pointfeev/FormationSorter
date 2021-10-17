@@ -40,7 +40,7 @@ namespace FormationSorter
             if (setting != value)
             {
                 setting = value;
-                PatchInformationManager.SetCheckDirty();
+                PatchInformationManager.SetIgnoredMessagesDirty();
             }
         }
 

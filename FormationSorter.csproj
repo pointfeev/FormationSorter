@@ -336,6 +336,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mission.cs" />
     <Compile Include="Patches\InformationManager.cs" />
     <Compile Include="Patches\MissionOrderTroopControllerVM.cs" />
     <Compile Include="Settings.cs" />
@@ -347,7 +348,7 @@
     <Compile Include="Patches\OrderTroopItemWidget.cs" />
     <Compile Include="Patches\MissionOrderVM.cs" />
     <Compile Include="Patches\CharacterObject.cs" />
-    <Compile Include="MissionOrder.cs" />
+    <Compile Include="Order.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />

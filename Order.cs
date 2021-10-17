@@ -6,49 +6,44 @@ using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
-using TaleWorlds.MountAndBlade.ViewModelCollection;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
 {
-    public static class MissionOrder
+    public static class Order
     {
-        public static MissionOrderVM MissionOrderVM;
-        public static OrderSetVM OrderSetVM;
-        public static InputKeyItemVM InputKeyItemVM;
-
         public static void OnApplicationTick(float dt)
         {
-            if (!IsCurrentMissionReady()) return;
-            if (!CanSortOrderBeUsedInCurrentMission()) return;
+            if (!Mission.IsCurrentReady()) return;
+            if (!Mission.IsCurrentOrderable()) return;
 
             if (ctorOrderSetVM is null) ctorOrderSetVM = typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }, null);
-            if (OrderSetVM is null) OrderSetVM = (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
+            if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
 
             if (ctorInputKeyItemVM is null) ctorInputKeyItemVM = typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
-            if (InputKeyItemVM is null) InputKeyItemVM = (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
+            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
 
             InputKey OrderKey = Settings.OrderKey;
             string Key = OrderKey.ToString();
-            InputKeyItemVM.KeyID = Key;
-            InputKeyItemVM.KeyName = Key;
-            InputKeyItemVM.IsVisible = OrderKey.IsDefined();
+            Mission.InputKeyItemVM.KeyID = Key;
+            Mission.InputKeyItemVM.KeyName = Key;
+            Mission.InputKeyItemVM.IsVisible = OrderKey.IsDefined();
 
-            OrderSetVM.TitleOrderKey = InputKeyItemVM;
-            OrderSetVM.TitleOrder.ShortcutKey = InputKeyItemVM;
-            OrderSetVM.TitleOrder.IsTitle = true;
-            OrderSetVM.TitleText = "Sort Troops Between Formations";
-            OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
-            OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
-            OrderSetVM.TitleOrder.IsActive = true;
-            OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
+            Mission.OrderSetVM.TitleOrderKey = Mission.InputKeyItemVM;
+            Mission.OrderSetVM.TitleOrder.ShortcutKey = Mission.InputKeyItemVM;
+            Mission.OrderSetVM.TitleOrder.IsTitle = true;
+            Mission.OrderSetVM.TitleText = "Sort Troops Between Formations";
+            Mission.OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
+            Mission.OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
+            Mission.OrderSetVM.TitleOrder.IsActive = true;
+            Mission.OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
 
-            if (!MissionOrderVM.OrderSets.Contains(OrderSetVM)) MissionOrderVM.OrderSets.Add(OrderSetVM);
+            if (!Mission.MissionOrderVM.OrderSets.Contains(Mission.OrderSetVM)) Mission.MissionOrderVM.OrderSets.Add(Mission.OrderSetVM);
         }
 
         private static ConstructorInfo ctorOrderSetVM;
@@ -56,8 +51,8 @@ namespace FormationSorter
 
         public static void OnOrderHotkeyPressed()
         {
-            if (!IsCurrentMissionReady()) return;
-            if (!CanSortOrderBeUsedInCurrentMission()) return;
+            if (!Mission.IsCurrentReady()) return;
+            if (!Mission.IsCurrentOrderable()) return;
             List<Formation> selectedFormations = GetSelectedRegularFormations();
             if (selectedFormations is null || !selectedFormations.Any()) return;
             int numUnitsSorted = SortAgentsBetweenFormations(selectedFormations);
@@ -69,41 +64,14 @@ namespace FormationSorter
             }
             else if (numUnitsSorted > 0)
             {
-                Mission.Current.MainAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                 InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.White, "FormationSorter"));
             }
             else
             {
                 InformationManager.DisplayMessage(new InformationMessage($"No troops need sorting between the selected formations", Colors.White, "FormationSorter"));
             }
-            MissionOrderVM.TryCloseToggleOrder();
-        }
-
-        public static bool CanSortOrderBeUsedInCurrentMission()
-        {
-            return true;
-        }
-
-        public static bool IsCurrentMissionSiege()
-        {
-            if (!IsCurrentMissionReady()) return false;
-            SiegeMissionController siegeMissionController = Mission.Current?.GetMissionBehaviour<SiegeMissionController>();
-            if (siegeMissionController is null) return false;
-            if (siegeMissionController?.IsSallyOut is true) return false;
-            return true;
-        }
-
-        public static bool IsCurrentMissionReady()
-        {
-            if (MissionOrderVM is null) return false;
-            if (Mission.Current is null) return false;
-            try
-            {
-                if (MissionOrderVM.OrderController is null) return false;
-                if (MissionOrderVM.TroopController is null) return false;
-            }
-            catch { }
-            return true;
+            Mission.MissionOrderVM.TryCloseToggleOrder();
         }
 
         private static List<Formation> GetSelectedRegularFormations()
@@ -116,7 +84,7 @@ namespace FormationSorter
 
         private static int SortAgentsBetweenFormations(List<Formation> formations)
         {
-            if (!CanSortOrderBeUsedInCurrentMission()) return -1;
+            if (!Mission.IsCurrentOrderable()) return -1;
             if (formations is null || formations.Count < 2) return -1;
             if (formations.All(f => f.IsAIControlled)) return -2;
             int numAgentsSorted = 0;
@@ -180,7 +148,7 @@ namespace FormationSorter
         private static List<Agent> GetAllPlayerControlledHumanAgentsInFormations(List<Formation> formations)
         {
             List<Agent> readAgents = new List<Agent>();
-            if (!CanSortOrderBeUsedInCurrentMission()) return readAgents;
+            if (!Mission.IsCurrentOrderable()) return readAgents;
             foreach (Formation formation in formations)
             {
                 if (formation.IsAIControlled) continue;
@@ -193,7 +161,7 @@ namespace FormationSorter
             List<Agent> agents = new List<Agent>();
             foreach (Agent agent in readAgents)
             {
-                if (agent == Mission.Current.MainAgent) continue;
+                if (agent == Mission.PlayerAgent) continue;
                 if (!agents.Contains(agent))
                 {
                     agents.Add(agent);
@@ -246,7 +214,7 @@ namespace FormationSorter
 
         private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
         {
-            if (!CanSortOrderBeUsedInCurrentMission()) return false;
+            if (!Mission.IsCurrentOrderable()) return false;
             if (agent is null || desiredFormation is null || agent.Formation == desiredFormation) return false;
             agent.Formation = desiredFormation;
             switch (desiredFormation.PrimaryClass) // units will yell out the formation they change to, because why not?

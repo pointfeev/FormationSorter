@@ -41,7 +41,7 @@ namespace FormationSorter
             }
             try
             {
-                MissionOrder.OnApplicationTick(dt);
+                Order.OnApplicationTick(dt);
             }
             catch (Exception e)
             {

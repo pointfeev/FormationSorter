@@ -17,7 +17,7 @@ namespace FormationSorter
         {
             try
             {
-                if (!MissionOrder.IsCurrentMissionReady() || !MissionOrder.CanSortOrderBeUsedInCurrentMission()) return true;
+                if (!Mission.IsCurrentReady() || !Mission.IsCurrentOrderable()) return true;
                 __result = selectorAgent == null || formation.PlayerOwner == selectorAgent;
                 return false;
             }

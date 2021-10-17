@@ -21,8 +21,8 @@ namespace FormationSorter
         {
             try
             {
-                MissionOrder.MissionOrderVM = __instance;
-                if (!MissionOrder.CanSortOrderBeUsedInCurrentMission()) return;
+                Mission.MissionOrderVM = __instance;
+                if (!Mission.IsCurrentOrderable()) return;
                 Update();
             }
             catch (Exception e)

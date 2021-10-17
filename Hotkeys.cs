@@ -8,8 +8,9 @@ namespace FormationSorter
     {
         public static void OnApplicationTick(float dt)
         {
-            if (!MissionOrder.IsCurrentMissionReady()) return;
-            ProcessKey(Settings.OrderKey, () => MissionOrder.OnOrderHotkeyPressed());
+            if (!Mission.IsCurrentReady()) return;
+            if (Mission.IsPlayerInteracting()) return;
+            ProcessKey(Settings.OrderKey, () => Order.OnOrderHotkeyPressed());
             ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
             ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
             ProcessKey(Settings.SelectAllRangedCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.RangedCavalryFormationClasses, "ranged cavalry"));
