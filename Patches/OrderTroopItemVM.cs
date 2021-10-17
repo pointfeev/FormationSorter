@@ -15,7 +15,7 @@ namespace FormationSorter
         {
             try
             {
-                if (__instance.CurrentMemberCount <= 0)
+                if (formation.CountOfUnits <= 0)
                 {
                     switch (formation.InitialClass)
                     {

@@ -61,7 +61,10 @@ namespace FormationSorter
             }
             else if (numUnitsSorted > 0)
             {
-                Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                if (Mission.Current.IsOrderShoutingAllowed())
+                {
+                    Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                }
                 InformationManager.DisplayMessage(new InformationMessage($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.White, "FormationSorter"));
             }
             else
@@ -75,7 +78,7 @@ namespace FormationSorter
         {
             List<Formation> selectedFormations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
             if (selectedFormations is null || !selectedFormations.Any()) return null;
-            selectedFormations.RemoveAll(f => f.PrimaryClass > FormationClass.NumberOfRegularFormations);
+            selectedFormations.RemoveAll(f => f.CountOfUnits > 0 ? f.PrimaryClass > FormationClass.NumberOfRegularFormations : f.InitialClass > FormationClass.NumberOfRegularFormations);
             return selectedFormations;
         }
 
@@ -86,12 +89,13 @@ namespace FormationSorter
             if (formations.All(f => f.IsAIControlled)) return -2;
             int numAgentsSorted = 0;
             List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
+            bool useSkirmishers = Settings.SkirmisherSortingModifierKey.IsDefinedAndDown();
             if (Settings.EqualSortingModifierKey.IsDefinedAndDown())
             {
                 Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                 foreach (Agent agent in agents)
                 {
-                    FormationClass formationClass = GetBestFormationClassForAgent(agent);
+                    FormationClass formationClass = GetBestFormationClassForAgent(agent, useSkirmishers);
                     if (agentsInFormationClasses.TryGetValue(formationClass, out List<Agent> agentsInFormationClass))
                     {
                         agentsInFormationClass.Add(agent);
@@ -132,8 +136,8 @@ namespace FormationSorter
             {
                 foreach (Agent agent in agents)
                 {
-                    FormationClass formationClass = GetBestFormationClassForAgent(agent);
-                    if (TrySetAgentFormation(agent, formations.Find(f => f.PrimaryClass == formationClass)))
+                    FormationClass formationClass = GetBestFormationClassForAgent(agent, useSkirmishers);
+                    if (TrySetAgentFormation(agent, GetBestFormationForFormationClass(formations, formationClass)))
                     {
                         numAgentsSorted++;
                     }
@@ -168,11 +172,10 @@ namespace FormationSorter
             return agents;
         }
 
-        private static FormationClass GetBestFormationClassForAgent(Agent agent)
+        private static FormationClass GetBestFormationClassForAgent(Agent agent, bool useSkirmishers)
         {
             Agent mount = agent.MountAgent;
-            Agent rider = mount?.RiderAgent;
-            if (rider == agent && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount))
+            if (!(mount is null) && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount))
             {
                 if (AgentHasProperRangedWeaponWithAmmo(agent))
                 {
@@ -189,7 +192,7 @@ namespace FormationSorter
                 {
                     return FormationClass.Ranged;
                 }
-                else if (Settings.SkirmisherSortingModifierKey.IsDefinedAndDown() && agent.GetHasRangedWeapon(true))
+                else if (useSkirmishers && agent.GetHasRangedWeapon(true))
                 {
                     return FormationClass.Skirmisher;
                 }
@@ -198,6 +201,19 @@ namespace FormationSorter
                     return FormationClass.Infantry;
                 }
             }
+        }
+
+        private static Formation GetBestFormationForFormationClass(List<Formation> formations, FormationClass formationClass)
+        {
+            Formation formationOfCorrectInitialClass = null;
+            Formation formationOfCorrectPrimaryClass = null;
+            foreach (Formation formation in formations)
+            {
+                if (formation.InitialClass == formationClass) formationOfCorrectInitialClass = formation;
+                if (formation.PrimaryClass == formationClass) formationOfCorrectPrimaryClass = formation;
+                if (!(formationOfCorrectInitialClass is null) && !(formationOfCorrectPrimaryClass is null)) break;
+            }
+            return formationOfCorrectInitialClass ?? formationOfCorrectPrimaryClass;
         }
 
         private static bool AgentHasProperRangedWeaponWithAmmo(Agent agent)
@@ -214,31 +230,35 @@ namespace FormationSorter
             if (!Mission.IsCurrentOrderable()) return false;
             if (agent is null || desiredFormation is null || agent.Formation == desiredFormation) return false;
             agent.Formation = desiredFormation;
-            switch (desiredFormation.PrimaryClass) // units will yell out the formation they change to, because why not?
+            if (Mission.Current.IsOrderShoutingAllowed())
             {
-                case FormationClass.Infantry:
-                case FormationClass.HeavyInfantry:
-                    agent.MakeVoice(SkinVoiceManager.VoiceType.Infantry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                    break;
+                switch (desiredFormation.CountOfUnits > 0 ? desiredFormation.PrimaryClass : desiredFormation.InitialClass)
+                { // units will yell out the formation they change to, because why not?
+                    case FormationClass.Infantry:
+                    case FormationClass.HeavyInfantry:
+                        agent.MakeVoice(SkinVoiceManager.VoiceType.Infantry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                        break;
 
-                case FormationClass.Ranged:
-                case FormationClass.Skirmisher:
-                    agent.MakeVoice(SkinVoiceManager.VoiceType.Archers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                    break;
+                    case FormationClass.Ranged:
+                    case FormationClass.Skirmisher:
+                        agent.MakeVoice(SkinVoiceManager.VoiceType.Archers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                        break;
 
-                case FormationClass.Cavalry:
-                case FormationClass.LightCavalry:
-                case FormationClass.HeavyCavalry:
-                    agent.MakeVoice(SkinVoiceManager.VoiceType.Cavalry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                    break;
+                    case FormationClass.Cavalry:
+                    case FormationClass.LightCavalry:
+                    case FormationClass.HeavyCavalry:
+                        agent.MakeVoice(SkinVoiceManager.VoiceType.Cavalry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                        break;
 
-                case FormationClass.HorseArcher:
-                    agent.MakeVoice(SkinVoiceManager.VoiceType.HorseArchers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                    break;
+                    case FormationClass.HorseArcher:
+                        agent.MakeVoice(SkinVoiceManager.VoiceType.HorseArchers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                        break;
 
-                default:
-                    agent.MakeVoice(SkinVoiceManager.VoiceType.MpAffirmative, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction); // best fallback I can find
-                    break;
+                    default:
+                        agent.MakeVoice(SkinVoiceManager.VoiceType.MpAffirmative, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                        // best fallback I can find
+                        break;
+                }
             }
             return true;
         }

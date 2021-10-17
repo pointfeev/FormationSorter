@@ -196,7 +196,7 @@ namespace FormationSorter
             MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
             if (troopController.TroopList.Any())
             {
-                List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.InitialFormationClass).ToList();
+                List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.Formation.FormationIndex).ToList();
                 troopController.TroopList.Clear();
                 for (int i = 0; i < sorted.Count; i++)
                 {
