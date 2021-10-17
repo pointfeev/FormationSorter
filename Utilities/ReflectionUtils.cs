@@ -40,15 +40,15 @@ namespace FormationSorter
             return false;
         }
 
-        private static void AddToReflectionCache(Type memberType, string memberName, MemberInfo memberInfo)
+        private static void AddToReflectionCache(Type memberType, string identifier, MemberInfo memberInfo)
         {
             if (!reflectionCache.TryGetValue(memberType, out Dictionary<string, MemberInfo> methodInfos))
             {
                 methodInfos = new Dictionary<string, MemberInfo>();
                 reflectionCache.Add(memberType, methodInfos);
             }
-            if (!methodInfos.TryGetValue(memberName, out MemberInfo _))
-                methodInfos.Add(memberName, memberInfo);
+            if (!methodInfos.TryGetValue(identifier, out MemberInfo _))
+                methodInfos.Add(identifier, memberInfo);
         }
 
         private static readonly Dictionary<Type, Dictionary<string, MemberInfo>> reflectionCache = new Dictionary<Type, Dictionary<string, MemberInfo>>();
