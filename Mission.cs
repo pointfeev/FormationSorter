@@ -23,8 +23,12 @@ namespace FormationSorter
             if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
-            return !(interactionComponent.CurrentFocusedObject is null) || !(interactionComponent.CurrentFocusedMachine is null);
+            if (fieldCurrentInteractableObject is null) fieldCurrentInteractableObject = typeof(MissionMainAgentInteractionComponent)
+                    .GetField("_currentInteractableObject", BindingFlags.NonPublic | BindingFlags.Instance);
+            return !(fieldCurrentInteractableObject.GetValue(interactionComponent) is null);
         }
+
+        private static FieldInfo fieldCurrentInteractableObject;
 
         public static bool IsCurrentReady()
         {
