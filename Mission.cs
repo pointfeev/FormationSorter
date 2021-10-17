@@ -23,9 +23,11 @@ namespace FormationSorter
             if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
-            IFocusable focusable = interactionComponent.CurrentFocusedObject ?? interactionComponent.CurrentFocusedMachine;
-            if (focusable is null) return false;
-            Agent agent = focusable as Agent;
+            if (fieldCurrentInteractableObject is null) fieldCurrentInteractableObject = typeof(MissionMainAgentInteractionComponent)
+                .GetField("_currentInteractableObject", BindingFlags.NonPublic | BindingFlags.Instance);
+            IFocusable currentInteractableObject = (IFocusable)fieldCurrentInteractableObject.GetValue(interactionComponent);
+            if (currentInteractableObject is null) return false;
+            Agent agent = currentInteractableObject as Agent;
             if (agent is null) return true;
             bool agentHasInteraction = false;
             foreach (MissionBehaviour missionBehaviour in Current.MissionBehaviours) agentHasInteraction = agentHasInteraction || missionBehaviour.IsThereAgentAction(playerAgent, agent);
@@ -33,6 +35,8 @@ namespace FormationSorter
             if (GameNetwork.IsSessionActive && missionRepresentative != null) agentHasInteraction = agentHasInteraction || missionRepresentative.IsThereAgentAction(agent);
             return agentHasInteraction;
         }
+
+        private static FieldInfo fieldCurrentInteractableObject;
 
         public static bool IsCurrentReady()
         {
