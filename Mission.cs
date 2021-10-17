@@ -28,12 +28,7 @@ namespace FormationSorter
             IFocusable currentInteractableObject = (IFocusable)fieldCurrentInteractableObject.GetValue(interactionComponent);
             if (currentInteractableObject is null) return false;
             Agent agent = currentInteractableObject as Agent;
-            if (agent is null) return true;
-            bool agentHasInteraction = false;
-            foreach (MissionBehaviour missionBehaviour in Current.MissionBehaviours) agentHasInteraction = agentHasInteraction || missionBehaviour.IsThereAgentAction(playerAgent, agent);
-            MissionRepresentativeBase missionRepresentative = playerAgent.MissionRepresentative;
-            if (GameNetwork.IsSessionActive && missionRepresentative != null) agentHasInteraction = agentHasInteraction || missionRepresentative.IsThereAgentAction(agent);
-            return agentHasInteraction;
+            return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
         }
 
         private static FieldInfo fieldCurrentInteractableObject;
