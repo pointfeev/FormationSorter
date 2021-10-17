@@ -1,4 +1,7 @@
-﻿using TaleWorlds.MountAndBlade;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using TaleWorlds.InputSystem;
+using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.View.Missions;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
@@ -20,7 +23,7 @@ namespace FormationSorter
             if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
-            return !(interactionComponent.CurrentFocusedMachine is null) || !(interactionComponent.CurrentFocusedObject is null);
+            return !(interactionComponent.CurrentFocusedObject is null) || !(interactionComponent.CurrentFocusedMachine is null);
         }
 
         public static bool IsCurrentReady()
@@ -39,7 +42,6 @@ namespace FormationSorter
 
         public static bool IsCurrentSiege()
         {
-            if (!IsCurrentReady()) return false;
             SiegeMissionController siegeMissionController = Current?.GetMissionBehaviour<SiegeMissionController>();
             if (siegeMissionController is null) return false;
             if (siegeMissionController?.IsSallyOut is true) return false;
@@ -50,6 +52,18 @@ namespace FormationSorter
         {
             return true;
         }
+
+        public static List<GameKey> GetCurrentGameKeys()
+        {
+            if (fieldRegisteredGameKeys is null)
+            {
+                fieldRegisteredGameKeys = typeof(InputContext).GetField("_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance);
+            }
+            if (!IsCurrentReady()) return null;
+            return (List<GameKey>)fieldRegisteredGameKeys.GetValue(Current.InputManager);
+        }
+
+        private static FieldInfo fieldRegisteredGameKeys;
 
         public static TaleWorlds.MountAndBlade.Mission Current => TaleWorlds.MountAndBlade.Mission.Current;
 

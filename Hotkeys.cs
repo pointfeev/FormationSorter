@@ -9,7 +9,6 @@ namespace FormationSorter
         public static void OnApplicationTick(float dt)
         {
             if (!Mission.IsCurrentReady()) return;
-            if (Mission.IsPlayerInteracting()) return;
             ProcessKey(Settings.OrderKey, () => Order.OnOrderHotkeyPressed());
             ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
             ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
@@ -33,6 +32,7 @@ namespace FormationSorter
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
                     pressedLastTick[inputKey] = true;
+                    if (Mission.IsPlayerInteracting() && inputKey == GetCurrentInteractKey()) return;
                     action();
                 }
             }
@@ -43,6 +43,11 @@ namespace FormationSorter
         }
 
         private static Dictionary<InputKey, bool> pressedLastTick;
+
+        private static InputKey GetCurrentInteractKey()
+        {
+            return Mission.GetCurrentGameKeys()?[13]?.KeyboardKey?.InputKey ?? InputKey.F;
+        }
 
         public static bool IsKeyBound(this InputKey inputKey)
         {

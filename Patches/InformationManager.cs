@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
@@ -15,11 +14,11 @@ namespace FormationSorter
 
         private static List<string> ignoredMessages;
 
-        private static TaleWorlds.MountAndBlade.Mission checkedMission;
+        private static TaleWorlds.MountAndBlade.Mission lastCheckedMission;
 
         public static void SetIgnoredMessagesDirty()
         {
-            checkedMission = null;
+            lastCheckedMission = null;
         }
 
         public static List<string> IgnoredMessages
@@ -31,9 +30,9 @@ namespace FormationSorter
                     ignoredMessages = new List<string>();
                 }
                 TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
-                if (mission is null || checkedMission == mission) return ignoredMessages;
-                checkedMission = mission;
-                List<GameKey> gameKeys = (List<GameKey>)typeof(InputContext).GetField("_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(mission.InputManager);
+                if (mission is null || lastCheckedMission == mission) return ignoredMessages;
+                lastCheckedMission = mission;
+                List<GameKey> gameKeys = Mission.GetCurrentGameKeys();
                 ignoredMessages.Clear();
                 if (!mission.IsInventoryAccessAllowed && gameKeys[37].KeyboardKey.InputKey.IsKeyBound())
                 {
