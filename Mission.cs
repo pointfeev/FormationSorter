@@ -23,15 +23,13 @@ namespace FormationSorter
             if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
-            if (fieldCurrentInteractableObject is null) fieldCurrentInteractableObject = typeof(MissionMainAgentInteractionComponent)
-                .GetField("_currentInteractableObject", BindingFlags.NonPublic | BindingFlags.Instance);
-            IFocusable currentInteractableObject = (IFocusable)fieldCurrentInteractableObject.GetValue(interactionComponent);
+            IFocusable currentInteractableObject = (IFocusable)ReflectionUtils
+                .GetField(typeof(MissionMainAgentInteractionComponent), "_currentInteractableObject", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(interactionComponent);
             if (currentInteractableObject is null) return false;
             Agent agent = currentInteractableObject as Agent;
             return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
         }
-
-        private static FieldInfo fieldCurrentInteractableObject;
 
         public static bool IsCurrentReady()
         {
@@ -62,15 +60,10 @@ namespace FormationSorter
 
         public static List<GameKey> GetCurrentGameKeys()
         {
-            if (fieldRegisteredGameKeys is null)
-            {
-                fieldRegisteredGameKeys = typeof(InputContext).GetField("_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance);
-            }
             if (!IsCurrentReady()) return null;
-            return (List<GameKey>)fieldRegisteredGameKeys.GetValue(Current.InputManager);
+            return (List<GameKey>)ReflectionUtils.GetField(typeof(InputContext), "_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(Current.InputManager);
         }
-
-        private static FieldInfo fieldRegisteredGameKeys;
 
         public static TaleWorlds.MountAndBlade.Mission Current => TaleWorlds.MountAndBlade.Mission.Current;
 

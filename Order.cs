@@ -18,15 +18,15 @@ namespace FormationSorter
             if (!Mission.IsCurrentReady()) return;
             if (!Mission.IsCurrentOrderable()) return;
 
-            if (ctorOrderSetVM is null) ctorOrderSetVM = typeof(OrderSetVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {
+            if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)ReflectionUtils.GetConstructor(typeof(OrderSetVM), new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-            }, null);
-            if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)ctorOrderSetVM.Invoke(new object[] {
+            }, BindingFlags.NonPublic | BindingFlags.Instance).Invoke(new object[] {
                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
 
-            if (ctorInputKeyItemVM is null) ctorInputKeyItemVM = typeof(InputKeyItemVM).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
-            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)ctorInputKeyItemVM.Invoke(new object[0]);
+            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)ReflectionUtils
+                    .GetConstructor(typeof(InputKeyItemVM), new Type[] { }, BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(new object[0]);
 
             InputKey OrderKey = Settings.OrderKey;
             string Key = OrderKey.ToString();
@@ -45,9 +45,6 @@ namespace FormationSorter
 
             if (!Mission.MissionOrderVM.OrderSets.Contains(Mission.OrderSetVM)) Mission.MissionOrderVM.OrderSets.Add(Mission.OrderSetVM);
         }
-
-        private static ConstructorInfo ctorOrderSetVM;
-        private static ConstructorInfo ctorInputKeyItemVM;
 
         public static void OnOrderHotkeyPressed()
         {
@@ -152,7 +149,7 @@ namespace FormationSorter
             foreach (Formation formation in formations)
             {
                 if (formation.IsAIControlled) continue;
-                readAgents.AddRange(((List<Agent>)typeof(Formation).GetField("_detachedUnits", BindingFlags.NonPublic | BindingFlags.Instance)
+                readAgents.AddRange(((List<Agent>)ReflectionUtils.GetField(typeof(Formation), "_detachedUnits", BindingFlags.NonPublic | BindingFlags.Instance)
                     .GetValue(formation)).FindAll(agent => agent.IsHuman));
                 readAgents.AddRange(from unit in formation.Arrangement.GetAllUnits()
                                     where !(unit as Agent is null) && (unit as Agent).IsHuman
