@@ -31,9 +31,9 @@ namespace FormationSorter
                     ignoredMessages = new List<string>();
                 }
                 TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
-                List<GameKey> gameKeys = (List<GameKey>)typeof(InputContext).GetField("_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(mission.InputManager);
                 if (mission is null || checkedMission == mission) return ignoredMessages;
                 checkedMission = mission;
+                List<GameKey> gameKeys = (List<GameKey>)typeof(InputContext).GetField("_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(mission.InputManager);
                 ignoredMessages.Clear();
                 if (!mission.IsInventoryAccessAllowed && gameKeys[37].KeyboardKey.InputKey.IsKeyBound())
                 {

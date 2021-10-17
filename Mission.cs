@@ -17,7 +17,7 @@ namespace FormationSorter
             Agent playerAgent = PlayerAgent;
             if (playerAgent is null) return false;
             MissionMainAgentController playerAgentController = PlayerAgentController;
-            if (playerAgentController is null || playerAgentController.IsDisabled) return false;
+            if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
             return !(interactionComponent.CurrentFocusedMachine is null) || !(interactionComponent.CurrentFocusedObject is null);
