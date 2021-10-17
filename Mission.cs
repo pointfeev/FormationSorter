@@ -15,7 +15,7 @@ namespace FormationSorter
         public static OrderSetVM OrderSetVM;
         public static InputKeyItemVM InputKeyItemVM;
 
-        public static bool IsPlayerInteracting()
+        public static bool CanPlayerInteract()
         {
             Agent playerAgent = PlayerAgent;
             if (playerAgent is null) return false;
@@ -23,12 +23,16 @@ namespace FormationSorter
             if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
-            if (fieldCurrentInteractableObject is null) fieldCurrentInteractableObject = typeof(MissionMainAgentInteractionComponent)
-                    .GetField("_currentInteractableObject", BindingFlags.NonPublic | BindingFlags.Instance);
-            return !(fieldCurrentInteractableObject.GetValue(interactionComponent) is null);
+            IFocusable focusable = interactionComponent.CurrentFocusedObject ?? interactionComponent.CurrentFocusedMachine;
+            if (focusable is null) return false;
+            Agent agent = focusable as Agent;
+            if (agent is null) return true;
+            bool agentHasInteraction = false;
+            foreach (MissionBehaviour missionBehaviour in Current.MissionBehaviours) agentHasInteraction = agentHasInteraction || missionBehaviour.IsThereAgentAction(playerAgent, agent);
+            MissionRepresentativeBase missionRepresentative = playerAgent.MissionRepresentative;
+            if (GameNetwork.IsSessionActive && missionRepresentative != null) agentHasInteraction = agentHasInteraction || missionRepresentative.IsThereAgentAction(agent);
+            return agentHasInteraction;
         }
-
-        private static FieldInfo fieldCurrentInteractableObject;
 
         public static bool IsCurrentReady()
         {
