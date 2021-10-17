@@ -178,10 +178,7 @@ namespace FormationSorter
                         .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
                     orderTroopItemVM.IsSelectable = selectable;
                     orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && Mission.MissionOrderVM.OrderController.IsFormationListening(formation);
-                    if (formation.CountOfUnits <= 0)
-                    {
-                        orderTroopItemVM.FormationClass = (int)formation.InitialClass;
-                    }
+                    orderTroopItemVM.SetFormationClassFromFormation(formation);
                 }
                 else
                 {
