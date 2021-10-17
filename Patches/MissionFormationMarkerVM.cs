@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Linq;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.ViewModelCollection.HUD;
@@ -12,13 +13,20 @@ namespace FormationSorter
         [HarmonyPrefix]
         public static bool RefreshFormationPositions(MissionFormationMarkerVM __instance)
         {
-            foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList())
+            try
             {
-                if (target.Formation.CountOfUnits <= 0)
+                foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList())
                 {
-                    target.ScreenPosition = new Vec2(-10000f, -10000f);
-                    __instance.Targets.Remove(target);
+                    if (target.Formation.CountOfUnits <= 0)
+                    {
+                        target.ScreenPosition = new Vec2(-10000f, -10000f);
+                        __instance.Targets.Remove(target);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                OutputUtils.DoOutputForException(e);
             }
             return true;
         }

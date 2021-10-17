@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -25,10 +26,7 @@ namespace FormationSorter
         {
             get
             {
-                if (ignoredMessages is null)
-                {
-                    ignoredMessages = new List<string>();
-                }
+                if (ignoredMessages is null) ignoredMessages = new List<string>();
                 TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
                 if (mission is null || lastCheckedMission == mission) return ignoredMessages;
                 lastCheckedMission = mission;
@@ -74,10 +72,17 @@ namespace FormationSorter
         [HarmonyPrefix]
         public static bool DisplayMessage(InformationMessage message)
         {
-            if (Mission.IsCurrentOrderable())
+            try
             {
-                if (IgnoredMessages.Contains(message.Information)) return false;
-                if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString()) return false;
+                if (Mission.IsCurrentOrderable())
+                {
+                    if (IgnoredMessages.Contains(message.Information)) return false;
+                    if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString()) return false;
+                }
+            }
+            catch (Exception e)
+            {
+                OutputUtils.DoOutputForException(e);
             }
             return true;
         }

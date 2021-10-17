@@ -19,19 +19,13 @@ namespace FormationSorter
 
         private static DropdownDefault<InputKey> GetNormalSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
-            if (setting is null)
-            {
-                setting = GetNormalKeysDropdown(defaultKey);
-            }
+            if (setting is null) setting = GetNormalKeysDropdown(defaultKey);
             return setting;
         }
 
         private static DropdownDefault<InputKey> GetModifierSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
-            if (setting is null)
-            {
-                setting = GetModifierKeysDropdown(defaultKey);
-            }
+            if (setting is null) setting = GetModifierKeysDropdown(defaultKey);
             return setting;
         }
 
@@ -46,7 +40,10 @@ namespace FormationSorter
 
         private static InputKey GetValue(DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
-            return (setting?.SelectedValue).GetValueOrDefault(defaultKey);
+            InputKey selectedKey = defaultKey;
+            try { selectedKey = setting.SelectedValue; } catch { }
+            if (!selectedKey.IsDefined()) return defaultKey;
+            return selectedKey;
         }
 
         #endregion Get & Set
