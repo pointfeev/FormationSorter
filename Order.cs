@@ -15,7 +15,7 @@ namespace FormationSorter
     {
         public static void OnApplicationTick(float dt)
         {
-            if (!Mission.IsCurrentReady()) return;
+            if (!Mission.IsCurrentValid()) return;
             if (!Mission.IsCurrentOrderable()) return;
 
             if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)ReflectionUtils.GetConstructor(typeof(OrderSetVM), new Type[] {
@@ -48,7 +48,7 @@ namespace FormationSorter
 
         public static void OnOrderHotkeyPressed()
         {
-            if (!Mission.IsCurrentReady()) return;
+            if (!Mission.IsCurrentValid()) return;
             if (!Mission.IsCurrentOrderable()) return;
             List<Formation> selectedFormations = GetSelectedRegularFormations();
             if (selectedFormations is null || !selectedFormations.Any()) return;

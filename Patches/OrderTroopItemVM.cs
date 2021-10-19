@@ -15,7 +15,7 @@ namespace FormationSorter
         {
             try
             {
-                if (formation.CountOfUnits <= 0)
+                if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable() && formation.CountOfUnits <= 0)
                 {
                     switch (formation.InitialClass)
                     {

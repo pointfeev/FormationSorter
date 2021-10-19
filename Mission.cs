@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.View.Missions;
@@ -31,17 +32,22 @@ namespace FormationSorter
             return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
         }
 
-        public static bool IsCurrentReady()
+        public static bool IsCurrentValid(TaleWorlds.MountAndBlade.Mission current = null)
         {
-            if (Current is null) return false;
-            if (Current.MissionEnded()) return false;
+            current = current ?? Current;
+            if (current is null) return false;
+            if (current.Mode != MissionMode.Battle) return false;
+            if (current.MissionEnded()) return false;
             if (MissionOrderVM is null) return false;
             try
             {
                 if (MissionOrderVM.OrderController is null) return false;
                 if (MissionOrderVM.TroopController is null) return false;
             }
-            catch { }
+            catch // to catch errors that are entirely out of my control
+            {
+                return false;
+            }
             return true;
         }
 
@@ -60,7 +66,7 @@ namespace FormationSorter
 
         public static List<GameKey> GetCurrentGameKeys()
         {
-            if (!IsCurrentReady()) return null;
+            if (!IsCurrentValid()) return null;
             return (List<GameKey>)ReflectionUtils.GetField(typeof(InputContext), "_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance)
                 .GetValue(Current.InputManager);
         }

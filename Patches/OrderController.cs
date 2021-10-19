@@ -17,9 +17,11 @@ namespace FormationSorter
         {
             try
             {
-                if (!Mission.IsCurrentReady() || !Mission.IsCurrentOrderable()) return true;
-                __result = selectorAgent == null || formation.PlayerOwner == selectorAgent;
-                return false;
+                if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable())
+                {
+                    __result = selectorAgent == null || formation.PlayerOwner == selectorAgent;
+                    return false;
+                }
             }
             catch (Exception e)
             {

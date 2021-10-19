@@ -22,6 +22,7 @@ namespace FormationSorter
             try
             {
                 Mission.MissionOrderVM = __instance;
+                if (!Mission.IsCurrentValid()) return;
                 if (!Mission.IsCurrentOrderable()) return;
                 Update();
             }

@@ -14,7 +14,7 @@ namespace FormationSorter
         {
             try
             {
-                if (Mission.IsCurrentOrderable())
+                if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable())
                 {
                     ____initialClass = __instance.FormationIndex;
                     return false;

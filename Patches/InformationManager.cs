@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
@@ -22,47 +23,52 @@ namespace FormationSorter
             lastCheckedMission = null;
         }
 
+        private static InputKey Get(this List<GameKey> gameKeys, int i)
+        {
+            return (gameKeys?.ElementAtOrDefault(i)?.KeyboardKey?.InputKey).GetValueOrDefault(0);
+        }
+
         public static List<string> IgnoredMessages
         {
             get
             {
                 if (ignoredMessages is null) ignoredMessages = new List<string>();
                 TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
-                if (mission is null || lastCheckedMission == mission) return ignoredMessages;
+                if (lastCheckedMission == mission) return ignoredMessages;
                 lastCheckedMission = mission;
                 List<GameKey> gameKeys = Mission.GetCurrentGameKeys();
                 ignoredMessages.Clear();
-                if (!mission.IsInventoryAccessAllowed && gameKeys[37].KeyboardKey.InputKey.IsKeyBound())
+                if (!mission.IsInventoryAccessAllowed && gameKeys.Get(37).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText((Mission.Current.Mode == MissionMode.Battle || Mission.Current.Mode == MissionMode.Duel) ? "str_cannot_reach_inventory_during_battle" : "str_cannot_reach_inventory").ToString());
+                    ignoredMessages.Add(GameTexts.FindText((mission.Mode == MissionMode.Battle || mission.Mode == MissionMode.Duel) ? "str_cannot_reach_inventory_during_battle" : "str_cannot_reach_inventory")?.ToString() ?? "");
                 }
-                if (!mission.IsQuestScreenAccessAllowed && gameKeys[41].KeyboardKey.InputKey.IsKeyBound())
+                if (!mission.IsQuestScreenAccessAllowed && gameKeys.Get(41).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_quests", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_quests", null)?.ToString() ?? "");
                 }
-                if (!mission.IsPartyWindowAccessAllowed && gameKeys[42].KeyboardKey.InputKey.IsKeyBound())
+                if (!mission.IsPartyWindowAccessAllowed && gameKeys.Get(42).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_party", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_party", null)?.ToString() ?? "");
                 }
-                if (!mission.IsEncyclopediaWindowAccessAllowed && gameKeys[38].KeyboardKey.InputKey.IsKeyBound())
+                if (!mission.IsEncyclopediaWindowAccessAllowed && gameKeys.Get(38).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_encyclopedia", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_encyclopedia", null)?.ToString() ?? "");
                 }
-                if ((!mission.IsKingdomWindowAccessAllowed || !Hero.MainHero.MapFaction.IsKingdomFaction) && gameKeys[39].KeyboardKey.InputKey.IsKeyBound())
+                if ((!mission.IsKingdomWindowAccessAllowed || (!Hero.MainHero?.MapFaction?.IsKingdomFaction).GetValueOrDefault(false)) && gameKeys.Get(39).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_kingdom", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_kingdom", null)?.ToString() ?? "");
                 }
-                if (!mission.IsClanWindowAccessAllowed && gameKeys[40].KeyboardKey.InputKey.IsKeyBound())
+                if (!mission.IsClanWindowAccessAllowed && gameKeys.Get(40).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_clan", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_clan", null)?.ToString() ?? "");
                 }
-                if (!mission.IsCharacterWindowAccessAllowed && gameKeys[36].KeyboardKey.InputKey.IsKeyBound())
+                if (!mission.IsCharacterWindowAccessAllowed && gameKeys.Get(36).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_character", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_character", null)?.ToString() ?? "");
                 }
-                if ((!mission.IsBannerWindowAccessAllowed || !Campaign.Current.IsBannerEditorEnabled) && gameKeys[35].KeyboardKey.InputKey.IsKeyBound())
+                if ((!mission.IsBannerWindowAccessAllowed || (!Campaign.Current?.IsBannerEditorEnabled).GetValueOrDefault(false)) && gameKeys.Get(35).IsKeyBound())
                 {
-                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_banner", null).ToString());
+                    ignoredMessages.Add(GameTexts.FindText("str_cannot_open_banner", null)?.ToString() ?? "");
                 }
                 return ignoredMessages;
             }
@@ -74,7 +80,7 @@ namespace FormationSorter
         {
             try
             {
-                if (Mission.IsCurrentOrderable())
+                if (Mission.IsCurrentValid())
                 {
                     if (IgnoredMessages.Contains(message.Information)) return false;
                     if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString()) return false;

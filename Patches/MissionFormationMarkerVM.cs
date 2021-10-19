@@ -15,12 +15,15 @@ namespace FormationSorter
         {
             try
             {
-                foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList())
+                if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable())
                 {
-                    if (target.Formation.CountOfUnits <= 0)
+                    foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList())
                     {
-                        target.ScreenPosition = new Vec2(-10000f, -10000f);
-                        __instance.Targets.Remove(target);
+                        if (target.Formation.CountOfUnits <= 0)
+                        {
+                            target.ScreenPosition = new Vec2(-10000f, -10000f);
+                            __instance.Targets.Remove(target);
+                        }
                     }
                 }
             }

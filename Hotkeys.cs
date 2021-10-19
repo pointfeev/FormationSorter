@@ -8,7 +8,7 @@ namespace FormationSorter
     {
         public static void OnApplicationTick(float dt)
         {
-            if (!Mission.IsCurrentReady()) return;
+            if (!Mission.IsCurrentValid()) return;
             ProcessKey(Settings.OrderKey, () => Order.OnOrderHotkeyPressed());
             ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
             ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
@@ -51,7 +51,7 @@ namespace FormationSorter
 
         public static bool IsKeyBound(this InputKey inputKey)
         {
-            return Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
+            return IsDefined(inputKey) && Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
                 Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey ||
                 Settings.SelectAllKey == inputKey || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey ||
                 Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey || Settings.SelectAllBasicMeleeKey == inputKey ||

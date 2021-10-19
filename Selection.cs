@@ -54,7 +54,7 @@ namespace FormationSorter
             try
             {
                 if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod())) return;
-                if (!Mission.IsCurrentReady()) return;
+                if (!Mission.IsCurrentValid()) return;
                 if (!Mission.IsCurrentOrderable()) return;
                 foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
                 {

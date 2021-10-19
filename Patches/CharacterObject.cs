@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+﻿/*using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 
 namespace FormationSorter
@@ -6,7 +6,7 @@ namespace FormationSorter
     [HarmonyPatch(typeof(CharacterObject))]
     public static class PatchCharacterObject
     {
-        /*[HarmonyPostfix]
+        [HarmonyPostfix]
         [HarmonyPatch("GetFormationClass")]
         public static void GetFormationClass(CharacterObject __instance, IBattleCombatant owner, ref FormationClass __result)
         {
@@ -32,6 +32,6 @@ namespace FormationSorter
                     __result = FormationClass.Infantry;
                 }
             }
-        }*/
+        }
     }
-}
+}*/
