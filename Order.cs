@@ -18,15 +18,12 @@ namespace FormationSorter
             if (!Mission.IsCurrentValid()) return;
             if (!Mission.IsCurrentOrderable()) return;
 
-            if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)ReflectionUtils.GetConstructor(typeof(OrderSetVM), new Type[] {
+            if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetCachedConstructor(new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-            }, BindingFlags.NonPublic | BindingFlags.Instance).Invoke(new object[] {
+            }).Invoke(new object[] {
                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
-
-            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)ReflectionUtils
-                    .GetConstructor(typeof(InputKeyItemVM), new Type[] { }, BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(new object[0]);
+            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor().Invoke(new object[0]);
 
             InputKey OrderKey = Settings.OrderKey;
             string Key = OrderKey.ToString();
@@ -153,8 +150,7 @@ namespace FormationSorter
             foreach (Formation formation in formations)
             {
                 if (formation.IsAIControlled) continue;
-                readAgents.AddRange(((List<Agent>)ReflectionUtils.GetField(typeof(Formation), "_detachedUnits", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .GetValue(formation)).FindAll(agent => agent.IsHuman));
+                readAgents.AddRange(((List<Agent>)typeof(Formation).GetCachedField("_detachedUnits").GetValue(formation)).FindAll(agent => agent.IsHuman));
                 readAgents.AddRange(from unit in formation.Arrangement.GetAllUnits()
                                     where !(unit as Agent is null) && (unit as Agent).IsHuman
                                     select unit as Agent);

@@ -24,9 +24,8 @@ namespace FormationSorter
             if (playerAgentController is null) return false;
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
-            IFocusable currentInteractableObject = (IFocusable)ReflectionUtils
-                .GetField(typeof(MissionMainAgentInteractionComponent), "_currentInteractableObject", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(interactionComponent);
+            IFocusable currentInteractableObject = (IFocusable)typeof(MissionMainAgentInteractionComponent)
+                .GetField("_currentInteractableObject").GetValue(interactionComponent);
             if (currentInteractableObject is null) return false;
             Agent agent = currentInteractableObject as Agent;
             return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
@@ -67,8 +66,7 @@ namespace FormationSorter
         public static List<GameKey> GetCurrentGameKeys()
         {
             if (!IsCurrentValid()) return null;
-            return (List<GameKey>)ReflectionUtils.GetField(typeof(InputContext), "_registeredGameKeys", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(Current.InputManager);
+            return (List<GameKey>)typeof(InputContext).GetCachedField("_registeredGameKeys").GetValue(Current.InputManager);
         }
 
         public static TaleWorlds.MountAndBlade.Mission Current => TaleWorlds.MountAndBlade.Mission.Current;

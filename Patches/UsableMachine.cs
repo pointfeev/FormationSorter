@@ -19,8 +19,8 @@ namespace FormationSorter
                 {
                     if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable())
                     {
-                        __result = (float)ReflectionUtils.GetMethod(typeof(UsableMachine), "TaleWorlds.MountAndBlade.IDetachment.GetDetachmentWeight",
-                            BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, new object[] { side });
+                        __result = (float)typeof(UsableMachine).GetCachedMethod("TaleWorlds.MountAndBlade.IDetachment.GetDetachmentWeight")
+                            .Invoke(__instance, new object[] { side });
                     }
                 }
                 catch

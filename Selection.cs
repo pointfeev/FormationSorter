@@ -140,8 +140,7 @@ namespace FormationSorter
             if (!(orderTroopItemVM is null))
             {
                 Mission.MissionOrderVM.OnSelect((int)selections.First().FormationIndex);
-                ReflectionUtils.GetMethod(typeof(MissionOrderTroopControllerVM), "SetSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(troopController, new object[] { orderTroopItemVM });
+                typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
             }
             for (int i = 1; i <= selections.Count - 1; i++)
             {
@@ -149,8 +148,7 @@ namespace FormationSorter
                 orderTroopItemVM = GetOrderTroopItemVM(formation);
                 if (!(orderTroopItemVM is null))
                 {
-                    ReflectionUtils.GetMethod(typeof(MissionOrderTroopControllerVM), "AddSelectedFormation", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .Invoke(troopController, new object[] { orderTroopItemVM });
+                    typeof(MissionOrderTroopControllerVM).GetCachedMethod("AddSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
                 }
             }
             SortOrderTroopItemVMs();
@@ -164,9 +162,8 @@ namespace FormationSorter
             if (orderTroopItemVM is null && Mission.IsCurrentOrderable() && selectable)
             {
                 orderTroopItemVM = new OrderTroopItemVM(formation,
-                    new Action<OrderTroopItemVM>(item =>
-                        ReflectionUtils.GetMethod(typeof(MissionOrderTroopControllerVM), "OnSelectFormation", BindingFlags.NonPublic | BindingFlags.Instance)
-                            .Invoke(troopController, new object[] { item })),
+                    new Action<OrderTroopItemVM>(item => typeof(MissionOrderTroopControllerVM).GetCachedMethod("OnSelectFormation")
+                        .Invoke(troopController, new object[] { item })),
                     (int)Mission.Current.GetAverageMoraleOfAgentsWithIndices(formation.CollectUnitIndices()));
                 troopController.TroopList.Add(orderTroopItemVM);
                 SortOrderTroopItemVMs();
@@ -175,7 +172,7 @@ namespace FormationSorter
             {
                 if (selectable)
                 {
-                    ReflectionUtils.GetMethod(typeof(MissionOrderTroopControllerVM), "SetTroopActiveOrders", BindingFlags.NonPublic | BindingFlags.Instance)
+                    typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetTroopActiveOrders")
                         .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
                     orderTroopItemVM.IsSelectable = selectable;
                     orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && Mission.MissionOrderVM.OrderController.IsFormationListening(formation);

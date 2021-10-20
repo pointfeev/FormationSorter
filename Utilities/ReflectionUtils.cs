@@ -8,7 +8,7 @@ namespace FormationSorter
 {
     public static class ReflectionUtils
     {
-        public static ConstructorInfo GetConstructor(Type memberType, Type[] types, BindingFlags bindingFlags)
+        public static ConstructorInfo GetCachedConstructor(this Type memberType, Type[] types = default, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(memberType, types.ToString(), out MemberInfo memberInfo)) return memberInfo as ConstructorInfo;
             ConstructorInfo constructorInfo = memberType.GetConstructor(bindingFlags, null, types, null);
@@ -16,7 +16,7 @@ namespace FormationSorter
             return constructorInfo;
         }
 
-        public static FieldInfo GetField(Type memberType, string memberName, BindingFlags bindingFlags)
+        public static FieldInfo GetCachedField(this Type memberType, string memberName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(memberType, memberName, out MemberInfo memberInfo)) return memberInfo as FieldInfo;
             FieldInfo fieldInfo = memberType.GetField(memberName, bindingFlags);
@@ -24,7 +24,15 @@ namespace FormationSorter
             return fieldInfo;
         }
 
-        public static MethodInfo GetMethod(Type memberType, string memberName, BindingFlags bindingFlags)
+        public static PropertyInfo GetCachedProperty(this Type memberType, string memberName, BindingFlags bindingFlags = (BindingFlags)(-1))
+        {
+            if (CheckReflectionCache(memberType, memberName, out MemberInfo memberInfo)) return memberInfo as PropertyInfo;
+            PropertyInfo propertyInfo = memberType.GetProperty(memberName, bindingFlags);
+            AddToReflectionCache(memberType, memberName, propertyInfo);
+            return propertyInfo;
+        }
+
+        public static MethodInfo GetCachedMethod(this Type memberType, string memberName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(memberType, memberName, out MemberInfo memberInfo)) return memberInfo as MethodInfo;
             MethodInfo methodInfo = memberType.GetMethod(memberName, bindingFlags);
