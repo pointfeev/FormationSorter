@@ -25,7 +25,7 @@ namespace FormationSorter
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
             if (interactionComponent is null) return false;
             IFocusable currentInteractableObject = (IFocusable)typeof(MissionMainAgentInteractionComponent)
-                .GetField("_currentInteractableObject").GetValue(interactionComponent);
+                .GetCachedField("_currentInteractableObject").GetValue(interactionComponent);
             if (currentInteractableObject is null) return false;
             Agent agent = currentInteractableObject as Agent;
             return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
