@@ -31,9 +31,9 @@ namespace FormationSorter
             return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
         }
 
-        public static bool IsCurrentValid(TaleWorlds.MountAndBlade.Mission current = null)
+        public static bool IsCurrentValid()
         {
-            current = current ?? Current;
+            TaleWorlds.MountAndBlade.Mission current = Current;
             if (current is null) return false;
             if (current.Mode != MissionMode.Battle) return false;
             if (current.MissionEnded()) return false;
