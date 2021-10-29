@@ -23,7 +23,7 @@ namespace FormationSorter
             }).Invoke(new object[] {
                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
-            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor().Invoke(new object[0]);
+            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor(new Type[0]).Invoke(new object[0]);
 
             InputKey OrderKey = Settings.OrderKey;
             string Key = OrderKey.ToString();

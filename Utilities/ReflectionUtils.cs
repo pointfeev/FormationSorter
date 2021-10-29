@@ -16,9 +16,9 @@ namespace FormationSorter
             return nestedType;
         }
 
-        public static ConstructorInfo GetCachedConstructor(this Type fromType, Type[] types = null, BindingFlags bindingFlags = (BindingFlags)(-1))
+        public static ConstructorInfo GetCachedConstructor(this Type fromType, Type[] types, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
-            string identifier = fromType.FullName + (types is null ? "()" : $"({types})");
+            string identifier = fromType.FullName + $"({types})";
             if (CheckReflectionCache(fromType, identifier, out MemberInfo memberInfo)) return memberInfo as ConstructorInfo;
             ConstructorInfo constructorInfo = fromType.GetConstructor(bindingFlags, null, types, null);
             AddToReflectionCache(fromType, identifier, constructorInfo);
