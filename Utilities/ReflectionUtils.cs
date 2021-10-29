@@ -10,9 +10,10 @@ namespace FormationSorter
     {
         public static ConstructorInfo GetCachedConstructor(this Type memberType, Type[] types = default, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
-            if (CheckReflectionCache(memberType, types.ToString(), out MemberInfo memberInfo)) return memberInfo as ConstructorInfo;
+            string identifier = memberType.FullName + (types is null ? "()" : $"({types})");
+            if (CheckReflectionCache(memberType, identifier, out MemberInfo memberInfo)) return memberInfo as ConstructorInfo;
             ConstructorInfo constructorInfo = memberType.GetConstructor(bindingFlags, null, types, null);
-            AddToReflectionCache(memberType, types.ToString(), constructorInfo);
+            AddToReflectionCache(memberType, identifier, constructorInfo);
             return constructorInfo;
         }
 
