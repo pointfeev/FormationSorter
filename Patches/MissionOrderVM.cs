@@ -24,7 +24,7 @@ namespace FormationSorter
                 Mission.MissionOrderVM = __instance;
                 if (!Mission.IsCurrentValid()) return;
                 if (!Mission.IsCurrentOrderable()) return;
-                Update();
+                Selection.UpdateAllFormationOrderTroopItemVMs();
             }
             catch (Exception e)
             {
@@ -33,12 +33,15 @@ namespace FormationSorter
         }
 
         [HarmonyPatch("OnTransferFinished")]
+        [HarmonyPostfix]
+        public static void OnTransferFinished() => Selection.UpdateAllFormationOrderTroopItemVMs();
+
         [HarmonyPatch("SetActiveOrders")]
+        [HarmonyPostfix]
+        public static void SetActiveOrders() => Selection.UpdateAllFormationOrderTroopItemVMs();
+
         [HarmonyPatch("OnOrder")]
         [HarmonyPostfix]
-        public static void Update()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void OnOrder() => Selection.UpdateAllFormationOrderTroopItemVMs();
     }
 }

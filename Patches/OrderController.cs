@@ -70,9 +70,6 @@ namespace FormationSorter
 
         [HarmonyPatch("OnSelectedFormationsCollectionChanged")]
         [HarmonyPostfix]
-        public static void Update()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void OnSelectedFormationsCollectionChanged() => Selection.UpdateAllFormationOrderTroopItemVMs();
     }
 }
