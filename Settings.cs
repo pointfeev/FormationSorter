@@ -259,27 +259,33 @@ namespace FormationSorter
 
         [SettingPropertyBool("", Order = 14, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private bool S1 { get { return false; } set { } }
+        private bool S1
+        { get { return false; } set { } }
 
         [SettingPropertyBool("", Order = 15, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private bool S2 { get { return false; } set { } }
+        private bool S2
+        { get { return false; } set { } }
 
         [SettingPropertyBool("", Order = 16, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private bool S3 { get { return false; } set { } }
+        private bool S3
+        { get { return false; } set { } }
 
         [SettingPropertyBool("", Order = 17, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private bool S4 { get { return false; } set { } }
+        private bool S4
+        { get { return false; } set { } }
 
         [SettingPropertyBool("", Order = 18, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private bool S5 { get { return false; } set { } }
+        private bool S5
+        { get { return false; } set { } }
 
         [SettingPropertyBool("", Order = 19, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
-        private bool S6 { get { return false; } set { } }
+        private bool S6
+        { get { return false; } set { } }
 
         #endregion Selection Spacers
 

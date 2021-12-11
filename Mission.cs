@@ -35,7 +35,7 @@ namespace FormationSorter
             TaleWorlds.MountAndBlade.Mission current = Current;
             if (current is null) return false;
             if (current.Mode != MissionMode.Battle) return false;
-            if (current.MissionEnded()) return false;
+            if (current.MissionEnded) return false;
             if (MissionOrderVM is null) return false;
             try
             {
@@ -51,7 +51,7 @@ namespace FormationSorter
 
         public static bool IsCurrentSiege()
         {
-            SiegeMissionController siegeMissionController = Current?.GetMissionBehaviour<SiegeMissionController>();
+            SiegeMissionController siegeMissionController = Current?.GetMissionBehavior<SiegeMissionController>();
             if (siegeMissionController is null) return false;
             if (siegeMissionController?.IsSallyOut is true) return false;
             return true;
@@ -72,6 +72,6 @@ namespace FormationSorter
 
         public static Agent PlayerAgent => Current?.MainAgent;
 
-        public static MissionMainAgentController PlayerAgentController => Current?.GetMissionBehaviour<MissionMainAgentController>();
+        public static MissionMainAgentController PlayerAgentController => Current?.GetMissionBehavior<MissionMainAgentController>();
     }
 }

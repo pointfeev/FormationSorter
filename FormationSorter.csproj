@@ -45,7 +45,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\Published\SortedIncome\bin\Win64_Shipping_Client\</OutputPath>
+    <OutputPath>..\..\Published\FormationSorter\bin\Win64_Shipping_Client\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <PlatformTarget>x64</PlatformTarget>
@@ -341,7 +341,6 @@
     <Compile Include="Mission.cs" />
     <Compile Include="Patches\InformationManager.cs" />
     <Compile Include="Patches\MissionOrderTroopControllerVM.cs" />
-    <Compile Include="Patches\OrderTroopItemVM.cs" />
     <Compile Include="Patches\Formation.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Hotkeys.cs" />

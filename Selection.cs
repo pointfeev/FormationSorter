@@ -164,7 +164,8 @@ namespace FormationSorter
                 orderTroopItemVM = new OrderTroopItemVM(formation,
                     new Action<OrderTroopItemVM>(item => typeof(MissionOrderTroopControllerVM).GetCachedMethod("OnSelectFormation")
                         .Invoke(troopController, new object[] { item })),
-                    (int)Mission.Current.GetAverageMoraleOfAgentsWithIndices(formation.CollectUnitIndices()));
+                    new Func<Formation, int>(_formation => (int)typeof(MissionOrderTroopControllerVM).GetCachedMethod("GetFormationMorale")
+                        .Invoke(troopController, new object[] { _formation })));
                 troopController.TroopList.Add(orderTroopItemVM);
                 SortOrderTroopItemVMs();
             }
