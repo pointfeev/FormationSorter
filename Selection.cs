@@ -45,7 +45,11 @@ namespace FormationSorter
 
         public static void SelectAllFormations()
         {
-            if (!Mission.IsCurrentOrderable()) return;
+            if (!Mission.IsCurrentOrderable())
+            {
+                return;
+            }
+
             SelectFormationsOfClasses(AllFormationClasses, "all");
         }
 
@@ -53,9 +57,21 @@ namespace FormationSorter
         {
             try
             {
-                if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod())) return;
-                if (!Mission.IsCurrentValid()) return;
-                if (!Mission.IsCurrentOrderable()) return;
+                if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod()))
+                {
+                    return;
+                }
+
+                if (!Mission.IsCurrentValid())
+                {
+                    return;
+                }
+
+                if (!Mission.IsCurrentOrderable())
+                {
+                    return;
+                }
+
                 foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
                 {
                     GetOrderTroopItemVM(formation);
@@ -70,7 +86,11 @@ namespace FormationSorter
 
         public static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
         {
-            if (formationClasses is null || !formationClasses.Any()) return;
+            if (formationClasses is null || !formationClasses.Any())
+            {
+                return;
+            }
+
             if (!Mission.MissionOrderVM.IsToggleOrderShown || !Settings.InverseSelectionModifierKey.IsDefinedAndDown())
             {
                 previousSelections.Clear();
@@ -88,7 +108,11 @@ namespace FormationSorter
             List<Formation> invertedSelections = new List<Formation>();
             foreach (Formation formation in Mission.Current?.PlayerTeam?.FormationsIncludingEmpty)
             {
-                if (formation is null) continue;
+                if (formation is null)
+                {
+                    continue;
+                }
+
                 bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 bool wasPreviouslySelected = previousSelections.Contains(formation);
                 bool shouldInvertSelection = Settings.InverseSelectionModifierKey.IsDefinedAndDown() && wasPreviouslySelected;
@@ -106,7 +130,15 @@ namespace FormationSorter
             }
             if (!(feedback is null))
             {
-                if (feedback == "all") feedback = ""; else feedback += " ";
+                if (feedback == "all")
+                {
+                    feedback = "";
+                }
+                else
+                {
+                    feedback += " ";
+                }
+
                 if (invertedSelections.Any() || selections.Any(f => f.CountOfUnits > 0))
                 {
                     InformationManager.DisplayMessage(new InformationMessage($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.White, "FormationSorter"));
@@ -133,7 +165,11 @@ namespace FormationSorter
         {
             Mission.MissionOrderVM.OrderController.ClearSelectedFormations();
             Mission.MissionOrderVM.TryCloseToggleOrder();
-            if (selections is null || !selections.Any(f => f.CountOfUnits > 0)) return;
+            if (selections is null || !selections.Any(f => f.CountOfUnits > 0))
+            {
+                return;
+            }
+
             Mission.MissionOrderVM.OpenToggleOrder(false);
             MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
             OrderTroopItemVM orderTroopItemVM = GetOrderTroopItemVM(selections.First());
@@ -190,7 +226,11 @@ namespace FormationSorter
 
         private static void SortOrderTroopItemVMs()
         {
-            if (!Mission.IsCurrentOrderable()) return;
+            if (!Mission.IsCurrentOrderable())
+            {
+                return;
+            }
+
             MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
             if (troopController.TroopList.Any())
             {

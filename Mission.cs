@@ -18,14 +18,30 @@ namespace FormationSorter
         public static bool CanPlayerInteract()
         {
             Agent playerAgent = PlayerAgent;
-            if (playerAgent is null) return false;
+            if (playerAgent is null)
+            {
+                return false;
+            }
+
             MissionMainAgentController playerAgentController = PlayerAgentController;
-            if (playerAgentController is null) return false;
+            if (playerAgentController is null)
+            {
+                return false;
+            }
+
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController.InteractionComponent;
-            if (interactionComponent is null) return false;
+            if (interactionComponent is null)
+            {
+                return false;
+            }
+
             IFocusable currentInteractableObject = (IFocusable)typeof(MissionMainAgentInteractionComponent)
                 .GetCachedField("_currentInteractableObject").GetValue(interactionComponent);
-            if (currentInteractableObject is null) return false;
+            if (currentInteractableObject is null)
+            {
+                return false;
+            }
+
             Agent agent = currentInteractableObject as Agent;
             return !(currentInteractableObject is null) && (agent is null || agent.IsMount);
         }
@@ -33,14 +49,37 @@ namespace FormationSorter
         public static bool IsCurrentValid()
         {
             TaleWorlds.MountAndBlade.Mission current = Current;
-            if (current is null) return false;
-            if (current.Mode != MissionMode.Battle) return false;
-            if (current.MissionEnded) return false;
-            if (MissionOrderVM is null) return false;
+            if (current is null)
+            {
+                return false;
+            }
+
+            if (current.Mode != MissionMode.Battle)
+            {
+                return false;
+            }
+
+            if (current.MissionEnded)
+            {
+                return false;
+            }
+
+            if (MissionOrderVM is null)
+            {
+                return false;
+            }
+
             try
             {
-                if (MissionOrderVM.OrderController is null) return false;
-                if (MissionOrderVM.TroopController is null) return false;
+                if (MissionOrderVM.OrderController is null)
+                {
+                    return false;
+                }
+
+                if (MissionOrderVM.TroopController is null)
+                {
+                    return false;
+                }
             }
             catch // to catch errors that are entirely out of my control
             {
@@ -52,8 +91,16 @@ namespace FormationSorter
         public static bool IsCurrentSiege()
         {
             SiegeMissionController siegeMissionController = Current?.GetMissionBehavior<SiegeMissionController>();
-            if (siegeMissionController is null) return false;
-            if (siegeMissionController?.IsSallyOut is true) return false;
+            if (siegeMissionController is null)
+            {
+                return false;
+            }
+
+            if (siegeMissionController?.IsSallyOut is true)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -64,7 +111,11 @@ namespace FormationSorter
 
         public static List<GameKey> GetCurrentGameKeys()
         {
-            if (!IsCurrentValid()) return null;
+            if (!IsCurrentValid())
+            {
+                return null;
+            }
+
             return (List<GameKey>)typeof(InputContext).GetCachedField("_registeredGameKeys").GetValue(Current.InputManager);
         }
 

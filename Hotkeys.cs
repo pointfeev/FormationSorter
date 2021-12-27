@@ -8,7 +8,11 @@ namespace FormationSorter
     {
         public static void OnApplicationTick(float dt)
         {
-            if (!Mission.IsCurrentValid()) return;
+            if (!Mission.IsCurrentValid())
+            {
+                return;
+            }
+
             ProcessKey(Settings.OrderKey, () => Order.OnOrderHotkeyPressed());
             ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
             ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
@@ -32,7 +36,11 @@ namespace FormationSorter
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
                     pressedLastTick[inputKey] = true;
-                    if (Mission.CanPlayerInteract() && inputKey == GetCurrentInteractKey()) return;
+                    if (Mission.CanPlayerInteract() && inputKey == GetCurrentInteractKey())
+                    {
+                        return;
+                    }
+
                     action();
                 }
             }
@@ -60,13 +68,17 @@ namespace FormationSorter
 
         public static bool IsDefined(this InputKey inputKey)
         {
-            if (isKeyDefined.TryGetValue(inputKey, out bool defined)) return defined;
+            if (isKeyDefined.TryGetValue(inputKey, out bool defined))
+            {
+                return defined;
+            }
+
             defined = Enum.IsDefined(typeof(InputKey), inputKey);
             isKeyDefined.Add(inputKey, defined);
             return defined;
         }
 
-        private static Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
+        private static readonly Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
 
         public static bool IsDefinedAndDown(this InputKey inputKey)
         {

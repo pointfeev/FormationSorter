@@ -14,15 +14,29 @@ namespace FormationSorter
     {
         public static void OnApplicationTick(float dt)
         {
-            if (!Mission.IsCurrentValid()) return;
-            if (!Mission.IsCurrentOrderable()) return;
+            if (!Mission.IsCurrentValid())
+            {
+                return;
+            }
 
-            if (Mission.OrderSetVM is null) Mission.OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetCachedConstructor(new Type[] {
+            if (!Mission.IsCurrentOrderable())
+            {
+                return;
+            }
+
+            if (Mission.OrderSetVM is null)
+            {
+                Mission.OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetCachedConstructor(new Type[] {
                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
             }).Invoke(new object[] {
                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
             });
-            if (Mission.InputKeyItemVM is null) Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor(new Type[0]).Invoke(new object[0]);
+            }
+
+            if (Mission.InputKeyItemVM is null)
+            {
+                Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor(new Type[0]).Invoke(new object[0]);
+            }
 
             InputKey OrderKey = Settings.OrderKey;
             string Key = OrderKey.ToString();
@@ -39,17 +53,35 @@ namespace FormationSorter
             Mission.OrderSetVM.TitleOrder.IsActive = true;
             Mission.OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
 
-            if (!Mission.MissionOrderVM.OrderSets.Contains(Mission.OrderSetVM)) Mission.MissionOrderVM.OrderSets.Add(Mission.OrderSetVM);
+            if (!Mission.MissionOrderVM.OrderSets.Contains(Mission.OrderSetVM))
+            {
+                Mission.MissionOrderVM.OrderSets.Add(Mission.OrderSetVM);
+            }
         }
 
         public static void OnOrderHotkeyPressed()
         {
-            if (!Mission.IsCurrentValid()) return;
-            if (!Mission.IsCurrentOrderable()) return;
+            if (!Mission.IsCurrentValid())
+            {
+                return;
+            }
+
+            if (!Mission.IsCurrentOrderable())
+            {
+                return;
+            }
+
             List<Formation> selectedFormations = GetSelectedRegularFormations();
-            if (selectedFormations is null || !selectedFormations.Any()) return;
+            if (selectedFormations is null || !selectedFormations.Any())
+            {
+                return;
+            }
+
             int numUnitsSorted = SortAgentsBetweenFormations(selectedFormations);
-            if (numUnitsSorted == -1) return;
+            if (numUnitsSorted == -1)
+            {
+                return;
+            }
             else if (numUnitsSorted == -2)
             {
                 InformationManager.DisplayMessage(new InformationMessage($"Formations controlled by AI cannot be sorted", Colors.White, "FormationSorter"));
@@ -73,16 +105,32 @@ namespace FormationSorter
         private static List<Formation> GetSelectedRegularFormations()
         {
             List<Formation> selectedFormations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
-            if (selectedFormations is null || !selectedFormations.Any()) return null;
+            if (selectedFormations is null || !selectedFormations.Any())
+            {
+                return null;
+            }
+
             selectedFormations.RemoveAll(f => f.CountOfUnits > 0 ? f.PrimaryClass > FormationClass.NumberOfRegularFormations : f.InitialClass > FormationClass.NumberOfRegularFormations);
             return selectedFormations;
         }
 
         private static int SortAgentsBetweenFormations(List<Formation> formations)
         {
-            if (!Mission.IsCurrentOrderable()) return -1;
-            if (formations is null || formations.Count < 2) return -1;
-            if (formations.All(f => f.IsAIControlled)) return -2;
+            if (!Mission.IsCurrentOrderable())
+            {
+                return -1;
+            }
+
+            if (formations is null || formations.Count < 2)
+            {
+                return -1;
+            }
+
+            if (formations.All(f => f.IsAIControlled))
+            {
+                return -2;
+            }
+
             int numAgentsSorted = 0;
             List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
             bool useSkirmishers = Settings.SkirmisherSortingModifierKey.IsDefinedAndDown();
@@ -114,10 +162,18 @@ namespace FormationSorter
                             numAgentsToMove++;
                             numAgentsLeftOver--;
                         }
-                        if (numAgentsToMove < 1) break;
+                        if (numAgentsToMove < 1)
+                        {
+                            break;
+                        }
+
                         List<Agent> agentsToMove = agentsInFormationClass.GetRange(0, numAgentsToMove);
                         agentsInFormationClass.RemoveRange(0, numAgentsToMove);
-                        if (!agentsToMove.Any()) break;
+                        if (!agentsToMove.Any())
+                        {
+                            break;
+                        }
+
                         foreach (Agent agent in agentsToMove)
                         {
                             if (TrySetAgentFormation(agent, formation))
@@ -145,10 +201,18 @@ namespace FormationSorter
         private static List<Agent> GetAllPlayerControlledHumanAgentsInFormations(List<Formation> formations)
         {
             List<Agent> readAgents = new List<Agent>();
-            if (!Mission.IsCurrentOrderable()) return readAgents;
+            if (!Mission.IsCurrentOrderable())
+            {
+                return readAgents;
+            }
+
             foreach (Formation formation in formations)
             {
-                if (formation.IsAIControlled) continue;
+                if (formation.IsAIControlled)
+                {
+                    continue;
+                }
+
                 readAgents.AddRange(((List<Agent>)typeof(Formation).GetCachedField("_detachedUnits").GetValue(formation)).FindAll(agent => agent.IsHuman));
                 readAgents.AddRange(from unit in formation.Arrangement.GetAllUnits()
                                     where !(unit as Agent is null) && (unit as Agent).IsHuman
@@ -157,7 +221,11 @@ namespace FormationSorter
             List<Agent> agents = new List<Agent>();
             foreach (Agent agent in readAgents)
             {
-                if (agent == Mission.PlayerAgent) continue;
+                if (agent == Mission.PlayerAgent)
+                {
+                    continue;
+                }
+
                 if (!agents.Contains(agent))
                 {
                     agents.Add(agent);
@@ -204,9 +272,20 @@ namespace FormationSorter
             Formation formationOfCorrectPrimaryClass = null;
             foreach (Formation formation in formations)
             {
-                if (formation.InitialClass == formationClass) formationOfCorrectInitialClass = formation;
-                if (formation.PrimaryClass == formationClass) formationOfCorrectPrimaryClass = formation;
-                if (!(formationOfCorrectInitialClass is null) && !(formationOfCorrectPrimaryClass is null)) break;
+                if (formation.InitialClass == formationClass)
+                {
+                    formationOfCorrectInitialClass = formation;
+                }
+
+                if (formation.PrimaryClass == formationClass)
+                {
+                    formationOfCorrectPrimaryClass = formation;
+                }
+
+                if (!(formationOfCorrectInitialClass is null) && !(formationOfCorrectPrimaryClass is null))
+                {
+                    break;
+                }
             }
             return formationOfCorrectInitialClass ?? formationOfCorrectPrimaryClass;
         }
@@ -214,7 +293,11 @@ namespace FormationSorter
         private static bool AgentHasProperRangedWeaponWithAmmo(Agent agent)
         {
             MissionEquipment equipment = agent.Equipment;
-            if (equipment is null) return false;
+            if (equipment is null)
+            {
+                return false;
+            }
+
             bool hasBowWithArrows = equipment.HasRangedWeapon(WeaponClass.Arrow) && equipment.GetAmmoAmount(WeaponClass.Arrow) > 0;
             bool hasCrossbowWithBolts = equipment.HasRangedWeapon(WeaponClass.Bolt) && equipment.GetAmmoAmount(WeaponClass.Bolt) > 0;
             return hasBowWithArrows || hasCrossbowWithBolts;
@@ -222,8 +305,16 @@ namespace FormationSorter
 
         private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
         {
-            if (!Mission.IsCurrentOrderable()) return false;
-            if (agent is null || desiredFormation is null || agent.Formation == desiredFormation) return false;
+            if (!Mission.IsCurrentOrderable())
+            {
+                return false;
+            }
+
+            if (agent is null || desiredFormation is null || agent.Formation == desiredFormation)
+            {
+                return false;
+            }
+
             agent.Formation = desiredFormation;
             if (Mission.Current.IsOrderShoutingAllowed())
             {

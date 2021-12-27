@@ -19,13 +19,21 @@ namespace FormationSorter
 
         private static DropdownDefault<InputKey> GetNormalSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
-            if (setting is null) setting = GetNormalKeysDropdown(defaultKey);
+            if (setting is null)
+            {
+                setting = GetNormalKeysDropdown(defaultKey);
+            }
+
             return setting;
         }
 
         private static DropdownDefault<InputKey> GetModifierSetting(ref DropdownDefault<InputKey> setting, InputKey defaultKey)
         {
-            if (setting is null) setting = GetModifierKeysDropdown(defaultKey);
+            if (setting is null)
+            {
+                setting = GetModifierKeysDropdown(defaultKey);
+            }
+
             return setting;
         }
 
@@ -42,7 +50,11 @@ namespace FormationSorter
         {
             InputKey selectedKey = defaultKey;
             try { selectedKey = setting.SelectedValue; } catch { }
-            if (!selectedKey.IsDefined()) return defaultKey;
+            if (!selectedKey.IsDefined())
+            {
+                return defaultKey;
+            }
+
             return selectedKey;
         }
 
@@ -260,32 +272,32 @@ namespace FormationSorter
         [SettingPropertyBool("", Order = 14, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S1
-        { get { return false; } set { } }
+        { get => false; set { } }
 
         [SettingPropertyBool("", Order = 15, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S2
-        { get { return false; } set { } }
+        { get => false; set { } }
 
         [SettingPropertyBool("", Order = 16, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S3
-        { get { return false; } set { } }
+        { get => false; set { } }
 
         [SettingPropertyBool("", Order = 17, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S4
-        { get { return false; } set { } }
+        { get => false; set { } }
 
         [SettingPropertyBool("", Order = 18, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S5
-        { get { return false; } set { } }
+        { get => false; set { } }
 
         [SettingPropertyBool("", Order = 19, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S6
-        { get { return false; } set { } }
+        { get => false; set { } }
 
         #endregion Selection Spacers
 
@@ -324,13 +336,15 @@ namespace FormationSorter
 
         private static int[] GetModifierKeyValues()
         {
-            List<int> toUse = new List<int>();
-            toUse.Add(29); // left ctrl
-            toUse.Add(42); // left shift
-            toUse.Add(56); // left alt
-            toUse.Add(157); // right ctrl
-            toUse.Add(54); // right shift
-            toUse.Add(184); // right alt
+            List<int> toUse = new List<int>
+            {
+                29, // left ctrl
+                42, // left shift
+                56, // left alt
+                157, // right ctrl
+                54, // right shift
+                184 // right alt
+            };
             return toUse.ToArray();
         }
 

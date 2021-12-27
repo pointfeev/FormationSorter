@@ -32,9 +32,17 @@ namespace FormationSorter
         {
             get
             {
-                if (ignoredMessages is null) ignoredMessages = new List<string>();
+                if (ignoredMessages is null)
+                {
+                    ignoredMessages = new List<string>();
+                }
+
                 TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
-                if (lastCheckedMission == mission) return ignoredMessages;
+                if (lastCheckedMission == mission)
+                {
+                    return ignoredMessages;
+                }
+
                 lastCheckedMission = mission;
                 List<GameKey> gameKeys = Mission.GetCurrentGameKeys();
                 ignoredMessages.Clear();
@@ -82,8 +90,15 @@ namespace FormationSorter
             {
                 if (Mission.IsCurrentValid())
                 {
-                    if (IgnoredMessages.Contains(message.Information)) return false;
-                    if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString()) return false;
+                    if (IgnoredMessages.Contains(message.Information))
+                    {
+                        return false;
+                    }
+
+                    if (SuppressSelectAllFormations && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me", null).ToString())
+                    {
+                        return false;
+                    }
                 }
             }
             catch (Exception e)

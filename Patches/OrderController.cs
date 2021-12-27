@@ -34,7 +34,7 @@ namespace FormationSorter
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> SetOrderWithFormationAndNumber(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            var codes = new List<CodeInstruction>(instructions);
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
             for (int i = 0; i < codes.Count; i++)
             {
                 CodeInstruction instruction = codes[i];
@@ -70,6 +70,9 @@ namespace FormationSorter
 
         [HarmonyPatch("OnSelectedFormationsCollectionChanged")]
         [HarmonyPostfix]
-        public static void OnSelectedFormationsCollectionChanged() => Selection.UpdateAllFormationOrderTroopItemVMs();
+        public static void OnSelectedFormationsCollectionChanged()
+        {
+            Selection.UpdateAllFormationOrderTroopItemVMs();
+        }
     }
 }
