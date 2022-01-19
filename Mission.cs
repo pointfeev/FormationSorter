@@ -59,11 +59,6 @@ namespace FormationSorter
                 return false;
             }
 
-            if (current.MissionEnded)
-            {
-                return false;
-            }
-
             if (MissionOrderVM is null)
             {
                 return false;

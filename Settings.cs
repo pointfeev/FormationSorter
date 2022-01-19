@@ -269,32 +269,32 @@ namespace FormationSorter
 
         #region Selection Spacers
 
-        [SettingPropertyBool("", Order = 14, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
+        [SettingPropertyBool("S1", Order = 14, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S1
         { get => false; set { } }
 
-        [SettingPropertyBool("", Order = 15, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
+        [SettingPropertyBool("S2", Order = 15, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S2
         { get => false; set { } }
 
-        [SettingPropertyBool("", Order = 16, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
+        [SettingPropertyBool("S3", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S3
         { get => false; set { } }
 
-        [SettingPropertyBool("", Order = 17, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
+        [SettingPropertyBool("S4", Order = 17, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S4
         { get => false; set { } }
 
-        [SettingPropertyBool("", Order = 18, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
+        [SettingPropertyBool("S5", Order = 18, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S5
         { get => false; set { } }
 
-        [SettingPropertyBool("", Order = 19, RequireRestart = false, HintText = "This is a temporary spacer for the selection dropdown menus. You can ignore this.")]
+        [SettingPropertyBool("S6", Order = 19, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S6
         { get => false; set { } }
