@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
+
+using HarmonyLib;
+
 using TaleWorlds.MountAndBlade.GauntletUI.Widgets;
 
 namespace FormationSorter

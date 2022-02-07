@@ -1,6 +1,8 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Linq;
+
+using HarmonyLib;
+
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.ViewModelCollection.HUD;
 

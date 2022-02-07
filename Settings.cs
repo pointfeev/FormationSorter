@@ -1,9 +1,11 @@
-﻿using MCM.Abstractions.Attributes;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Dropdown;
 using MCM.Abstractions.Settings.Base.Global;
-using System.Collections.Generic;
-using System.Linq;
+
 using TaleWorlds.InputSystem;
 
 namespace FormationSorter
@@ -315,15 +317,9 @@ namespace FormationSorter
             return new DropdownDefault<InputKey>(result.Item1, result.Item2);
         }
 
-        private static (InputKey[], int) GetUsableNormalKeysAndDefaultIndex(InputKey defaultKey)
-        {
-            return GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetNormalKeyValues());
-        }
+        private static (InputKey[], int) GetUsableNormalKeysAndDefaultIndex(InputKey defaultKey) => GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetNormalKeyValues());
 
-        private static (InputKey[], int) GetUsableModifierKeysAndDefaultIndex(InputKey defaultKey)
-        {
-            return GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetModifierKeyValues());
-        }
+        private static (InputKey[], int) GetUsableModifierKeysAndDefaultIndex(InputKey defaultKey) => GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetModifierKeyValues());
 
         private static int[] GetNormalKeyValues()
         {
@@ -348,10 +344,7 @@ namespace FormationSorter
             return toUse.ToArray();
         }
 
-        private static int[] GetRangeOfIntegers(int from, int to)
-        {
-            return Enumerable.Range(from, 1 + to - from).ToArray();
-        }
+        private static int[] GetRangeOfIntegers(int from, int to) => Enumerable.Range(from, 1 + to - from).ToArray();
 
         private static (InputKey[], int) GetUsableKeysAndDefaultIndexFromKeyValues(InputKey defaultKey, int[] keyValues)
         {

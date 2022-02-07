@@ -1,6 +1,8 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using HarmonyLib;
+
 using TaleWorlds.Engine;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection;
@@ -42,23 +44,14 @@ namespace FormationSorter
 
         [HarmonyPatch("OnTransferFinished")]
         [HarmonyPostfix]
-        public static void OnTransferFinished()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void OnTransferFinished() => Selection.UpdateAllFormationOrderTroopItemVMs();
 
         [HarmonyPatch("SetActiveOrders")]
         [HarmonyPostfix]
-        public static void SetActiveOrders()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void SetActiveOrders() => Selection.UpdateAllFormationOrderTroopItemVMs();
 
         [HarmonyPatch("OnOrder")]
         [HarmonyPostfix]
-        public static void OnOrder()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void OnOrder() => Selection.UpdateAllFormationOrderTroopItemVMs();
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
@@ -156,10 +157,7 @@ namespace FormationSorter
 
         private static List<Formation> previousSelections = new List<Formation>();
 
-        private static bool IsFormationOneOfFormationClasses(Formation formation, List<FormationClass> formationClasses)
-        {
-            return formation.CountOfUnits > 0 ? formationClasses.Contains(formation.PrimaryClass) : formationClasses.Contains(formation.InitialClass);
-        }
+        private static bool IsFormationOneOfFormationClasses(Formation formation, List<FormationClass> formationClasses) => formation.CountOfUnits > 0 ? formationClasses.Contains(formation.PrimaryClass) : formationClasses.Contains(formation.InitialClass);
 
         private static void SetFormationSelections(List<Formation> selections = null)
         {

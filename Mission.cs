@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.MountAndBlade;
@@ -99,10 +100,7 @@ namespace FormationSorter
             return true;
         }
 
-        public static bool IsCurrentOrderable()
-        {
-            return true;
-        }
+        public static bool IsCurrentOrderable() => true;
 
         public static List<GameKey> GetCurrentGameKeys()
         {

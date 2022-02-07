@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
@@ -8,9 +9,6 @@ namespace FormationSorter
     {
         [HarmonyPatch("UpdateTroops")]
         [HarmonyPostfix]
-        public static void Update()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void Update() => Selection.UpdateAllFormationOrderTroopItemVMs();
     }
 }

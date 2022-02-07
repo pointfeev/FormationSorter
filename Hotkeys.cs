@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using TaleWorlds.InputSystem;
 
 namespace FormationSorter
@@ -52,19 +53,13 @@ namespace FormationSorter
 
         private static Dictionary<InputKey, bool> pressedLastTick;
 
-        private static InputKey GetCurrentInteractKey()
-        {
-            return Mission.GetCurrentGameKeys()?[13]?.KeyboardKey?.InputKey ?? InputKey.F;
-        }
+        private static InputKey GetCurrentInteractKey() => Mission.GetCurrentGameKeys()?[13]?.KeyboardKey?.InputKey ?? InputKey.F;
 
-        public static bool IsKeyBound(this InputKey inputKey)
-        {
-            return IsDefined(inputKey) && Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
+        public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
                 Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey ||
                 Settings.SelectAllKey == inputKey || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey ||
                 Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey || Settings.SelectAllBasicMeleeKey == inputKey ||
                 Settings.SelectAllBasicRangedKey == inputKey || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey;
-        }
 
         public static bool IsDefined(this InputKey inputKey)
         {
@@ -80,9 +75,6 @@ namespace FormationSorter
 
         private static readonly Dictionary<InputKey, bool> isKeyDefined = new Dictionary<InputKey, bool>();
 
-        public static bool IsDefinedAndDown(this InputKey inputKey)
-        {
-            return inputKey.IsDefined() && inputKey.IsDown();
-        }
+        public static bool IsDefinedAndDown(this InputKey inputKey) => inputKey.IsDefined() && inputKey.IsDown();
     }
 }

@@ -1,7 +1,9 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using HarmonyLib;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
@@ -18,15 +20,9 @@ namespace FormationSorter
 
         private static TaleWorlds.MountAndBlade.Mission lastCheckedMission;
 
-        public static void SetIgnoredMessagesDirty()
-        {
-            lastCheckedMission = null;
-        }
+        public static void SetIgnoredMessagesDirty() => lastCheckedMission = null;
 
-        private static InputKey Get(this List<GameKey> gameKeys, int i)
-        {
-            return (gameKeys?.ElementAtOrDefault(i)?.KeyboardKey?.InputKey).GetValueOrDefault(0);
-        }
+        private static InputKey Get(this List<GameKey> gameKeys, int i) => (gameKeys?.ElementAtOrDefault(i)?.KeyboardKey?.InputKey).GetValueOrDefault(0);
 
         public static List<string> IgnoredMessages
         {

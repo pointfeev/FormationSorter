@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
-using System.Reflection;
+﻿using System.Reflection;
+
+using HarmonyLib;
+
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 

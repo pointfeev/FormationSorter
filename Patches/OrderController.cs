@@ -1,8 +1,10 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+
+using HarmonyLib;
+
 using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter
@@ -70,9 +72,6 @@ namespace FormationSorter
 
         [HarmonyPatch("OnSelectedFormationsCollectionChanged")]
         [HarmonyPostfix]
-        public static void OnSelectedFormationsCollectionChanged()
-        {
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
+        public static void OnSelectedFormationsCollectionChanged() => Selection.UpdateAllFormationOrderTroopItemVMs();
     }
 }
