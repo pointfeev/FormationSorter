@@ -9,11 +9,7 @@ namespace FormationSorter
     {
         public static void OnApplicationTick(float dt)
         {
-            if (!Mission.IsCurrentValid())
-            {
-                return;
-            }
-
+            if (!Mission.IsCurrentValid()) return;
             ProcessKey(Settings.OrderKey, () => Order.OnOrderHotkeyPressed());
             ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
             ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
@@ -29,26 +25,17 @@ namespace FormationSorter
         private static void ProcessKey(InputKey inputKey, Action action)
         {
             if (pressedLastTick is null)
-            {
                 pressedLastTick = new Dictionary<InputKey, bool>();
-            }
             if (inputKey.IsDefinedAndDown())
-            {
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
                     pressedLastTick[inputKey] = true;
                     if (Mission.CanPlayerInteract() && inputKey == GetCurrentInteractKey())
-                    {
                         return;
-                    }
-
                     action();
                 }
-            }
-            else
-            {
-                pressedLastTick[inputKey] = false;
-            }
+                else
+                    pressedLastTick[inputKey] = false;
         }
 
         private static Dictionary<InputKey, bool> pressedLastTick;
@@ -64,10 +51,7 @@ namespace FormationSorter
         public static bool IsDefined(this InputKey inputKey)
         {
             if (isKeyDefined.TryGetValue(inputKey, out bool defined))
-            {
                 return defined;
-            }
-
             defined = Enum.IsDefined(typeof(InputKey), inputKey);
             isKeyDefined.Add(inputKey, defined);
             return defined;
