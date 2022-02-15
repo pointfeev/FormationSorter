@@ -13,9 +13,7 @@ namespace FormationSorter
 {
     public static class Order
     {
-#pragma warning disable IDE0060 // Remove unused parameter
         public static void OnApplicationTick(float dt)
-#pragma warning restore IDE0060 // Remove unused parameter
         {
             if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable()) return;
             if (Mission.OrderSetVM is null)
