@@ -163,10 +163,12 @@ namespace FormationSorter
 
         private static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields, bool useSkirmishers)
         {
+            agent.UpdateCachedAndFormationValues(false, false);
             Agent mount = agent.MountAgent;
-            return !(mount is null) && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount) ? (AgentHasProperRangedWeaponWithAmmo(agent) ? FormationClass.HorseArcher : FormationClass.Cavalry)
-                : AgentHasProperRangedWeaponWithAmmo(agent) ? FormationClass.Ranged
-                : useSkirmishers && agent.GetHasRangedWeapon(true) || useShields && !agent.HasShieldCached ? FormationClass.Skirmisher
+            return (!(mount is null) && mount.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount))
+                ? (agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry)
+                : agent.IsRangedCached ? FormationClass.Ranged
+                : (useSkirmishers && agent.HasThrownCached || useShields && !agent.HasShieldCached) ? FormationClass.Skirmisher
                 : FormationClass.Infantry;
         }
 
@@ -184,15 +186,6 @@ namespace FormationSorter
                     break;
             }
             return formationOfCorrectInitialClass ?? formationOfCorrectPrimaryClass;
-        }
-
-        private static bool AgentHasProperRangedWeaponWithAmmo(Agent agent)
-        {
-            MissionEquipment equipment = agent.Equipment;
-            if (equipment is null) return false;
-            bool hasBowWithArrows = equipment.HasRangedWeapon(WeaponClass.Arrow) && equipment.GetAmmoAmount(WeaponClass.Arrow) > 0;
-            bool hasCrossbowWithBolts = equipment.HasRangedWeapon(WeaponClass.Bolt) && equipment.GetAmmoAmount(WeaponClass.Bolt) > 0;
-            return hasBowWithArrows || hasCrossbowWithBolts;
         }
 
         private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
