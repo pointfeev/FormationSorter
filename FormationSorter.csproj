@@ -69,7 +69,6 @@
     <Compile Include="Mission.cs" />
     <Compile Include="Patches\InformationManager.cs" />
     <Compile Include="Patches\MissionOrderTroopControllerVM.cs" />
-    <Compile Include="Patches\Formation.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Hotkeys.cs" />
     <Compile Include="Patches\MissionFormationMarkerVM.cs" />

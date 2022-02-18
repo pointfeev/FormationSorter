@@ -164,6 +164,8 @@ namespace FormationSorter
         private static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields, bool useSkirmishers)
         {
             agent.UpdateCachedAndFormationValues(false, false);
+            agent.UpdateAgentProperties();
+            agent.UpdateWeapons();
             Agent mount = agent.MountAgent;
             return (!(mount is null) && mount.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount))
                 ? (agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry)
@@ -174,18 +176,21 @@ namespace FormationSorter
 
         private static Formation GetBestFormationForFormationClass(List<Formation> formations, FormationClass formationClass)
         {
+            Formation formationOfCorrectIndex = null;
             Formation formationOfCorrectInitialClass = null;
             Formation formationOfCorrectPrimaryClass = null;
             foreach (Formation formation in formations)
             {
+                if (formation.FormationIndex == formationClass)
+                    formationOfCorrectIndex = formation;
                 if (formation.InitialClass == formationClass)
                     formationOfCorrectInitialClass = formation;
                 if (formation.PrimaryClass == formationClass)
                     formationOfCorrectPrimaryClass = formation;
-                if (!(formationOfCorrectInitialClass is null) && !(formationOfCorrectPrimaryClass is null))
+                if (!(formationOfCorrectIndex is null) && !(formationOfCorrectInitialClass is null) && !(formationOfCorrectPrimaryClass is null))
                     break;
             }
-            return formationOfCorrectInitialClass ?? formationOfCorrectPrimaryClass;
+            return formationOfCorrectIndex ?? formationOfCorrectInitialClass ?? formationOfCorrectPrimaryClass;
         }
 
         private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
