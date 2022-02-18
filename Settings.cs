@@ -52,12 +52,7 @@ namespace FormationSorter
         {
             InputKey selectedKey = defaultKey;
             try { selectedKey = setting.SelectedValue; } catch { }
-            if (!selectedKey.IsDefined())
-            {
-                return defaultKey;
-            }
-
-            return selectedKey;
+            return !selectedKey.IsDefined() ? defaultKey : selectedKey;
         }
 
         #endregion Get & Set
@@ -77,6 +72,22 @@ namespace FormationSorter
         public static InputKey OrderKey => GetValue(Instance?.OrderKeySetting, InputKey.X);
 
         #endregion Order Key
+
+        #region Shield Sorting Modifier Key
+
+        [SettingPropertyDropdown("Shield Sorting Modifier Key", Order = 2, RequireRestart = false, HintText = "When combined with the Order Key shielded infantry and skirmishers get put into the Infantry formation while unshielded infantry and skirmishers get put into the Skirmisher formation.")]
+        [SettingPropertyGroup("General", GroupOrder = 1)]
+        private DropdownDefault<InputKey> ShieldSortingModifierKeySetting
+        {
+            get => GetModifierSetting(ref shieldSortingModifierKeySetting, InputKey.LeftShift);
+            set => SetSetting(ref shieldSortingModifierKeySetting, value);
+        }
+
+        private DropdownDefault<InputKey> shieldSortingModifierKeySetting = null;
+
+        public static InputKey ShieldSortingModifierKey => GetValue(Instance?.ShieldSortingModifierKeySetting, InputKey.LeftShift);
+
+        #endregion Shield Sorting Modifier Key
 
         #region Skirmisher Sorting Modifier Key
 

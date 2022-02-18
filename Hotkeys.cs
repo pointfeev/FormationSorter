@@ -43,11 +43,14 @@ namespace FormationSorter
 
         private static InputKey GetCurrentInteractKey() => Mission.GetCurrentGameKeys()?[13]?.KeyboardKey?.InputKey ?? InputKey.F;
 
-        public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && Settings.OrderKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey ||
-                Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey ||
-                Settings.SelectAllKey == inputKey || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey ||
-                Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey || Settings.SelectAllBasicMeleeKey == inputKey ||
-                Settings.SelectAllBasicRangedKey == inputKey || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey;
+        public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && (Settings.OrderKey == inputKey
+            || Settings.ShieldSortingModifierKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey
+            || Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey
+            || Settings.SelectAllKey == inputKey
+            || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey
+            || Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey
+            || Settings.SelectAllBasicMeleeKey == inputKey || Settings.SelectAllBasicRangedKey == inputKey
+            || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey);
 
         public static bool IsDefined(this InputKey inputKey)
         {

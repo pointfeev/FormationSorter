@@ -86,13 +86,14 @@ namespace FormationSorter
                 return -2;
             int numAgentsSorted = 0;
             List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
+            bool useShields = Settings.ShieldSortingModifierKey.IsDefinedAndDown();
             bool useSkirmishers = Settings.SkirmisherSortingModifierKey.IsDefinedAndDown();
             if (Settings.EqualSortingModifierKey.IsDefinedAndDown())
             {
                 Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                 foreach (Agent agent in agents)
                 {
-                    FormationClass formationClass = GetBestFormationClassForAgent(agent, useSkirmishers);
+                    FormationClass formationClass = GetBestFormationClassForAgent(agent, useShields, useSkirmishers);
                     if (agentsInFormationClasses.TryGetValue(formationClass, out List<Agent> agentsInFormationClass))
                         agentsInFormationClass.Add(agent);
                     else
@@ -127,7 +128,7 @@ namespace FormationSorter
             {
                 foreach (Agent agent in agents)
                 {
-                    FormationClass formationClass = GetBestFormationClassForAgent(agent, useSkirmishers);
+                    FormationClass formationClass = GetBestFormationClassForAgent(agent, useShields, useSkirmishers);
                     if (TrySetAgentFormation(agent, GetBestFormationForFormationClass(formations, formationClass)))
                         numAgentsSorted++;
                 }
@@ -160,13 +161,13 @@ namespace FormationSorter
             return agents;
         }
 
-        private static FormationClass GetBestFormationClassForAgent(Agent agent, bool useSkirmishers)
+        private static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields, bool useSkirmishers)
         {
             Agent mount = agent.MountAgent;
-            return !(mount is null) && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount)
-                ? AgentHasProperRangedWeaponWithAmmo(agent) ? FormationClass.HorseArcher : FormationClass.Cavalry
+            return !(mount is null) && mount.Health > 0 && mount.IsActive() && agent.CanReachAgent(mount) ? (AgentHasProperRangedWeaponWithAmmo(agent) ? FormationClass.HorseArcher : FormationClass.Cavalry)
                 : AgentHasProperRangedWeaponWithAmmo(agent) ? FormationClass.Ranged
-                    : useSkirmishers && agent.GetHasRangedWeapon(true) ? FormationClass.Skirmisher : FormationClass.Infantry;
+                : useSkirmishers && agent.GetHasRangedWeapon(true) || useShields && !agent.HasShieldCached ? FormationClass.Skirmisher
+                : FormationClass.Infantry;
         }
 
         private static Formation GetBestFormationForFormationClass(List<Formation> formations, FormationClass formationClass)
