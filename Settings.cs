@@ -73,9 +73,25 @@ namespace FormationSorter
 
         #endregion Order Key
 
+        #region Tier Sort Key
+
+        [SettingPropertyDropdown("Tier Sort Key", Order = 2, RequireRestart = false, HintText = "Tier sorting key; all infantry and cavalry troops will be sorted by their tiers. Tier 0-2 Infantry will be put into the Skirmisher formation, Tier 3-4 Infantry will be put into the Infantry formation, Tier 5-7 Infantry will be put into the Heavy Infantry formation. Tier 0-2 Cavalry will be put into the Cavalry formation, Tier 3-4 Cavalry will be put into the Light Cavalry formation, Tier 5-7 Cavalry will be put into the Heavy Cavalry formation. All archers and horse archers with ammunition/mounts will be put into the Ranged and Horse Archer formations respectively, otherwise they'll be counted as normal Infantry/Cavalry to be sorted via the tiers listed previously.")]
+        [SettingPropertyGroup("General", GroupOrder = 1)]
+        private DropdownDefault<InputKey> TierSortKeySetting
+        {
+            get => GetNormalSetting(ref tierSortKeySetting, InputKey.L);
+            set => SetSetting(ref tierSortKeySetting, value);
+        }
+
+        private DropdownDefault<InputKey> tierSortKeySetting = null;
+
+        public static InputKey TierSortKey => GetValue(Instance?.TierSortKeySetting, InputKey.L);
+
+        #endregion Tier Sort Key
+
         #region Shield Sorting Modifier Key
 
-        [SettingPropertyDropdown("Shield Sorting Modifier Key", Order = 2, RequireRestart = false, HintText = "When combined with the Order Key shielded infantry and skirmishers get put into the Infantry formation while unshielded infantry and skirmishers get put into the Skirmisher formation.")]
+        [SettingPropertyDropdown("Shield Sorting Modifier Key", Order = 3, RequireRestart = false, HintText = "When combined with the Order Key shielded infantry and skirmishers get put into the Infantry formation while unshielded infantry and skirmishers get put into the Skirmisher formation.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
         private DropdownDefault<InputKey> ShieldSortingModifierKeySetting
         {
@@ -91,7 +107,7 @@ namespace FormationSorter
 
         #region Skirmisher Sorting Modifier Key
 
-        [SettingPropertyDropdown("Skirmisher Sorting Modifier Key", Order = 2, RequireRestart = false, HintText = "When combined with the Order Key javelineers, rock throwers, etc. get put into the Skirmisher formation instead of Infantry.")]
+        [SettingPropertyDropdown("Skirmisher Sorting Modifier Key", Order = 4, RequireRestart = false, HintText = "When combined with the Order Key javelineers, rock throwers, etc. get put into the Skirmisher formation instead of Infantry.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
         private DropdownDefault<InputKey> SkirmisherSortingModifierKeySetting
         {
@@ -107,7 +123,7 @@ namespace FormationSorter
 
         #region Equal Sorting Modifier Key
 
-        [SettingPropertyDropdown("Equal Sorting Modifier Key", Order = 3, RequireRestart = false, HintText = "When combined with the Order Key troops will be sorted equally amongst the selected formations instead of being put in only their single best formation.")]
+        [SettingPropertyDropdown("Equal Sorting Modifier Key", Order = 5, RequireRestart = false, HintText = "When combined with the Order Key troops will be sorted equally amongst the selected formations instead of being put in only their single best formation.")]
         [SettingPropertyGroup("General", GroupOrder = 1)]
         private DropdownDefault<InputKey> EqualSortingModifierKeySetting
         {
@@ -123,7 +139,7 @@ namespace FormationSorter
 
         #region Inverse Selection Modifier Key
 
-        [SettingPropertyDropdown("Inverse Selection Modifier Key", Order = 4, RequireRestart = false, HintText = "When combined with any of the selection keys below, the formations it encompasses will be inverted from their current state, potentially being added or removed from the current selection.")]
+        [SettingPropertyDropdown("Inverse Selection Modifier Key", Order = 6, RequireRestart = false, HintText = "When combined with any of the selection keys below, the formations it encompasses will be inverted from their current state, potentially being added or removed from the current selection.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> InverseSelectionModifierKeySetting
         {
@@ -139,7 +155,7 @@ namespace FormationSorter
 
         #region Select All Formations Key
 
-        [SettingPropertyDropdown("Select All Formations Key", Order = 5, RequireRestart = false, HintText = "This key will select all formations.")]
+        [SettingPropertyDropdown("Select All Formations Key", Order = 7, RequireRestart = false, HintText = "This key will select all formations.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllKeySetting
         {
@@ -155,7 +171,7 @@ namespace FormationSorter
 
         #region Select All Melee Cavalry Formations Key
 
-        [SettingPropertyDropdown("Select All Melee Cavalry Formations Key", Order = 6, RequireRestart = false, HintText = "This key will select all melee cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry.")]
+        [SettingPropertyDropdown("Select All Melee Cavalry Formations Key", Order = 8, RequireRestart = false, HintText = "This key will select all melee cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllMeleeCavalryKeySetting
         {
@@ -171,7 +187,7 @@ namespace FormationSorter
 
         #region Select All Ranged Cavalry Formations Key
 
-        [SettingPropertyDropdown("Select All Ranged Cavalry Formations Key", Order = 7, RequireRestart = false, HintText = "This key will select all ranged cavalry formations: Horse Archers.")]
+        [SettingPropertyDropdown("Select All Ranged Cavalry Formations Key", Order = 9, RequireRestart = false, HintText = "This key will select all ranged cavalry formations: Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllHorseArchersKeySetting
         {
@@ -187,7 +203,7 @@ namespace FormationSorter
 
         #region Select All Ground Melee Formations Key
 
-        [SettingPropertyDropdown("Select All Ground Melee Formations Key", Order = 8, RequireRestart = false, HintText = "This key will select all ground melee formations: Infantry, Heavy Infantry.")]
+        [SettingPropertyDropdown("Select All Ground Melee Formations Key", Order = 10, RequireRestart = false, HintText = "This key will select all ground melee formations: Infantry, Heavy Infantry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllInfantryKeySetting
         {
@@ -202,7 +218,7 @@ namespace FormationSorter
 
         #region Select All Ground Ranged Formations Key
 
-        [SettingPropertyDropdown("Select All Ground Ranged Formations Key", Order = 9, RequireRestart = false, HintText = "This key will select all ground ranged formations: Archers, Skirmishers.")]
+        [SettingPropertyDropdown("Select All Ground Ranged Formations Key", Order = 11, RequireRestart = false, HintText = "This key will select all ground ranged formations: Archers, Skirmishers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllArchersAndSkirmishersKeySetting
         {
@@ -218,7 +234,7 @@ namespace FormationSorter
 
         #region Select All Basic Melee Formations Key
 
-        [SettingPropertyDropdown("Select All Basic Melee Formations Key", Order = 10, RequireRestart = false, HintText = "This key will select all basic melee formations: Infantry, Cavalry.")]
+        [SettingPropertyDropdown("Select All Basic Melee Formations Key", Order = 12, RequireRestart = false, HintText = "This key will select all basic melee formations: Infantry, Cavalry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllNormalMeleeKeySetting
         {
@@ -234,7 +250,7 @@ namespace FormationSorter
 
         #region Select All Basic Ranged Formations Key
 
-        [SettingPropertyDropdown("Select All Ranged Formations Key", Order = 11, RequireRestart = false, HintText = "This key will select all basic ranged formations: Archers, Horse Archers.")]
+        [SettingPropertyDropdown("Select All Ranged Formations Key", Order = 13, RequireRestart = false, HintText = "This key will select all basic ranged formations: Archers, Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllRangedKeySetting
         {
@@ -250,7 +266,7 @@ namespace FormationSorter
 
         #region Select All Ground Formations Key
 
-        [SettingPropertyDropdown("Select All Ground Formations Key", Order = 12, RequireRestart = false, HintText = "This key will select all ground formations: Infantry, Heavy Infantry, Archers, Skirmishers.")]
+        [SettingPropertyDropdown("Select All Ground Formations Key", Order = 14, RequireRestart = false, HintText = "This key will select all ground formations: Infantry, Heavy Infantry, Archers, Skirmishers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllGroundedKeySetting
         {
@@ -266,7 +282,7 @@ namespace FormationSorter
 
         #region Select All Cavalry Formations Key
 
-        [SettingPropertyDropdown("Select All Cavalry Formations Key", Order = 13, RequireRestart = false, HintText = "This key will select all cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry, Horse Archers.")]
+        [SettingPropertyDropdown("Select All Cavalry Formations Key", Order = 15, RequireRestart = false, HintText = "This key will select all cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry, Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private DropdownDefault<InputKey> SelectAllMountedKeySetting
         {
@@ -282,32 +298,32 @@ namespace FormationSorter
 
         #region Selection Spacers
 
-        [SettingPropertyBool("S1", Order = 14, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S1", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S1
         { get => false; set { } }
 
-        [SettingPropertyBool("S2", Order = 15, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S2", Order = 17, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S2
         { get => false; set { } }
 
-        [SettingPropertyBool("S3", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S3", Order = 18, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S3
         { get => false; set { } }
 
-        [SettingPropertyBool("S4", Order = 17, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S4", Order = 19, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S4
         { get => false; set { } }
 
-        [SettingPropertyBool("S5", Order = 18, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S5", Order = 20, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S5
         { get => false; set { } }
 
-        [SettingPropertyBool("S6", Order = 19, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S6", Order = 21, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S6
         { get => false; set { } }

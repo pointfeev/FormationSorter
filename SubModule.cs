@@ -35,7 +35,7 @@ namespace FormationSorter
             base.OnApplicationTick(dt);
             try
             {
-                Hotkeys.OnApplicationTick(dt);
+                Hotkeys.OnApplicationTick();
             }
             catch (Exception e)
             {
@@ -43,7 +43,7 @@ namespace FormationSorter
             }
             try
             {
-                Order.OnApplicationTick(dt);
+                Order.OnApplicationTick();
             }
             catch (Exception e)
             {

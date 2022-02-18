@@ -111,7 +111,7 @@ namespace FormationSorter
 
         private static List<Formation> previousSelections = new List<Formation>();
 
-        private static bool IsFormationOneOfFormationClasses(Formation formation, List<FormationClass> formationClasses) => formation.CountOfUnits > 0 ? formationClasses.Contains(formation.PrimaryClass) : formationClasses.Contains(formation.InitialClass);
+        private static bool IsFormationOneOfFormationClasses(Formation formation, List<FormationClass> formationClasses) => formationClasses.Contains(formation.FormationIndex);
 
         private static void SetFormationSelections(List<Formation> selections = null)
         {

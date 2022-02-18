@@ -7,10 +7,11 @@ namespace FormationSorter
 {
     public static class Hotkeys
     {
-        public static void OnApplicationTick(float dt)
+        public static void OnApplicationTick()
         {
             if (!Mission.IsCurrentValid()) return;
-            ProcessKey(Settings.OrderKey, () => Order.OnOrderHotkeyPressed());
+            ProcessKey(Settings.OrderKey, () => Order.OnOrder());
+            ProcessKey(Settings.TierSortKey, () => Order.OnOrder(tierSort: true));
             ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
             ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
             ProcessKey(Settings.SelectAllRangedCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.RangedCavalryFormationClasses, "ranged cavalry"));
