@@ -27,6 +27,7 @@ namespace FormationSorter
             if (pressedLastTick is null)
                 pressedLastTick = new Dictionary<InputKey, bool>();
             if (inputKey.IsDefinedAndDown())
+            {
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
                     pressedLastTick[inputKey] = true;
@@ -34,8 +35,8 @@ namespace FormationSorter
                         return;
                     action();
                 }
-                else
-                    pressedLastTick[inputKey] = false;
+            }
+            else pressedLastTick[inputKey] = false;
         }
 
         private static Dictionary<InputKey, bool> pressedLastTick;
