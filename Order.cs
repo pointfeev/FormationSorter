@@ -101,23 +101,9 @@ namespace FormationSorter
                     FormationClass bestFormationClass = GetBestFormationClassForAgent(agent);
                     int tier = agent.GetTier();
                     if (bestFormationClass == FormationClass.Cavalry)
-                    {
-                        if (tier <= 2) // 0-2
-                            bestFormationClass = FormationClass.Cavalry;
-                        else if (tier <= 4) // 3-4
-                            bestFormationClass = FormationClass.LightCavalry;
-                        else // 5-7
-                            bestFormationClass = FormationClass.HeavyCavalry;
-                    }
+                        bestFormationClass = tier <= 2 ? FormationClass.Cavalry : tier <= 4 ? FormationClass.LightCavalry : FormationClass.HeavyCavalry;
                     else if (bestFormationClass == FormationClass.Infantry)
-                    {
-                        if (tier <= 2) // 0-2
-                            bestFormationClass = FormationClass.Skirmisher;
-                        else if (tier <= 4) // 3-4
-                            bestFormationClass = FormationClass.Infantry;
-                        else // 5-7
-                            bestFormationClass = FormationClass.HeavyInfantry;
-                    }
+                        bestFormationClass = tier <= 2 ? FormationClass.Skirmisher : tier <= 4 ? FormationClass.Infantry : FormationClass.HeavyInfantry;
                     if (TrySetAgentFormation(agent, GetBestFormationForFormationClass(formations, bestFormationClass)))
                         numAgentsSorted++;
                 }
