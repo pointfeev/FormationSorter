@@ -298,6 +298,7 @@ namespace FormationSorter
 
         #region Selection Spacers
 
+#pragma warning disable IDE0051 // Remove unused private members
         [SettingPropertyBool("S1", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S1
@@ -327,6 +328,7 @@ namespace FormationSorter
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S6
         { get => false; set { } }
+#pragma warning restore IDE0051 // Remove unused private members
 
         #endregion Selection Spacers
 

@@ -47,7 +47,7 @@ namespace FormationSorter
         public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && (Settings.OrderKey == inputKey
             || Settings.ShieldSortingModifierKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey
             || Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey
-            || Settings.SelectAllKey == inputKey
+            || Settings.TierSortKey == inputKey || Settings.SelectAllKey == inputKey
             || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey
             || Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey
             || Settings.SelectAllBasicMeleeKey == inputKey || Settings.SelectAllBasicRangedKey == inputKey
