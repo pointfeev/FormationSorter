@@ -16,9 +16,7 @@ namespace FormationSorter
             try
             {
                 if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable() && __instance.IsSelectable && __instance.CurrentMemberCount <= 0)
-                {
                     __instance.SetState(__instance.IsSelected ? "Selected" : "Disabled");
-                }
             }
             catch (Exception e)
             {

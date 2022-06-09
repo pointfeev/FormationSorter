@@ -46,7 +46,6 @@
     <Compile Include="Patches\OrderController.cs" />
     <Compile Include="Patches\OrderTroopItemWidget.cs" />
     <Compile Include="Patches\MissionOrderVM.cs" />
-    <Compile Include="Patches\CharacterObject.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

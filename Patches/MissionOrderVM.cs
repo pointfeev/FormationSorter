@@ -16,7 +16,7 @@ namespace FormationSorter
         [HarmonyPatch(new Type[] {
             typeof(Camera), typeof(List<DeploymentPoint>), typeof(Action<bool>), typeof(bool), typeof(GetOrderFlagPositionDelegate),
             typeof(OnRefreshVisualsDelegate), typeof(ToggleOrderPositionVisibilityDelegate), typeof(OnToggleActivateOrderStateDelegate),
-            typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate), typeof(bool)
+            typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate), typeof(OnBeforeOrderDelegate), typeof(bool)
         })]
         [HarmonyPostfix]
         public static void MissionOrderVM(MissionOrderVM __instance)
@@ -24,16 +24,8 @@ namespace FormationSorter
             try
             {
                 Mission.MissionOrderVM = __instance;
-                if (!Mission.IsCurrentValid())
-                {
+                if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable())
                     return;
-                }
-
-                if (!Mission.IsCurrentOrderable())
-                {
-                    return;
-                }
-
                 Selection.UpdateAllFormationOrderTroopItemVMs();
             }
             catch (Exception e)
