@@ -69,7 +69,7 @@ namespace FormationSorter
                 InformationManager.DisplayMessage(new InformationMessage($"No troops need tier sorting", Colors.White, "FormationSorter"));
             else
                 InformationManager.DisplayMessage(new InformationMessage($"No troops need sorting between the selected formations", Colors.White, "FormationSorter"));
-            Mission.MissionOrderVM.TryCloseToggleOrder();
+            _ = Mission.MissionOrderVM.TryCloseToggleOrder();
         }
 
         private static List<Formation> GetAllRegularFormations()
@@ -82,7 +82,7 @@ namespace FormationSorter
         {
             List<Formation> formations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
             if (formations is null) return null;
-            formations.RemoveAll(f => f.FormationIndex > FormationClass.NumberOfRegularFormations);
+            _ = formations.RemoveAll(f => f.FormationIndex > FormationClass.NumberOfRegularFormations);
             return !formations.Any() ? null : formations;
         }
 

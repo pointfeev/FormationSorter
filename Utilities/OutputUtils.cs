@@ -41,7 +41,7 @@ namespace FormationSorter
             if (!outputs.Contains(output))
             {
                 outputs.Add(output);
-                MessageBox.Show(output, caption: "Formation Sorter encountered an exception", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
+                _ = MessageBox.Show(output, caption: "Formation Sorter encountered an exception", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
             }
         }
     }

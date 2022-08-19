@@ -5,7 +5,7 @@ using HarmonyLib;
 
 using TaleWorlds.Engine;
 using TaleWorlds.MountAndBlade;
-using TaleWorlds.MountAndBlade.ViewModelCollection;
+using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
 {

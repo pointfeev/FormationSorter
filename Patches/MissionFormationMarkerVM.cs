@@ -4,7 +4,7 @@ using System.Linq;
 using HarmonyLib;
 
 using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade.ViewModelCollection.HUD;
+using TaleWorlds.MountAndBlade.ViewModelCollection.HUD.FormationMarker;
 
 namespace FormationSorter
 {

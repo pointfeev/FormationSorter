@@ -59,7 +59,7 @@ namespace FormationSorter
                 if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable())
                     return;
                 foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
-                    GetOrderTroopItemVM(formation);
+                    _ = GetOrderTroopItemVM(formation);
                 SortOrderTroopItemVMs();
             }
             catch (Exception e)
@@ -116,7 +116,7 @@ namespace FormationSorter
         private static void SetFormationSelections(List<Formation> selections = null)
         {
             Mission.MissionOrderVM.OrderController.ClearSelectedFormations();
-            Mission.MissionOrderVM.TryCloseToggleOrder();
+            _ = Mission.MissionOrderVM.TryCloseToggleOrder();
             if (selections is null || !selections.Any(f => f.CountOfUnits > 0))
                 return;
 
@@ -126,14 +126,14 @@ namespace FormationSorter
             if (!(orderTroopItemVM is null))
             {
                 Mission.MissionOrderVM.OnSelect((int)selections.First().FormationIndex);
-                typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
+                _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
             }
             for (int i = 1; i <= selections.Count - 1; i++)
             {
                 Formation formation = selections[i];
                 orderTroopItemVM = GetOrderTroopItemVM(formation);
                 if (!(orderTroopItemVM is null))
-                    typeof(MissionOrderTroopControllerVM).GetCachedMethod("AddSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
+                    _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("AddSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
             }
             SortOrderTroopItemVMs();
         }
@@ -157,15 +157,15 @@ namespace FormationSorter
             {
                 if (selectable)
                 {
-                    typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetTroopActiveOrders")
+                    _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetTroopActiveOrders")
                         .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
                     orderTroopItemVM.IsSelectable = selectable;
                     orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && Mission.MissionOrderVM.OrderController.IsFormationListening(formation);
-                    orderTroopItemVM.SetFormationClassFromFormation(formation);
+                    _ = orderTroopItemVM.SetFormationClassFromFormation(formation);
                 }
                 else
                 {
-                    troopController.TroopList.Remove(orderTroopItemVM);
+                    _ = troopController.TroopList.Remove(orderTroopItemVM);
                     SortOrderTroopItemVMs();
                 }
             }

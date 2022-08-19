@@ -2,16 +2,16 @@
 
 using HarmonyLib;
 
-using TaleWorlds.MountAndBlade.GauntletUI.Widgets;
+using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Order;
 
 namespace FormationSorter
 {
-    [HarmonyPatch(typeof(OrderTroopItemWidget))]
+    [HarmonyPatch(typeof(OrderTroopItemBrushWidget))]
     public static class PatchOrderTroopItemWidget
     {
         [HarmonyPatch("UpdateBackgroundState")]
         [HarmonyPostfix]
-        public static void UpdateBackgroundState(OrderTroopItemWidget __instance)
+        public static void UpdateBackgroundState(OrderTroopItemBrushWidget __instance)
         {
             try
             {

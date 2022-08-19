@@ -3,8 +3,7 @@
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.MountAndBlade;
-using TaleWorlds.MountAndBlade.View.Missions;
-using TaleWorlds.MountAndBlade.ViewModelCollection;
+using TaleWorlds.MountAndBlade.View.MissionViews;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
