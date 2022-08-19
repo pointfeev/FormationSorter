@@ -12,6 +12,8 @@ namespace FormationSorter
 
         public static void DoOutputForException(Exception e)
         {
+            while (e.InnerException != null)
+                e = e.InnerException;
             string[] stackTrace = e.StackTrace?.Split('\n');
             string location = "STACK TRACE\n";
             if (stackTrace is null || stackTrace.Length == 0)

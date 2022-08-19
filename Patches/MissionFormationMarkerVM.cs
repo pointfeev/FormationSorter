@@ -24,7 +24,7 @@ namespace FormationSorter
                         if (target.Formation.CountOfUnits <= 0)
                         {
                             target.ScreenPosition = new Vec2(-10000f, -10000f);
-                            __instance.Targets.Remove(target);
+                            _ = __instance.Targets.Remove(target);
                         }
                     }
                 }

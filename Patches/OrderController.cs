@@ -36,20 +36,21 @@ namespace FormationSorter
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> SetOrderWithFormationAndNumber(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+            List<CodeInstruction> codes = instructions.ToList();
             for (int i = 0; i < codes.Count; i++)
             {
                 CodeInstruction instruction = codes[i];
                 yield return instruction;
                 if (instruction.opcode == OpCodes.Callvirt && instruction.operand.ToString() == "Int32 get_CountOfUnits()")
                 {
-                    char[] digits = codes[i + 1].operand.ToString().Where(char.IsDigit).ToArray();
-                    digits = digits.Reverse().Take(digits.Length - 2).Reverse().ToArray();
-                    if (int.TryParse(new string(digits), out int varIndex))
+                    string operand = codes[i + 1].operand.ToString();
+                    int l = operand.LastIndexOf('('), r = operand.LastIndexOf(')');
+                    if (l >= 0 && r >= 0 && int.TryParse(operand.Substring(l + 1, r - l - 1), out int varIndex))
                     {
                         Label noUnitsInFormation = generator.DefineLabel();
                         Label storeValue = generator.DefineLabel();
                         i += 7;
+
                         yield return new CodeInstruction(OpCodes.Stloc_S, varIndex);
 
                         yield return new CodeInstruction(OpCodes.Ldloc_S, varIndex);
@@ -62,7 +63,8 @@ namespace FormationSorter
                         yield return new CodeInstruction(OpCodes.Div);
                         yield return new CodeInstruction(OpCodes.Br_S, storeValue);
 
-                        yield return new CodeInstruction(OpCodes.Ldc_I4_0).WithLabels(noUnitsInFormation);
+                        yield return new CodeInstruction(OpCodes.Pop).WithLabels(noUnitsInFormation);
+                        yield return new CodeInstruction(OpCodes.Ldc_I4_0);
 
                         yield return new CodeInstruction(OpCodes.Stloc_S, varIndex + 1).WithLabels(storeValue);
                     }
