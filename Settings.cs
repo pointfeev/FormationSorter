@@ -298,7 +298,6 @@ namespace FormationSorter
 
         #region Selection Spacers
 
-#pragma warning disable IDE0051 // Remove unused private members
         [SettingPropertyBool("S1", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S1
@@ -328,7 +327,6 @@ namespace FormationSorter
         [SettingPropertyGroup("Selection", GroupOrder = 2)]
         private bool S6
         { get => false; set { } }
-#pragma warning restore IDE0051 // Remove unused private members
 
         #endregion Selection Spacers
 
@@ -336,62 +334,54 @@ namespace FormationSorter
 
         private static DropdownDefault<InputKey> GetNormalKeysDropdown(InputKey defaultKey)
         {
-            (InputKey[], int) result = GetUsableNormalKeysAndDefaultIndex(defaultKey);
+            (IEnumerable<InputKey>, int) result = GetUsableNormalKeysAndDefaultIndex(defaultKey);
             return new DropdownDefault<InputKey>(result.Item1, result.Item2);
         }
 
         private static DropdownDefault<InputKey> GetModifierKeysDropdown(InputKey defaultKey)
         {
-            (InputKey[], int) result = GetUsableModifierKeysAndDefaultIndex(defaultKey);
+            (IEnumerable<InputKey>, int) result = GetUsableModifierKeysAndDefaultIndex(defaultKey);
             return new DropdownDefault<InputKey>(result.Item1, result.Item2);
         }
 
-        private static (InputKey[], int) GetUsableNormalKeysAndDefaultIndex(InputKey defaultKey) => GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetNormalKeyValues());
+        private static (IEnumerable<InputKey>, int) GetUsableNormalKeysAndDefaultIndex(InputKey defaultKey) => GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetNormalKeyValues());
 
-        private static (InputKey[], int) GetUsableModifierKeysAndDefaultIndex(InputKey defaultKey) => GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetModifierKeyValues());
+        private static (IEnumerable<InputKey>, int) GetUsableModifierKeysAndDefaultIndex(InputKey defaultKey) => GetUsableKeysAndDefaultIndexFromKeyValues(defaultKey, GetModifierKeyValues());
 
-        private static int[] GetNormalKeyValues()
+        private static IEnumerable<int> GetNormalKeyValues()
         {
             List<int> toUse = new List<int>();
             toUse.AddRange(GetRangeOfIntegers(16, 27)); // Q to ]
             toUse.AddRange(GetRangeOfIntegers(30, 40)); // A to '
             toUse.AddRange(GetRangeOfIntegers(44, 53)); // Z to /
-            return toUse.ToArray();
+            return toUse;
         }
 
-        private static int[] GetModifierKeyValues()
+        private static IEnumerable<int> GetModifierKeyValues() => new List<int>
         {
-            List<int> toUse = new List<int>
-            {
-                29, // left ctrl
-                42, // left shift
-                56, // left alt
-                157, // right ctrl
-                54, // right shift
-                184 // right alt
-            };
-            return toUse.ToArray();
-        }
+            29, // left ctrl
+            42, // left shift
+            56, // left alt
+            157, // right ctrl
+            54, // right shift
+            184 // right alt
+        };
 
-        private static int[] GetRangeOfIntegers(int from, int to) => Enumerable.Range(from, 1 + to - from).ToArray();
+        private static IEnumerable<int> GetRangeOfIntegers(int from, int to) => Enumerable.Range(from, 1 + to - from);
 
-        private static (InputKey[], int) GetUsableKeysAndDefaultIndexFromKeyValues(InputKey defaultKey, int[] keyValues)
+        private static (IEnumerable<InputKey>, int) GetUsableKeysAndDefaultIndexFromKeyValues(InputKey defaultKey, IEnumerable<int> keyValues)
         {
             int indexOfDefault = 0;
             List<InputKey> keys = new List<InputKey>();
             foreach (InputKey key in typeof(InputKey).GetEnumValues())
             {
                 if (key == defaultKey)
-                {
                     indexOfDefault = keys.Count;
-                }
                 if (keyValues.Contains((int)key))
-                {
                     keys.Add(key);
-                }
             }
             keys.Add(InputKey.Invalid); // effectively unbinds the key
-            return (keys.ToArray(), indexOfDefault);
+            return (keys, indexOfDefault);
         }
 
         #endregion Get Usable Keys
