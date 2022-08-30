@@ -2,11 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
@@ -23,8 +21,6 @@ namespace FormationSorter
 
         public static void SetIgnoredMessagesDirty() => lastCheckedMission = null;
 
-        private static InputKey Get(this List<GameKey> gameKeys, int i) => (gameKeys?.ElementAtOrDefault(i)?.KeyboardKey?.InputKey).GetValueOrDefault(0);
-
         public static List<string> IgnoredMessages
         {
             get
@@ -35,25 +31,25 @@ namespace FormationSorter
                 TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
                 if (lastCheckedMission == mission)
                     return ignoredMessages;
-
                 lastCheckedMission = mission;
-                List<GameKey> gameKeys = Mission.GetCurrentGameKeys();
+
                 ignoredMessages.Clear();
-                if (!mission.IsInventoryAccessAllowed && gameKeys.Get(38).IsKeyBound())
-                    ignoredMessages.Add(GameTexts.FindText((mission.Mode == MissionMode.Battle || mission.Mode == MissionMode.Duel) ? "str_cannot_reach_inventory_during_battle" : "str_cannot_reach_inventory")?.ToString() ?? "");
-                if (!mission.IsQuestScreenAccessAllowed && gameKeys.Get(42).IsKeyBound())
+                if (!mission.IsInventoryAccessAllowed && Hotkeys.IsGameKeyBound("InventoryWindow"))
+                    ignoredMessages.Add(GameTexts.FindText((mission.Mode == MissionMode.Battle || mission.Mode == MissionMode.Duel)
+                        ? "str_cannot_reach_inventory_during_battle" : "str_cannot_reach_inventory")?.ToString() ?? "");
+                if (!mission.IsQuestScreenAccessAllowed && Hotkeys.IsGameKeyBound("QuestsWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_quests", null)?.ToString() ?? "");
-                if (!mission.IsPartyWindowAccessAllowed && gameKeys.Get(43).IsKeyBound())
+                if (!mission.IsPartyWindowAccessAllowed && Hotkeys.IsGameKeyBound("PartyWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_party", null)?.ToString() ?? "");
-                if (!mission.IsEncyclopediaWindowAccessAllowed && gameKeys.Get(39).IsKeyBound())
+                if (!mission.IsEncyclopediaWindowAccessAllowed && Hotkeys.IsGameKeyBound("EncyclopediaWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_encyclopedia", null)?.ToString() ?? "");
-                if ((!mission.IsKingdomWindowAccessAllowed || (!Hero.MainHero?.MapFaction?.IsKingdomFaction).GetValueOrDefault(false)) && gameKeys.Get(40).IsKeyBound())
+                if ((!mission.IsKingdomWindowAccessAllowed || (!Hero.MainHero?.MapFaction?.IsKingdomFaction).GetValueOrDefault(false)) && Hotkeys.IsGameKeyBound("KingdomWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_kingdom", null)?.ToString() ?? "");
-                if (!mission.IsClanWindowAccessAllowed && gameKeys.Get(41).IsKeyBound())
+                if (!mission.IsClanWindowAccessAllowed && Hotkeys.IsGameKeyBound("ClanWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_clan", null)?.ToString() ?? "");
-                if (!mission.IsCharacterWindowAccessAllowed && gameKeys.Get(37).IsKeyBound())
+                if (!mission.IsCharacterWindowAccessAllowed && Hotkeys.IsGameKeyBound("CharacterWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_character", null)?.ToString() ?? "");
-                if ((!mission.IsBannerWindowAccessAllowed || (!Campaign.Current?.IsBannerEditorEnabled).GetValueOrDefault(false)) && gameKeys.Get(36).IsKeyBound())
+                if ((!mission.IsBannerWindowAccessAllowed || (!Campaign.Current?.IsBannerEditorEnabled).GetValueOrDefault(false)) && Hotkeys.IsGameKeyBound("BannerWindow"))
                     ignoredMessages.Add(GameTexts.FindText("str_cannot_open_banner", null)?.ToString() ?? "");
 
                 return ignoredMessages;

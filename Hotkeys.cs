@@ -32,7 +32,7 @@ namespace FormationSorter
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
                     pressedLastTick[inputKey] = true;
-                    if (Mission.CanPlayerInteract() && inputKey == GetCurrentInteractKey())
+                    if (Mission.CanPlayerInteract() && inputKey == GetActionKey())
                         return;
                     action();
                 }
@@ -42,7 +42,7 @@ namespace FormationSorter
 
         private static Dictionary<InputKey, bool> pressedLastTick;
 
-        private static InputKey GetCurrentInteractKey() => Mission.GetCurrentGameKeys()?[13]?.KeyboardKey?.InputKey ?? InputKey.F;
+        private static InputKey GetActionKey() => TryGetGameKeyFromStringId("Action", out GameKey gameKey) ? gameKey.KeyboardKey.InputKey : InputKey.F;
 
         public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && (Settings.OrderKey == inputKey
             || Settings.ShieldSortingModifierKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey
@@ -52,6 +52,22 @@ namespace FormationSorter
             || Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey
             || Settings.SelectAllBasicMeleeKey == inputKey || Settings.SelectAllBasicRangedKey == inputKey
             || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey);
+
+        public static bool IsGameKeyBound(string stringId) => !TryGetGameKeyFromStringId(stringId, out GameKey gameKey) || gameKey.KeyboardKey.InputKey.IsKeyBound();
+
+        public static bool TryGetGameKeyFromStringId(string stringId, out GameKey gameKey)
+        {
+            List<GameKey> gameKeys = Mission.GetCurrentGameKeys();
+            if (!(gameKeys is null))
+                foreach (GameKey _gameKey in gameKeys)
+                    if (_gameKey.StringId == stringId && !(_gameKey.KeyboardKey is null))
+                    {
+                        gameKey = _gameKey;
+                        return true;
+                    }
+            gameKey = null;
+            return false;
+        }
 
         public static bool IsDefined(this InputKey inputKey)
         {
