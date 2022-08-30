@@ -1,6 +1,6 @@
-﻿using System;
+﻿using HarmonyLib;
 
-using HarmonyLib;
+using System;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;

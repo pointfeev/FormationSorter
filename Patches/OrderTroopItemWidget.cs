@@ -1,6 +1,6 @@
-﻿using System;
+﻿using HarmonyLib;
 
-using HarmonyLib;
+using System;
 
 using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Order;
 

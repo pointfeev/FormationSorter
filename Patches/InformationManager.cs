@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HarmonyLib;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using HarmonyLib;
 
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
