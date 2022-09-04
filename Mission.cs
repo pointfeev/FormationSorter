@@ -63,8 +63,6 @@ namespace FormationSorter
 
         public static bool IsCurrentOrderable() => true;
 
-        public static List<GameKey> GetCurrentGameKeys() => !IsCurrentValid() ? null : (List<GameKey>)typeof(InputContext).GetCachedField("_registeredGameKeys").GetValue(Current.InputManager);
-
         public static TaleWorlds.MountAndBlade.Mission Current => TaleWorlds.MountAndBlade.Mission.Current;
 
         public static Agent PlayerAgent => Current?.MainAgent;
