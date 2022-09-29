@@ -31,7 +31,7 @@ namespace FormationSorter
                         int fsNum = line.LastIndexOf(@"FormationSorter\");
                         int lineNum = line.LastIndexOf(":line ");
                         if (!(line is null) && atNum != -1)
-                            _ = output.Append("\n    " + (inNum != -1 ? line.Substring(atNum, inNum - atNum + 1) : line.Substring(atNum))
+                            _ = output.Append("\n    " + (inNum != -1 ? line.Substring(atNum, inNum - atNum) : line.Substring(atNum))
                                 + (inNum != -1 ? ("\n        "
                                     + (fsNum != -1 ? ("in "
                                         + (lineNum != -1 ? line.Substring(fsNum, lineNum - fsNum)
