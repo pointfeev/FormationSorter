@@ -15,8 +15,8 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>D:\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\FormationSorter\bin\Win64_Shipping_Client\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Bannerlord.MCM">
-      <Version>4.7.7</Version>
+      <Version>4.7.9</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-
-using TaleWorlds.Core;
-using TaleWorlds.InputSystem;
+﻿using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.View.MissionViews;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
