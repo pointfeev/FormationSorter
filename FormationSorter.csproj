@@ -348,7 +348,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Bannerlord.MCM">
-      <Version>4.7.9</Version>
+      <Version>4.7.11</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
