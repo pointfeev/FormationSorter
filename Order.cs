@@ -26,7 +26,7 @@ namespace FormationSorter
             if (Mission.InputKeyItemVM is null)
                 Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor(new Type[0]).Invoke(new object[0]);
 
-            InputKey OrderKey = Settings.OrderKey;
+            InputKey OrderKey = Settings.Instance.OrderKey;
             string Key = OrderKey.ToString();
             Mission.InputKeyItemVM.KeyID = Key;
             Mission.InputKeyItemVM.KeyName = Key;
@@ -110,9 +110,9 @@ namespace FormationSorter
             }
             else
             {
-                bool useShields = Settings.ShieldSortingModifierKey.IsDefinedAndDown();
-                bool useSkirmishers = Settings.SkirmisherSortingModifierKey.IsDefinedAndDown();
-                if (Settings.EqualSortingModifierKey.IsDefinedAndDown())
+                bool useShields = Settings.Instance.ShieldSortKey.IsDefinedAndDown();
+                bool useSkirmishers = Settings.Instance.SkirmisherSortKey.IsDefinedAndDown();
+                if (Settings.Instance.EqualSortKey.IsDefinedAndDown())
                 {
                     Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                     foreach (Agent agent in agents)

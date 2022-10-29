@@ -71,7 +71,7 @@ namespace FormationSorter
         public static void SelectFormationsOfClasses(List<FormationClass> formationClasses, string feedback = null)
         {
             if (formationClasses is null || !formationClasses.Any()) return;
-            if (!Mission.MissionOrderVM.IsToggleOrderShown || !Settings.InverseSelectionModifierKey.IsDefinedAndDown())
+            if (!Mission.MissionOrderVM.IsToggleOrderShown || !Settings.Instance.InverseSelectKey.IsDefinedAndDown())
                 previousSelections.Clear();
             SetFormationSelections();
             List<Formation> selections = new List<Formation>();
@@ -87,7 +87,7 @@ namespace FormationSorter
                 if (formation is null) continue;
                 bool isCorrectFormation = IsFormationOneOfFormationClasses(formation, formationClasses);
                 bool wasPreviouslySelected = previousSelections.Contains(formation);
-                bool shouldInvertSelection = Settings.InverseSelectionModifierKey.IsDefinedAndDown() && wasPreviouslySelected;
+                bool shouldInvertSelection = Settings.Instance.InverseSelectKey.IsDefinedAndDown() && wasPreviouslySelected;
                 if (isCorrectFormation)
                 {
                     if (shouldInvertSelection) invertedSelections.Add(formation);

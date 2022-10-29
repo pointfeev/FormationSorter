@@ -11,17 +11,17 @@ namespace FormationSorter
         public static void OnApplicationTick()
         {
             if (!Mission.IsCurrentValid()) return;
-            ProcessKey(Settings.OrderKey, () => Order.OnOrder());
-            ProcessKey(Settings.TierSortKey, () => Order.OnOrder(tierSort: true));
-            ProcessKey(Settings.SelectAllKey, () => Selection.SelectAllFormations());
-            ProcessKey(Settings.SelectAllMeleeCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
-            ProcessKey(Settings.SelectAllRangedCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.RangedCavalryFormationClasses, "ranged cavalry"));
-            ProcessKey(Settings.SelectAllGroundMeleeKey, () => Selection.SelectFormationsOfClasses(Selection.GroundMeleeFormationClasses, "ground melee"));
-            ProcessKey(Settings.SelectAllGroundRangedKey, () => Selection.SelectFormationsOfClasses(Selection.GroundRangedFormationClasses, "ground ranged"));
-            ProcessKey(Settings.SelectAllBasicMeleeKey, () => Selection.SelectFormationsOfClasses(Selection.BasicMeleeFormationClasses, "basic melee"));
-            ProcessKey(Settings.SelectAllBasicRangedKey, () => Selection.SelectFormationsOfClasses(Selection.BasicRangedFormationClasses, "basic ranged"));
-            ProcessKey(Settings.SelectAllGroundKey, () => Selection.SelectFormationsOfClasses(Selection.GroundFormationClasses, "ground"));
-            ProcessKey(Settings.SelectAllCavalryKey, () => Selection.SelectFormationsOfClasses(Selection.CavalryFormationClasses, "cavalry"));
+            ProcessKey(Settings.Instance.OrderKey, () => Order.OnOrder());
+            ProcessKey(Settings.Instance.TierSortKey, () => Order.OnOrder(tierSort: true));
+            ProcessKey(Settings.Instance.AllSelectKey, () => Selection.SelectAllFormations());
+            ProcessKey(Settings.Instance.MeleeCavalrySelectKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
+            ProcessKey(Settings.Instance.RangedCavalrySelectKey, () => Selection.SelectFormationsOfClasses(Selection.RangedCavalryFormationClasses, "ranged cavalry"));
+            ProcessKey(Settings.Instance.MeleeGroundSelectKey, () => Selection.SelectFormationsOfClasses(Selection.GroundMeleeFormationClasses, "ground melee"));
+            ProcessKey(Settings.Instance.RangedGroundSelectKey, () => Selection.SelectFormationsOfClasses(Selection.GroundRangedFormationClasses, "ground ranged"));
+            ProcessKey(Settings.Instance.MeleeSelectKey, () => Selection.SelectFormationsOfClasses(Selection.BasicMeleeFormationClasses, "basic melee"));
+            ProcessKey(Settings.Instance.RangedSelectKey, () => Selection.SelectFormationsOfClasses(Selection.BasicRangedFormationClasses, "basic ranged"));
+            ProcessKey(Settings.Instance.GroundSelectKey, () => Selection.SelectFormationsOfClasses(Selection.GroundFormationClasses, "ground"));
+            ProcessKey(Settings.Instance.CavalrySelectKey, () => Selection.SelectFormationsOfClasses(Selection.CavalryFormationClasses, "cavalry"));
         }
 
         private static void ProcessKey(InputKey inputKey, Action action)
@@ -45,14 +45,14 @@ namespace FormationSorter
 
         private static InputKey GetActionKey() => TryGetGameKeyFromStringId("Action", out GameKey gameKey) ? gameKey.KeyboardKey.InputKey : InputKey.F;
 
-        public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && (Settings.OrderKey == inputKey
-            || Settings.ShieldSortingModifierKey == inputKey || Settings.SkirmisherSortingModifierKey == inputKey
-            || Settings.EqualSortingModifierKey == inputKey || Settings.InverseSelectionModifierKey == inputKey
-            || Settings.TierSortKey == inputKey || Settings.SelectAllKey == inputKey
-            || Settings.SelectAllMeleeCavalryKey == inputKey || Settings.SelectAllRangedCavalryKey == inputKey
-            || Settings.SelectAllGroundMeleeKey == inputKey || Settings.SelectAllGroundRangedKey == inputKey
-            || Settings.SelectAllBasicMeleeKey == inputKey || Settings.SelectAllBasicRangedKey == inputKey
-            || Settings.SelectAllGroundKey == inputKey || Settings.SelectAllCavalryKey == inputKey);
+        public static bool IsKeyBound(this InputKey inputKey) => IsDefined(inputKey) && (Settings.Instance.OrderKey == inputKey
+            || Settings.Instance.ShieldSortKey == inputKey || Settings.Instance.SkirmisherSortKey == inputKey
+            || Settings.Instance.EqualSortKey == inputKey || Settings.Instance.InverseSelectKey == inputKey
+            || Settings.Instance.TierSortKey == inputKey || Settings.Instance.AllSelectKey == inputKey
+            || Settings.Instance.MeleeCavalrySelectKey == inputKey || Settings.Instance.RangedCavalrySelectKey == inputKey
+            || Settings.Instance.MeleeGroundSelectKey == inputKey || Settings.Instance.RangedGroundSelectKey == inputKey
+            || Settings.Instance.MeleeSelectKey == inputKey || Settings.Instance.RangedSelectKey == inputKey
+            || Settings.Instance.GroundSelectKey == inputKey || Settings.Instance.CavalrySelectKey == inputKey);
 
         public static bool IsGameKeyBound(string stringId) => !TryGetGameKeyFromStringId(stringId, out GameKey gameKey) || gameKey.KeyboardKey.InputKey.IsKeyBound();
 
