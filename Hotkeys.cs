@@ -13,15 +13,15 @@ namespace FormationSorter
             if (!Mission.IsCurrentValid()) return;
             ProcessKey(Settings.Instance.OrderKey, () => Order.OnOrder());
             ProcessKey(Settings.Instance.TierSortKey, () => Order.OnOrder(tierSort: true));
-            ProcessKey(Settings.Instance.AllSelectKey, () => Selection.SelectAllFormations());
-            ProcessKey(Settings.Instance.MeleeCavalrySelectKey, () => Selection.SelectFormationsOfClasses(Selection.MeleeCavalryFormationClasses, "melee cavalry"));
-            ProcessKey(Settings.Instance.RangedCavalrySelectKey, () => Selection.SelectFormationsOfClasses(Selection.RangedCavalryFormationClasses, "ranged cavalry"));
-            ProcessKey(Settings.Instance.MeleeGroundSelectKey, () => Selection.SelectFormationsOfClasses(Selection.GroundMeleeFormationClasses, "ground melee"));
-            ProcessKey(Settings.Instance.RangedGroundSelectKey, () => Selection.SelectFormationsOfClasses(Selection.GroundRangedFormationClasses, "ground ranged"));
-            ProcessKey(Settings.Instance.MeleeSelectKey, () => Selection.SelectFormationsOfClasses(Selection.BasicMeleeFormationClasses, "basic melee"));
-            ProcessKey(Settings.Instance.RangedSelectKey, () => Selection.SelectFormationsOfClasses(Selection.BasicRangedFormationClasses, "basic ranged"));
-            ProcessKey(Settings.Instance.GroundSelectKey, () => Selection.SelectFormationsOfClasses(Selection.GroundFormationClasses, "ground"));
-            ProcessKey(Settings.Instance.CavalrySelectKey, () => Selection.SelectFormationsOfClasses(Selection.CavalryFormationClasses, "cavalry"));
+            ProcessKey(Settings.Instance.AllSelectKey, () => Selection.SelectFormations());
+            ProcessKey(Settings.Instance.CavalryMeleeSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateCavalryMelee(), feedback: "melee cavalry "));
+            ProcessKey(Settings.Instance.CavalryRangedSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateCavalryRanged(), feedback: "ranged cavalry "));
+            ProcessKey(Settings.Instance.GroundMeleeSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateGroundMelee(), feedback: "melee ground "));
+            ProcessKey(Settings.Instance.GroundRangedSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateGroundRanged(), feedback: "ranged ground "));
+            ProcessKey(Settings.Instance.MeleeSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateMelee(), feedback: "melee "));
+            ProcessKey(Settings.Instance.RangedSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateRanged(), feedback: "ranged "));
+            ProcessKey(Settings.Instance.GroundSelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateGround(), feedback: "ground "));
+            ProcessKey(Settings.Instance.CavalrySelectKey, () => Selection.SelectFormations(formationClasses: FormationClassUtils.EnumerateCavalry(), feedback: "cavalry "));
         }
 
         private static void ProcessKey(InputKey inputKey, Action action)
@@ -49,8 +49,8 @@ namespace FormationSorter
             || Settings.Instance.ShieldSortKey == inputKey || Settings.Instance.SkirmisherSortKey == inputKey
             || Settings.Instance.EqualSortKey == inputKey || Settings.Instance.InverseSelectKey == inputKey
             || Settings.Instance.TierSortKey == inputKey || Settings.Instance.AllSelectKey == inputKey
-            || Settings.Instance.MeleeCavalrySelectKey == inputKey || Settings.Instance.RangedCavalrySelectKey == inputKey
-            || Settings.Instance.MeleeGroundSelectKey == inputKey || Settings.Instance.RangedGroundSelectKey == inputKey
+            || Settings.Instance.CavalryMeleeSelectKey == inputKey || Settings.Instance.CavalryRangedSelectKey == inputKey
+            || Settings.Instance.GroundMeleeSelectKey == inputKey || Settings.Instance.GroundRangedSelectKey == inputKey
             || Settings.Instance.MeleeSelectKey == inputKey || Settings.Instance.RangedSelectKey == inputKey
             || Settings.Instance.GroundSelectKey == inputKey || Settings.Instance.CavalrySelectKey == inputKey);
 

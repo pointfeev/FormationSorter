@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace FormationSorter
 {
-    public static class OutputUtils
+    internal static class OutputUtils
     {
         private static readonly List<string> outputs = new List<string>();
 
-        public static void DoOutputForException(Exception e)
+        internal static void DoOutputForException(Exception e)
         {
             StringBuilder output = new StringBuilder();
             int stackDepth = 0;

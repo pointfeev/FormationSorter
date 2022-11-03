@@ -9,7 +9,7 @@ namespace FormationSorter
 {
     internal static class ReflectionUtils
     {
-        public static Type GetCachedNestedType(this Type fromType, string nestedTypeName, BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static Type GetCachedNestedType(this Type fromType, string nestedTypeName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(fromType, nestedTypeName, out MemberInfo memberInfo))
             {
@@ -21,7 +21,7 @@ namespace FormationSorter
             return nestedType;
         }
 
-        public static ConstructorInfo GetCachedConstructor(this Type fromType, Type[] types, BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static ConstructorInfo GetCachedConstructor(this Type fromType, Type[] types, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             string identifier = fromType.FullName + $"({types})";
             if (CheckReflectionCache(fromType, identifier, out MemberInfo memberInfo))
@@ -34,7 +34,7 @@ namespace FormationSorter
             return constructorInfo;
         }
 
-        public static FieldInfo GetCachedField(this Type fromType, string fieldName, BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static FieldInfo GetCachedField(this Type fromType, string fieldName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(fromType, fieldName, out MemberInfo memberInfo))
             {
@@ -46,7 +46,7 @@ namespace FormationSorter
             return fieldInfo;
         }
 
-        public static PropertyInfo GetCachedProperty(this Type fromType, string propertyName, BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static PropertyInfo GetCachedProperty(this Type fromType, string propertyName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(fromType, propertyName, out MemberInfo memberInfo))
             {
@@ -58,7 +58,7 @@ namespace FormationSorter
             return propertyInfo;
         }
 
-        public static MethodInfo GetCachedGetMethod(this PropertyInfo fromPropertyInfo)
+        internal static MethodInfo GetCachedGetMethod(this PropertyInfo fromPropertyInfo)
         {
             if (CheckReflectionCache(fromPropertyInfo, "GetMethod", out MemberInfo memberInfo))
             {
@@ -70,7 +70,7 @@ namespace FormationSorter
             return methodInfo;
         }
 
-        public static MethodInfo GetCachedSetMethod(this PropertyInfo fromPropertyInfo)
+        internal static MethodInfo GetCachedSetMethod(this PropertyInfo fromPropertyInfo)
         {
             if (CheckReflectionCache(fromPropertyInfo, "SetMethod", out MemberInfo memberInfo))
             {
@@ -82,7 +82,7 @@ namespace FormationSorter
             return methodInfo;
         }
 
-        public static MethodInfo GetCachedMethod(this Type fromType, string methodName, BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static MethodInfo GetCachedMethod(this Type fromType, string methodName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(fromType, methodName, out MemberInfo memberInfo))
             {
@@ -94,7 +94,7 @@ namespace FormationSorter
             return methodInfo;
         }
 
-        public static MethodInfo MakeCachedGenericMethod(this MethodInfo fromMethodInfo, Type ofType)
+        internal static MethodInfo MakeCachedGenericMethod(this MethodInfo fromMethodInfo, Type ofType)
         {
             if (CheckReflectionCache(fromMethodInfo, ofType.FullName, out MemberInfo memberInfo))
             {
