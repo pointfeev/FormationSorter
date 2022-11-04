@@ -2,7 +2,6 @@
 using System.Linq;
 
 using TaleWorlds.Core;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter

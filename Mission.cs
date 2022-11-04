@@ -39,7 +39,7 @@ namespace FormationSorter
         public static bool IsCurrentValid()
         {
             TaleWorlds.MountAndBlade.Mission current = Current;
-            if (current is null || current.Mode != MissionMode.Battle || MissionOrderVM is null)
+            if (current is null || !(current.Mode is MissionMode.Battle) && !(current.Mode is MissionMode.Stealth) || MissionOrderVM is null)
                 return false;
             try
             {
@@ -52,14 +52,6 @@ namespace FormationSorter
             }
             return true;
         }
-
-        public static bool IsCurrentSiege()
-        {
-            SiegeMissionController siegeMissionController = Current?.GetMissionBehavior<SiegeMissionController>();
-            return !(siegeMissionController is null) && !(siegeMissionController?.IsSallyOut is true);
-        }
-
-        public static bool IsCurrentOrderable() => true;
 
         public static TaleWorlds.MountAndBlade.Mission Current => TaleWorlds.MountAndBlade.Mission.Current;
 

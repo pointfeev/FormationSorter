@@ -18,7 +18,7 @@ namespace FormationSorter
         {
             try
             {
-                if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable())
+                if (Mission.IsCurrentValid())
                 {
                     __result = selectorAgent == null || formation.PlayerOwner == selectorAgent;
                     return false;

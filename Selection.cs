@@ -16,9 +16,7 @@ namespace FormationSorter
         {
             try
             {
-                if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod()))
-                    return;
-                if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable())
+                if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod()) || !Mission.IsCurrentValid())
                     return;
                 foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
                     _ = GetOrderTroopItemVM(formation);
@@ -98,7 +96,7 @@ namespace FormationSorter
             MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
             bool selectable = Mission.MissionOrderVM.OrderController.IsFormationSelectable(formation);
             OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.Formation == formation);
-            if (orderTroopItemVM is null && Mission.IsCurrentOrderable() && selectable)
+            if (orderTroopItemVM is null && Mission.IsCurrentValid() && selectable)
             {
                 orderTroopItemVM = new OrderTroopItemVM(formation,
                     new Action<OrderTroopItemVM>(item => typeof(MissionOrderTroopControllerVM).GetCachedMethod("OnSelectFormation")
@@ -110,7 +108,7 @@ namespace FormationSorter
             }
             if (!(orderTroopItemVM is null))
             {
-                if (selectable)
+                if (Mission.IsCurrentValid() && selectable)
                 {
                     _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetTroopActiveOrders")
                         .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
@@ -129,7 +127,6 @@ namespace FormationSorter
 
         private static void SortOrderTroopItemVMs()
         {
-            if (!Mission.IsCurrentOrderable()) return;
             MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
             if (troopController.TroopList.Any())
             {

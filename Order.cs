@@ -12,27 +12,29 @@ using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
 namespace FormationSorter
 {
-    public static class Order
+    internal static class Order
     {
         private const string ORDER_TEXT = "Formation Sort";
         private const string ORDER_ICON = "ToggleAI";
 
-        public static void OnApplicationTick()
+        internal static void RemoveOrderVMs()
         {
-            if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable()) return;
+            Mission.InputKeyItemVM = null;
+            if (!(Mission.OrderSetVM is null))
+                _ = Mission.MissionOrderVM.OrderSets.Remove(Mission.OrderSetVM);
+            Mission.OrderSetVM = null;
+            Mission.OrderItemVM = null;
+        }
 
+        internal static void RefreshOrderVMs()
+        {
             InputKey OrderKey = Settings.Instance.OrderKey;
             string Key = OrderKey.ToString();
             string KeyId = "FormationSortOrderKey_" + Key;
 
             if (!(Mission.InputKeyItemVM is null) && Mission.InputKeyItemVM.KeyID != KeyId)
-            {
-                Mission.InputKeyItemVM = null;
-                _ = Mission.MissionOrderVM.OrderSets.Remove(Mission.OrderSetVM);
-                Mission.OrderSetVM = null;
-                Mission.OrderItemVM = null;
-            }
-                
+                RemoveOrderVMs();
+
             if (Mission.InputKeyItemVM is null)
             {
                 Mission.InputKeyItemVM = InputKeyItemVM.CreateFromForcedID(KeyId, new TextObject(Key));
@@ -72,9 +74,19 @@ namespace FormationSorter
                 Mission.MissionOrderVM.OrderSets.Add(Mission.OrderSetVM);
         }
 
-        public static void OnOrder(bool tierSort = false)
+        internal static void OnApplicationTick()
         {
-            if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable()) return;
+            if (!Mission.IsCurrentValid())
+            {
+                RemoveOrderVMs();
+                return;
+            }
+            RefreshOrderVMs();
+        }
+
+        internal static void OnOrder(bool tierSort = false)
+        {
+            if (!Mission.IsCurrentValid()) return;
 
             List<Formation> formations = tierSort ? GetAllRegularFormations() : GetSelectedRegularFormations();
             if (formations is null) return;
@@ -115,7 +127,7 @@ namespace FormationSorter
 
         private static int SortAgentsBetweenFormations(List<Formation> formations, bool tierSort = false)
         {
-            if (!Mission.IsCurrentOrderable() || formations is null || formations.Count < 2)
+            if (!Mission.IsCurrentValid() || formations is null || formations.Count < 2)
                 return -1;
             if (formations.All(f => f.IsAIControlled))
                 return -2;
@@ -194,7 +206,7 @@ namespace FormationSorter
         private static List<Agent> GetAllPlayerControlledHumanAgentsInFormations(List<Formation> formations)
         {
             List<Agent> readAgents = new List<Agent>();
-            if (!Mission.IsCurrentOrderable()) return readAgents;
+            if (!Mission.IsCurrentValid()) return readAgents;
             foreach (Formation formation in formations)
             {
                 if (formation.IsAIControlled) continue;
@@ -218,7 +230,7 @@ namespace FormationSorter
 
         private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
         {
-            if (!Mission.IsCurrentOrderable() || agent is null || desiredFormation is null || agent.Formation == desiredFormation)
+            if (!Mission.IsCurrentValid() || agent is null || desiredFormation is null || agent.Formation == desiredFormation)
                 return false;
             agent.Formation = desiredFormation;
             if (Mission.Current.IsOrderShoutingAllowed())

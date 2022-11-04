@@ -17,7 +17,7 @@ namespace FormationSorter
         {
             try
             {
-                if (Mission.IsCurrentValid() && Mission.IsCurrentOrderable())
+                if (Mission.IsCurrentValid())
                 {
                     foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList())
                     {

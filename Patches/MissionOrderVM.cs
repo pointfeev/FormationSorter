@@ -24,8 +24,6 @@ namespace FormationSorter
             try
             {
                 Mission.MissionOrderVM = __instance;
-                if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable())
-                    return;
                 Selection.UpdateAllFormationOrderTroopItemVMs();
             }
             catch (Exception e)
