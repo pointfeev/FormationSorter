@@ -96,7 +96,6 @@ namespace FormationSorter
                     default:
                         break;
                 }
-            InformationManager.DisplayMessage(new InformationMessage(formation.Index + " = " + formationClass, Color.White, "FormationSorter"));
             return formationClass;
         }
 
