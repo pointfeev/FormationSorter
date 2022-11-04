@@ -5,6 +5,7 @@ using System.Linq;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
@@ -13,33 +14,59 @@ namespace FormationSorter
 {
     public static class Order
     {
+        private const string ORDER_TEXT = "Formation Sort";
+        private const string ORDER_ICON = "ToggleAI";
+
         public static void OnApplicationTick()
         {
             if (!Mission.IsCurrentValid() || !Mission.IsCurrentOrderable()) return;
-            if (Mission.OrderSetVM is null)
-                Mission.OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetCachedConstructor(new Type[] {
-                    typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-                }).Invoke(new object[] {
-                    OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
-                });
-
-            if (Mission.InputKeyItemVM is null)
-                Mission.InputKeyItemVM = (InputKeyItemVM)typeof(InputKeyItemVM).GetCachedConstructor(new Type[0]).Invoke(new object[0]);
 
             InputKey OrderKey = Settings.Instance.OrderKey;
             string Key = OrderKey.ToString();
-            Mission.InputKeyItemVM.KeyID = Key;
-            Mission.InputKeyItemVM.KeyName = Key;
-            Mission.InputKeyItemVM.IsVisible = OrderKey.IsDefined();
+            string KeyId = "FormationSortOrderKey_" + Key;
 
-            Mission.OrderSetVM.TitleOrderKey = Mission.InputKeyItemVM;
-            Mission.OrderSetVM.TitleOrder.ShortcutKey = Mission.InputKeyItemVM;
-            Mission.OrderSetVM.TitleOrder.IsTitle = true;
-            Mission.OrderSetVM.TitleText = "Sort Troops Between Formations";
-            Mission.OrderSetVM.TitleOrder.OrderIconID = "ToggleAI";
-            Mission.OrderSetVM.TitleOrder.TooltipText = "Sort Troops Between Formations";
-            Mission.OrderSetVM.TitleOrder.IsActive = true;
-            Mission.OrderSetVM.OnFinalize(); // we have our own code to deal with key presses
+            if (!(Mission.InputKeyItemVM is null) && Mission.InputKeyItemVM.KeyID != KeyId)
+            {
+                Mission.InputKeyItemVM = null;
+                _ = Mission.MissionOrderVM.OrderSets.Remove(Mission.OrderSetVM);
+                Mission.OrderSetVM = null;
+                Mission.OrderItemVM = null;
+            }
+                
+            if (Mission.InputKeyItemVM is null)
+            {
+                Mission.InputKeyItemVM = InputKeyItemVM.CreateFromForcedID(KeyId, new TextObject(Key));
+                Mission.InputKeyItemVM.SetForcedVisibility(true);
+                Mission.InputKeyItemVM.OnFinalize();
+            }
+
+            if (Mission.OrderItemVM is null)
+            {
+                Mission.OrderItemVM = new OrderItemVM(OrderSubType.None, OrderSetType.None, new TextObject(ORDER_TEXT), (vm, b) => { })
+                {
+                    ShortcutKey = Mission.InputKeyItemVM,
+                    IsTitle = true
+                };
+                Mission.OrderItemVM.IsTitle = true;
+                Mission.OrderItemVM.TooltipText = ORDER_TEXT;
+                Mission.OrderItemVM.OrderIconID = ORDER_ICON;
+                Mission.OrderItemVM.ShortcutKey = Mission.InputKeyItemVM;
+                Mission.OrderItemVM.IsActive = true;
+                Mission.OrderItemVM.OnFinalize();
+            }
+
+            if (Mission.OrderSetVM is null)
+            {
+                Mission.OrderSetVM = (OrderSetVM)typeof(OrderSetVM).GetCachedConstructor(new Type[] {
+                        typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
+                    }).Invoke(new object[] {
+                        OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((OrderItemVM o, OrderSetType or, bool b) => { }), false
+                    });
+                Mission.OrderSetVM.TitleText = ORDER_TEXT;
+                Mission.OrderSetVM.TitleOrderKey = Mission.InputKeyItemVM;
+                Mission.OrderSetVM.TitleOrder = Mission.OrderItemVM;
+                Mission.OrderSetVM.OnFinalize();
+            }
 
             if (!Mission.MissionOrderVM.OrderSets.Contains(Mission.OrderSetVM))
                 Mission.MissionOrderVM.OrderSets.Add(Mission.OrderSetVM);

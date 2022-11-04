@@ -9,6 +9,7 @@ namespace FormationSorter
     public static class Mission
     {
         public static MissionOrderVM MissionOrderVM;
+        public static OrderItemVM OrderItemVM;
         public static OrderSetVM OrderSetVM;
         public static InputKeyItemVM InputKeyItemVM;
 

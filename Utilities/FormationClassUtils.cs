@@ -104,7 +104,7 @@ namespace FormationSorter
             => formationClasses.Contains(GetFormationClass(formation));
 
         internal static Formation GetFormationForFormationClass(IEnumerable<Formation> formations, FormationClass formationClass)
-            => formations.First(formation => GetFormationClass(formation) == formationClass);
+            => formations.FirstOrDefault(formation => GetFormationClass(formation) == formationClass);
 
         internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false)
         {
