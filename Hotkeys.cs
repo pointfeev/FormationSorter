@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using TaleWorlds.InputSystem;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter
