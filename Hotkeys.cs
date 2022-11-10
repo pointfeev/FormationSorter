@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using TaleWorlds.InputSystem;
+using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter
@@ -58,14 +59,13 @@ namespace FormationSorter
 
         public static bool TryGetGameKeyFromStringId(string stringId, out GameKey gameKey)
         {
-            List<GameKey> gameKeys = GenericGameKeyContext.Current?.GameKeys;
-            if (!(gameKeys is null))
-                foreach (GameKey _gameKey in gameKeys)
-                    if (_gameKey.StringId == stringId && !(_gameKey.KeyboardKey is null))
-                    {
-                        gameKey = _gameKey;
-                        return true;
-                    }
+            GenericGameKeyContext gameKeyContext = GenericGameKeyContext.Current;
+            if (!(gameKeyContext is null))
+            {
+                gameKey = gameKeyContext.GetGameKey(stringId);
+                if (!(gameKey is null) && !(gameKey.KeyboardKey is null))
+                    return true;
+            }
             gameKey = null;
             return false;
         }
