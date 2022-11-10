@@ -34,7 +34,7 @@ namespace FormationSorter
                 if (!pressedLastTick.TryGetValue(inputKey, out bool b) || !b)
                 {
                     pressedLastTick[inputKey] = true;
-                    if (Mission.CanPlayerInteract() && inputKey == GetActionKey())
+                    if (inputKey == GetActionKey() && Mission.CanPlayerInteract())
                         return;
                     action();
                 }
