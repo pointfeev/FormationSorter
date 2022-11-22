@@ -54,10 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Bannerlord.MCM">
-      <Version>5.0.4</Version>
+      <Version>5.3.2</Version>
     </PackageReference>
     <PackageReference Include="Bannerlord.ReferenceAssemblies">
-      <Version>1.0.1.4441</Version>
+      <Version>1.0.1.5325</Version>
     </PackageReference>
     <PackageReference Include="Lib.Harmony">
       <Version>2.2.2</Version>

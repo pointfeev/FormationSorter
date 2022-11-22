@@ -104,9 +104,11 @@ namespace FormationSorter
         internal static Formation GetFormationForFormationClass(IEnumerable<Formation> formations, FormationClass formationClass)
             => formations.FirstOrDefault(formation => GetFormationClass(formation) == formationClass);
 
-        internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false)
+        internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false, bool useCompanions = false)
         {
             agent.UpdateCachedAndFormationValues(false, false);
+            if (useCompanions && agent.IsHero && !(Settings.Instance.CompanionFormation is FormationClass.Unset))
+                return Settings.Instance.CompanionFormation;
             Agent mount = agent.MountAgent;
             return (!(mount is null) && mount.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount))
                 ? (agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry)

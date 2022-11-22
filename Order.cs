@@ -139,11 +139,12 @@ namespace FormationSorter
                 {
                     FormationClass bestFormationClass = FormationClassUtils.GetBestFormationClassForAgent(agent);
                     int tier = agent.GetTier();
-                    if (bestFormationClass is FormationClass.Cavalry || bestFormationClass is FormationClass.LightCavalry || bestFormationClass is FormationClass.HeavyCavalry)
-                        bestFormationClass = tier <= 2 ? FormationClass.Cavalry : tier <= 4 ? FormationClass.LightCavalry : FormationClass.HeavyCavalry;
-                    else if (bestFormationClass is FormationClass.Skirmisher || bestFormationClass is FormationClass.Infantry || bestFormationClass is FormationClass.HeavyInfantry)
-                        bestFormationClass = tier <= 2 ? FormationClass.Skirmisher : tier <= 4 ? FormationClass.Infantry : FormationClass.HeavyInfantry;
-                    if (TrySetAgentFormation(agent, FormationClassUtils.GetFormationForFormationClass(formations, bestFormationClass)))
+                    int index = bestFormationClass is FormationClass.Ranged ? 3 : 7;
+                    if (bestFormationClass is FormationClass.Infantry || bestFormationClass is FormationClass.HeavyInfantry || bestFormationClass is FormationClass.Skirmisher)
+                        index = tier <= 2 ? 0 : tier <= 4 ? 1 : 2;
+                    else if (bestFormationClass is FormationClass.Cavalry || bestFormationClass is FormationClass.LightCavalry || bestFormationClass is FormationClass.HeavyCavalry)
+                        index = tier <= 2 ? 4 : tier <= 4 ? 5 : 6;
+                    if (TrySetAgentFormation(agent, formations.Find(f => f.Index == index)))
                         numAgentsSorted++;
                 }
             }
@@ -151,12 +152,13 @@ namespace FormationSorter
             {
                 bool useShields = Settings.Instance.ShieldSortKey.IsDefinedAndDown();
                 bool useSkirmishers = Settings.Instance.SkirmisherSortKey.IsDefinedAndDown();
+                bool useCompanions = true;
                 if (Settings.Instance.EqualSortKey.IsDefinedAndDown())
                 {
                     Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new Dictionary<FormationClass, List<Agent>>();
                     foreach (Agent agent in agents)
                     {
-                        FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields: useShields, useSkirmishers: useSkirmishers);
+                        FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, useCompanions);
                         if (agentsInFormationClasses.TryGetValue(formationClass, out List<Agent> agentsInFormationClass))
                             agentsInFormationClass.Add(agent);
                         else
@@ -191,7 +193,7 @@ namespace FormationSorter
                 {
                     foreach (Agent agent in agents)
                     {
-                        FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields: useShields, useSkirmishers: useSkirmishers);
+                        FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, useCompanions);
                         if (TrySetAgentFormation(agent, FormationClassUtils.GetFormationForFormationClass(formations, formationClass)))
                             numAgentsSorted++;
                     }
