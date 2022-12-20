@@ -1,18 +1,17 @@
-﻿using HarmonyLib;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using FormationSorter.Utilities;
+using HarmonyLib;
 using TaleWorlds.MountAndBlade;
 
-namespace FormationSorter
+namespace FormationSorter.Patches
 {
     [HarmonyPatch(typeof(OrderController))]
     public static class PatchOrderController
     {
         [HarmonyPatch("IsFormationSelectable")]
-        [HarmonyPatch(new Type[] { typeof(Formation), typeof(Agent) })]
+        [HarmonyPatch(new[] { typeof(Formation), typeof(Agent) })]
         [HarmonyPrefix]
         public static bool IsFormationSelectable(Formation formation, Agent selectorAgent, ref bool __result)
         {
@@ -38,6 +37,6 @@ namespace FormationSorter
         [HarmonyPatch("SetOrderWithFormationAndNumber")]
         [HarmonyPrefix]
         public static bool SetOrderWithFormationAndNumber(OrderType orderType, List<Formation> ____selectedFormations)
-            => orderType != OrderType.Transfer || ____selectedFormations.Sum((Formation f) => f.CountOfUnits) != 0;
+            => orderType != OrderType.Transfer || ____selectedFormations.Sum(f => f.CountOfUnits) != 0;
     }
 }

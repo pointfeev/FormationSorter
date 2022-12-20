@@ -1,12 +1,11 @@
-﻿using HarmonyLib;
-
-using System;
+﻿using System;
 using System.Linq;
-
+using FormationSorter.Utilities;
+using HarmonyLib;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.ViewModelCollection.HUD.FormationMarker;
 
-namespace FormationSorter
+namespace FormationSorter.Patches
 {
     [HarmonyPatch(typeof(MissionFormationMarkerVM))]
     public static class PatchMissionFormationMarkerVM
@@ -18,16 +17,12 @@ namespace FormationSorter
             try
             {
                 if (Mission.IsCurrentValid())
-                {
-                    foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList())
+                    foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList()
+                                .Where(target => target.Formation.CountOfUnits <= 0))
                     {
-                        if (target.Formation.CountOfUnits <= 0)
-                        {
-                            target.ScreenPosition = new Vec2(-10000f, -10000f);
-                            _ = __instance.Targets.Remove(target);
-                        }
+                        target.ScreenPosition = new Vec2(-10000f, -10000f);
+                        _ = __instance.Targets.Remove(target);
                     }
-                }
             }
             catch (Exception e)
             {

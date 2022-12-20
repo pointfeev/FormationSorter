@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
-namespace FormationSorter
+namespace FormationSorter.Utilities
 {
     internal static class FormationClassUtils
     {
@@ -65,56 +64,62 @@ namespace FormationSorter
         internal static FormationClass GetFormationClass(Formation formation)
         {
             FormationClass formationClass = formation.FormationIndex;
-            if (Settings.Instance.UserDefinedFormationClasses)
-                switch (formation.Index)
-                {
-                    case 0:
-                        formationClass = Settings.Instance.Formation1;
-                        break;
-                    case 1:
-                        formationClass = Settings.Instance.Formation2;
-                        break;
-                    case 2:
-                        formationClass = Settings.Instance.Formation3;
-                        break;
-                    case 3:
-                        formationClass = Settings.Instance.Formation4;
-                        break;
-                    case 4:
-                        formationClass = Settings.Instance.Formation5;
-                        break;
-                    case 5:
-                        formationClass = Settings.Instance.Formation6;
-                        break;
-                    case 6:
-                        formationClass = Settings.Instance.Formation7;
-                        break;
-                    case 7:
-                        formationClass = Settings.Instance.Formation8;
-                        break;
-                    default:
-                        break;
-                }
+            if (!Settings.Instance.UserDefinedFormationClasses)
+                return formationClass;
+            switch (formation.Index)
+            {
+                case 0:
+                    formationClass = Settings.Instance.Formation1;
+                    break;
+                case 1:
+                    formationClass = Settings.Instance.Formation2;
+                    break;
+                case 2:
+                    formationClass = Settings.Instance.Formation3;
+                    break;
+                case 3:
+                    formationClass = Settings.Instance.Formation4;
+                    break;
+                case 4:
+                    formationClass = Settings.Instance.Formation5;
+                    break;
+                case 5:
+                    formationClass = Settings.Instance.Formation6;
+                    break;
+                case 6:
+                    formationClass = Settings.Instance.Formation7;
+                    break;
+                case 7:
+                    formationClass = Settings.Instance.Formation8;
+                    break;
+            }
             return formationClass;
         }
 
-        internal static bool IsFormationOneOfFormationClasses(Formation formation, IEnumerable<FormationClass> formationClasses)
+        internal static bool IsFormationOneOfFormationClasses(Formation formation,
+                                                              IEnumerable<FormationClass> formationClasses)
             => formationClasses.Contains(GetFormationClass(formation));
 
-        internal static Formation GetFormationForFormationClass(IEnumerable<Formation> formations, FormationClass formationClass)
+        internal static Formation GetFormationForFormationClass(IEnumerable<Formation> formations,
+                                                                FormationClass formationClass)
             => formations.FirstOrDefault(formation => GetFormationClass(formation) == formationClass);
 
-        internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false, bool useCompanions = false)
+        internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false,
+                                                                     bool useSkirmishers = false,
+                                                                     bool useCompanions = false)
         {
             agent.UpdateCachedAndFormationValues(false, false);
             if (useCompanions && agent.IsHero && !(Settings.Instance.CompanionFormation is FormationClass.Unset))
                 return Settings.Instance.CompanionFormation;
             Agent mount = agent.MountAgent;
-            return (!(mount is null) && mount.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount))
-                ? (agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry)
-                : agent.IsRangedCached ? FormationClass.Ranged
-                : (useSkirmishers && agent.HasThrownCached || useShields && !agent.HasShieldCached) ? FormationClass.Skirmisher
-                : FormationClass.Infantry;
+            return !(mount is null) && mount.Health > 0 && mount.IsActive()
+                && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount)
+                ? agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry
+                : agent.IsRangedCached
+                    ? FormationClass.Ranged
+                    : (useSkirmishers && agent.HasThrownCached) || (useShields && !agent.HasShieldCached)
+                        ? FormationClass.Skirmisher
+                        : FormationClass.Infantry;
         }
     }
 }

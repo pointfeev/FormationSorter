@@ -1,7 +1,6 @@
-﻿using HarmonyLib;
-
-using System;
-
+﻿using System;
+using FormationSorter.Utilities;
+using HarmonyLib;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
@@ -9,19 +8,19 @@ namespace FormationSorter
 {
     public class SubModule : MBSubModuleBase
     {
-        private bool initialized = false;
+        private bool initialized;
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
             base.OnBeforeInitialModuleScreenSetAsRoot();
             try
             {
-                if (!initialized)
-                {
-                    initialized = true;
-                    new Harmony("pointfeev.formationsorter").PatchAll();
-                    InformationManager.DisplayMessage(new InformationMessage("Formation Sorter initialized", Colors.Cyan, "FormationSorter"));
-                }
+                if (initialized)
+                    return;
+                initialized = true;
+                new Harmony("pointfeev.formationsorter").PatchAll();
+                InformationManager.DisplayMessage(
+                    new InformationMessage("Formation Sorter initialized", Colors.Cyan, "FormationSorter"));
             }
             catch (Exception e)
             {
@@ -34,7 +33,7 @@ namespace FormationSorter
             base.OnApplicationTick(dt);
             try
             {
-                Hotkeys.OnApplicationTick();
+                HotKeys.OnApplicationTick();
             }
             catch (Exception e)
             {

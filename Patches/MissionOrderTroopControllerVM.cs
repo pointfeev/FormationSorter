@@ -1,8 +1,7 @@
 ﻿using HarmonyLib;
-
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
 
-namespace FormationSorter
+namespace FormationSorter.Patches
 {
     [HarmonyPatch(typeof(MissionOrderTroopControllerVM))]
     public static class PatchMissionOrderTroopControllerVM

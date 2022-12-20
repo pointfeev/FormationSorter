@@ -1,10 +1,9 @@
-﻿using HarmonyLib;
-
-using System;
-
+﻿using System;
+using FormationSorter.Utilities;
+using HarmonyLib;
 using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Order;
 
-namespace FormationSorter
+namespace FormationSorter.Patches
 {
     [HarmonyPatch(typeof(OrderTroopItemBrushWidget))]
     public static class PatchOrderTroopItemWidget
