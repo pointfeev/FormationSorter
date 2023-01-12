@@ -18,8 +18,7 @@ namespace FormationSorter
 
         public static Agent PlayerAgent => Current?.MainAgent;
 
-        private static MissionMainAgentController PlayerAgentController
-            => Current?.GetMissionBehavior<MissionMainAgentController>();
+        private static MissionMainAgentController PlayerAgentController => Current?.GetMissionBehavior<MissionMainAgentController>();
 
         public static bool CanPlayerInteract()
         {
@@ -30,9 +29,8 @@ namespace FormationSorter
             MissionMainAgentInteractionComponent interactionComponent = playerAgentController?.InteractionComponent;
             if (interactionComponent is null)
                 return false;
-            IFocusable currentInteractableObject = (IFocusable)typeof(MissionMainAgentInteractionComponent)
-                                                              .GetCachedField("_currentInteractableObject")
-                                                              .GetValue(interactionComponent);
+            IFocusable currentInteractableObject = (IFocusable)typeof(MissionMainAgentInteractionComponent).GetCachedField("_currentInteractableObject")
+               .GetValue(interactionComponent);
             if (currentInteractableObject is null)
                 return false;
             Agent agent = currentInteractableObject as Agent;
@@ -42,8 +40,7 @@ namespace FormationSorter
         public static bool IsCurrentValid()
         {
             TaleWorlds.MountAndBlade.Mission current = Current;
-            if (current is null || (!(current.Mode is MissionMode.Battle) && !(current.Mode is MissionMode.Stealth))
-                                || MissionOrderVM is null)
+            if (current is null || !(current.Mode is MissionMode.Battle) && !(current.Mode is MissionMode.Stealth) || MissionOrderVM is null)
                 return false;
             try
             {

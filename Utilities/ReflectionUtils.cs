@@ -11,8 +11,7 @@ namespace FormationSorter.Utilities
         private static readonly Dictionary<MemberInfo, Dictionary<string, MemberInfo>> ReflectionCache
             = new Dictionary<MemberInfo, Dictionary<string, MemberInfo>>();
 
-        internal static ConstructorInfo GetCachedConstructor(this Type fromType, Type[] types,
-                                                             BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static ConstructorInfo GetCachedConstructor(this Type fromType, Type[] types, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             string identifier = fromType.FullName + $"({types})";
             if (CheckReflectionCache(fromType, identifier, out MemberInfo memberInfo))
@@ -22,8 +21,7 @@ namespace FormationSorter.Utilities
             return constructorInfo;
         }
 
-        internal static FieldInfo GetCachedField(this Type fromType, string fieldName,
-                                                 BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static FieldInfo GetCachedField(this Type fromType, string fieldName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(fromType, fieldName, out MemberInfo memberInfo))
                 return memberInfo as FieldInfo;
@@ -32,8 +30,7 @@ namespace FormationSorter.Utilities
             return fieldInfo;
         }
 
-        internal static MethodInfo GetCachedMethod(this Type fromType, string methodName,
-                                                   BindingFlags bindingFlags = (BindingFlags)(-1))
+        internal static MethodInfo GetCachedMethod(this Type fromType, string methodName, BindingFlags bindingFlags = (BindingFlags)(-1))
         {
             if (CheckReflectionCache(fromType, methodName, out MemberInfo memberInfo))
                 return memberInfo as MethodInfo;
@@ -42,8 +39,7 @@ namespace FormationSorter.Utilities
             return methodInfo;
         }
 
-        private static bool CheckReflectionCache(MemberInfo memberInfo, string identifier,
-                                                 out MemberInfo cachedMemberInfo)
+        private static bool CheckReflectionCache(MemberInfo memberInfo, string identifier, out MemberInfo cachedMemberInfo)
         {
             if (ReflectionCache.TryGetValue(memberInfo, out Dictionary<string, MemberInfo> methodInfos))
                 if (methodInfos.TryGetValue(identifier, out cachedMemberInfo))

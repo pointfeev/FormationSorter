@@ -14,11 +14,9 @@ namespace FormationSorter.Patches
         [HarmonyPatch(MethodType.Constructor)]
         [HarmonyPatch(new[]
         {
-            typeof(Camera), typeof(List<DeploymentPoint>), typeof(Action<bool>), typeof(bool),
-            typeof(GetOrderFlagPositionDelegate), typeof(OnRefreshVisualsDelegate),
-            typeof(ToggleOrderPositionVisibilityDelegate), typeof(OnToggleActivateOrderStateDelegate),
-            typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate),
-            typeof(OnBeforeOrderDelegate), typeof(bool)
+            typeof(Camera), typeof(List<DeploymentPoint>), typeof(Action<bool>), typeof(bool), typeof(GetOrderFlagPositionDelegate),
+            typeof(OnRefreshVisualsDelegate), typeof(ToggleOrderPositionVisibilityDelegate), typeof(OnToggleActivateOrderStateDelegate),
+            typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate), typeof(OnBeforeOrderDelegate), typeof(bool)
         })]
         [HarmonyPostfix]
         public static void MissionOrderVM(MissionOrderVM __instance)

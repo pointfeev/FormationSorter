@@ -45,8 +45,7 @@ namespace FormationSorter
         private static Settings instance;
         private readonly ISettings provider;
 
-        private Settings()
-            => provider = CustomSettings.Instance is null ? DefaultSettings.Instance : CustomSettings.Instance;
+        private Settings() => provider = CustomSettings.Instance is null ? DefaultSettings.Instance : CustomSettings.Instance;
 
         internal static Settings Instance => instance ?? (instance = new Settings());
 
@@ -114,306 +113,227 @@ namespace FormationSorter
     {
         public override string Id => "FormationSorter";
 
-        public override string DisplayName
-            => "Formation Sorter " + typeof(CustomSettings).Assembly.GetName().Version.ToString(3);
+        public override string DisplayName => "Formation Sorter " + typeof(CustomSettings).Assembly.GetName().Version.ToString(3);
 
         public override string FolderName => "FormationSorter";
         public override string FormatType => "xml";
 
         [SettingPropertyDropdown("Companions", Order = 1, RequireRestart = false,
-                                 HintText
-                                     = "When set to Default, companions will simply go into the formation they fit in as if they were a normal unit.")]
+            HintText = "When set to Default, companions will simply go into the formation they fit in as if they were a normal unit.")]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> CompanionFormationDropdown { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.CompanionFormation,
-                                                     DropdownHelper.EnumerateRegularFormations(true));
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.CompanionFormation, DropdownHelper.EnumerateRegularFormations(true));
 
         [SettingPropertyDropdown("Formation #1", Order = 2, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown1 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation1,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation1, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #2", Order = 3, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown2 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation2,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation2, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #3", Order = 4, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown3 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation3,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation3, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #4", Order = 5, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown4 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation4,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation4, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #5", Order = 6, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown5 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation5,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation5, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #6", Order = 7, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown6 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation6,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation6, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #7", Order = 8, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown7 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation7,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation7, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Formation #8", Order = 9, RequireRestart = false)]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public Dropdown<FormationClassSelection> FormationDropdown8 { get; set; }
-            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation8,
-                                                     DropdownHelper.EnumerateRegularFormations());
+            = DropdownHelper.FormationClassSelection(DefaultSettings.Instance.Formation8, DropdownHelper.EnumerateRegularFormations());
 
         [SettingPropertyDropdown("Order Key", Order = 1, RequireRestart = false,
-                                 HintText
-                                     = "Sort Troops Between Formations order menu key; troops in selected formations will be sorted into their single best formation if one of its kind is among the selected formations.")]
+            HintText
+                = "Sort Troops Between Formations order menu key; troops in selected formations will be sorted into their single best formation if one of its kind is among the selected formations.")]
         [SettingPropertyGroup("Order", GroupOrder = 2)]
         public Dropdown<KeySelection> OrderKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.OrderKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Tier Sort Key", Order = 2, RequireRestart = false,
-                                 HintText
-                                     = "Tier sorting key; all infantry and cavalry troops will be sorted into separate formations by their tiers.")]
+            HintText = "Tier sorting key; all infantry and cavalry troops will be sorted into separate formations by their tiers.")]
         [SettingPropertyGroup("Order", GroupOrder = 2)]
         public Dropdown<KeySelection> TierSortKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.TierSortKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Shield Sorting Modifier Key", Order = 3, RequireRestart = false,
-                                 HintText
-                                     = "When combined with the Order Key shielded infantry and skirmishers get put into the Infantry formation while unshielded infantry and skirmishers get put into the Skirmisher formation.")]
+            HintText
+                = "When combined with the Order Key shielded infantry and skirmishers get put into the Infantry formation while unshielded infantry and skirmishers get put into the Skirmisher formation.")]
         [SettingPropertyGroup("Order", GroupOrder = 2)]
         public Dropdown<KeySelection> ShieldSortKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.ShieldSortKey, DropdownHelper.EnumerateModifiers());
 
         [SettingPropertyDropdown("Skirmisher Sorting Modifier Key", Order = 4, RequireRestart = false,
-                                 HintText
-                                     = "When combined with the Order Key javelineers, rock throwers, etc. get put into the Skirmisher formation instead of Infantry.")]
+            HintText = "When combined with the Order Key javelineers, rock throwers, etc. get put into the Skirmisher formation instead of Infantry.")]
         [SettingPropertyGroup("Order", GroupOrder = 2)]
         public Dropdown<KeySelection> SkirmisherSortKeyDropdown { get; set; }
-            = DropdownHelper.KeySelection(DefaultSettings.Instance.SkirmisherSortKey,
-                                          DropdownHelper.EnumerateModifiers());
+            = DropdownHelper.KeySelection(DefaultSettings.Instance.SkirmisherSortKey, DropdownHelper.EnumerateModifiers());
 
         [SettingPropertyDropdown("Equal Sorting Modifier Key", Order = 5, RequireRestart = false,
-                                 HintText
-                                     = "When combined with the Order Key troops will be sorted equally amongst the selected formations instead of being put in only their single best formation.")]
+            HintText
+                = "When combined with the Order Key troops will be sorted equally amongst the selected formations instead of being put in only their single best formation.")]
         [SettingPropertyGroup("Order", GroupOrder = 2)]
         public Dropdown<KeySelection> EqualSortKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.EqualSortKey, DropdownHelper.EnumerateModifiers());
 
         [SettingPropertyDropdown("Inverse Selection Modifier Key", Order = 6, RequireRestart = false,
-                                 HintText
-                                     = "When combined with any of the selection keys below, the formations it encompasses will be inverted from their current state, potentially being added or removed from the current selection.")]
+            HintText
+                = "When combined with any of the selection keys below, the formations it encompasses will be inverted from their current state, potentially being added or removed from the current selection.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> InverseSelectKeyDropdown { get; set; }
-            = DropdownHelper.KeySelection(DefaultSettings.Instance.InverseSelectKey,
-                                          DropdownHelper.EnumerateModifiers());
+            = DropdownHelper.KeySelection(DefaultSettings.Instance.InverseSelectKey, DropdownHelper.EnumerateModifiers());
 
-        [SettingPropertyDropdown("Select All Formations Key", Order = 7, RequireRestart = false,
-                                 HintText = "This key will select all formations.")]
+        [SettingPropertyDropdown("Select All Formations Key", Order = 7, RequireRestart = false, HintText = "This key will select all formations.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> AllSelectKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.AllSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Melee Cavalry Formations Key", Order = 8, RequireRestart = false,
-                                 HintText
-                                     = "This key will select all melee cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry.")]
+            HintText = "This key will select all melee cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> MeleeCavalrySelectKeyDropdown { get; set; }
-            = DropdownHelper.KeySelection(DefaultSettings.Instance.CavalryMeleeSelectKey,
-                                          DropdownHelper.EnumerateKeys());
+            = DropdownHelper.KeySelection(DefaultSettings.Instance.CavalryMeleeSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Ranged Cavalry Formations Key", Order = 9, RequireRestart = false,
-                                 HintText = "This key will select all ranged cavalry formations: Horse Archers.")]
+            HintText = "This key will select all ranged cavalry formations: Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> RangedCavalrySelectKeyDropdown { get; set; }
-            = DropdownHelper.KeySelection(DefaultSettings.Instance.CavalryRangedSelectKey,
-                                          DropdownHelper.EnumerateKeys());
+            = DropdownHelper.KeySelection(DefaultSettings.Instance.CavalryRangedSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Melee Ground Formations Key", Order = 10, RequireRestart = false,
-                                 HintText
-                                     = "This key will select all melee ground formations: Infantry, Heavy Infantry.")]
+            HintText = "This key will select all melee ground formations: Infantry, Heavy Infantry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> GroundMeleeSelectKeyDropdown { get; set; }
-            = DropdownHelper.KeySelection(DefaultSettings.Instance.GroundMeleeSelectKey,
-                                          DropdownHelper.EnumerateKeys());
+            = DropdownHelper.KeySelection(DefaultSettings.Instance.GroundMeleeSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Ranged Ground Formations Key", Order = 11, RequireRestart = false,
-                                 HintText = "This key will select all ranged ground formations: Archers, Skirmishers.")]
+            HintText = "This key will select all ranged ground formations: Archers, Skirmishers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> GroundRangedSelectKeyDropdown { get; set; }
-            = DropdownHelper.KeySelection(DefaultSettings.Instance.GroundRangedSelectKey,
-                                          DropdownHelper.EnumerateKeys());
+            = DropdownHelper.KeySelection(DefaultSettings.Instance.GroundRangedSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Melee Formations Key", Order = 12, RequireRestart = false,
-                                 HintText
-                                     = "This key will select all melee formations: Infantry, Cavalry, Heavy Infantry.")]
+            HintText = "This key will select all melee formations: Infantry, Cavalry, Heavy Infantry.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> MeleeSelectKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.MeleeSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Ranged Formations Key", Order = 13, RequireRestart = false,
-                                 HintText
-                                     = "This key will select all ranged formations: Archers, Skirmishers, Horse Archers.")]
+            HintText = "This key will select all ranged formations: Archers, Skirmishers, Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> RangedSelectKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.RangedSelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Cavalry Formations Key", Order = 14, RequireRestart = false,
-                                 HintText
-                                     = "This key will select all cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry, Horse Archers.")]
+            HintText = "This key will select all cavalry formations: Cavalry, Light Cavalry, Heavy Cavalry, Horse Archers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> CavalrySelectKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.CavalrySelectKey, DropdownHelper.EnumerateKeys());
 
         [SettingPropertyDropdown("Select All Ground Formations Key", Order = 15, RequireRestart = false,
-                                 HintText
-                                     = "This key will select all ground formations: Infantry, Heavy Infantry, Archers, Skirmishers.")]
+            HintText = "This key will select all ground formations: Infantry, Heavy Infantry, Archers, Skirmishers.")]
         [SettingPropertyGroup("Selection", GroupOrder = 3)]
         public Dropdown<KeySelection> GroundSelectKeyDropdown { get; set; }
             = DropdownHelper.KeySelection(DefaultSettings.Instance.GroundSelectKey, DropdownHelper.EnumerateKeys());
 
-        [SettingPropertyBool("S1", Order = 16, RequireRestart = false,
-                             HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S1", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Spacers", GroupOrder = 4)]
-        private bool S1
-        {
-            get => false;
-            set { }
-        }
+        private bool S1 { get => false; set { } }
 
-        [SettingPropertyBool("S2", Order = 17, RequireRestart = false,
-                             HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S2", Order = 17, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Spacers", GroupOrder = 4)]
-        private bool S2
-        {
-            get => false;
-            set { }
-        }
+        private bool S2 { get => false; set { } }
 
-        [SettingPropertyBool("S3", Order = 18, RequireRestart = false,
-                             HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S3", Order = 18, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Spacers", GroupOrder = 4)]
-        private bool S3
-        {
-            get => false;
-            set { }
-        }
+        private bool S3 { get => false; set { } }
 
-        [SettingPropertyBool("S4", Order = 19, RequireRestart = false,
-                             HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S4", Order = 19, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Spacers", GroupOrder = 4)]
-        private bool S4
-        {
-            get => false;
-            set { }
-        }
+        private bool S4 { get => false; set { } }
 
-        [SettingPropertyBool("S5", Order = 20, RequireRestart = false,
-                             HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S5", Order = 20, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Spacers", GroupOrder = 4)]
-        private bool S5
-        {
-            get => false;
-            set { }
-        }
+        private bool S5 { get => false; set { } }
 
-        [SettingPropertyBool("S6", Order = 21, RequireRestart = false,
-                             HintText = "Spacer for dropdown menus. Blame Aragasas.")]
+        [SettingPropertyBool("S6", Order = 21, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas.")]
         [SettingPropertyGroup("Spacers", GroupOrder = 4)]
-        private bool S6
-        {
-            get => false;
-            set { }
-        }
+        private bool S6 { get => false; set { } }
 
         [SettingPropertyBool("User-Defined Formation Classes", IsToggle = true, Order = 1, RequireRestart = false,
-                             HintText
-                                 = "Whether or not to use the user-defined formation classes below in place of the default dynamic formation classes. (highly recommended)")]
+            HintText
+                = "Whether or not to use the user-defined formation classes below in place of the default dynamic formation classes. (highly recommended)")]
         [SettingPropertyGroup("User-Defined Formation Classes", GroupOrder = 1)]
         public bool UserDefinedFormationClasses { get; set; } = DefaultSettings.Instance.UserDefinedFormationClasses;
 
-        FormationClass ISettings.CompanionFormation => CompanionFormationDropdown.SelectedValue?.FormationClass
-                                                    ?? DefaultSettings.Instance.CompanionFormation;
+        FormationClass ISettings.CompanionFormation => CompanionFormationDropdown.SelectedValue?.FormationClass ?? DefaultSettings.Instance.CompanionFormation;
 
-        FormationClass ISettings.Formation1
-            => FormationDropdown1.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation1;
+        FormationClass ISettings.Formation1 => FormationDropdown1.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation1;
 
-        FormationClass ISettings.Formation2
-            => FormationDropdown2.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation2;
+        FormationClass ISettings.Formation2 => FormationDropdown2.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation2;
 
-        FormationClass ISettings.Formation3
-            => FormationDropdown3.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation3;
+        FormationClass ISettings.Formation3 => FormationDropdown3.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation3;
 
-        FormationClass ISettings.Formation4
-            => FormationDropdown4.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation4;
+        FormationClass ISettings.Formation4 => FormationDropdown4.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation4;
 
-        FormationClass ISettings.Formation5
-            => FormationDropdown5.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation5;
+        FormationClass ISettings.Formation5 => FormationDropdown5.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation5;
 
-        FormationClass ISettings.Formation6
-            => FormationDropdown6.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation6;
+        FormationClass ISettings.Formation6 => FormationDropdown6.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation6;
 
-        FormationClass ISettings.Formation7
-            => FormationDropdown7.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation7;
+        FormationClass ISettings.Formation7 => FormationDropdown7.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation7;
 
-        FormationClass ISettings.Formation8
-            => FormationDropdown8.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation8;
+        FormationClass ISettings.Formation8 => FormationDropdown8.SelectedValue?.FormationClass ?? DefaultSettings.Instance.Formation8;
 
         InputKey ISettings.OrderKey => OrderKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.OrderKey;
 
-        InputKey ISettings.TierSortKey
-            => TierSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.TierSortKey;
+        InputKey ISettings.TierSortKey => TierSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.TierSortKey;
 
-        InputKey ISettings.ShieldSortKey
-            => ShieldSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.ShieldSortKey;
+        InputKey ISettings.ShieldSortKey => ShieldSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.ShieldSortKey;
 
-        InputKey ISettings.SkirmisherSortKey
-            => SkirmisherSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.SkirmisherSortKey;
+        InputKey ISettings.SkirmisherSortKey => SkirmisherSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.SkirmisherSortKey;
 
-        InputKey ISettings.EqualSortKey
-            => EqualSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.EqualSortKey;
+        InputKey ISettings.EqualSortKey => EqualSortKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.EqualSortKey;
 
-        InputKey ISettings.InverseSelectKey
-            => InverseSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.InverseSelectKey;
+        InputKey ISettings.InverseSelectKey => InverseSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.InverseSelectKey;
 
-        InputKey ISettings.AllSelectKey
-            => AllSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.AllSelectKey;
+        InputKey ISettings.AllSelectKey => AllSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.AllSelectKey;
 
-        InputKey ISettings.CavalryMeleeSelectKey => MeleeCavalrySelectKeyDropdown.SelectedValue?.Key
-                                                 ?? DefaultSettings.Instance.CavalryMeleeSelectKey;
+        InputKey ISettings.CavalryMeleeSelectKey => MeleeCavalrySelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.CavalryMeleeSelectKey;
 
-        InputKey ISettings.CavalryRangedSelectKey => RangedCavalrySelectKeyDropdown.SelectedValue?.Key
-                                                  ?? DefaultSettings.Instance.CavalryRangedSelectKey;
+        InputKey ISettings.CavalryRangedSelectKey => RangedCavalrySelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.CavalryRangedSelectKey;
 
-        InputKey ISettings.GroundMeleeSelectKey => GroundMeleeSelectKeyDropdown.SelectedValue?.Key
-                                                ?? DefaultSettings.Instance.GroundMeleeSelectKey;
+        InputKey ISettings.GroundMeleeSelectKey => GroundMeleeSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.GroundMeleeSelectKey;
 
-        InputKey ISettings.GroundRangedSelectKey => GroundRangedSelectKeyDropdown.SelectedValue?.Key
-                                                 ?? DefaultSettings.Instance.GroundRangedSelectKey;
+        InputKey ISettings.GroundRangedSelectKey => GroundRangedSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.GroundRangedSelectKey;
 
-        InputKey ISettings.MeleeSelectKey
-            => MeleeSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.MeleeSelectKey;
+        InputKey ISettings.MeleeSelectKey => MeleeSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.MeleeSelectKey;
 
-        InputKey ISettings.RangedSelectKey
-            => RangedSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.RangedSelectKey;
+        InputKey ISettings.RangedSelectKey => RangedSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.RangedSelectKey;
 
-        InputKey ISettings.CavalrySelectKey
-            => CavalrySelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.CavalrySelectKey;
+        InputKey ISettings.CavalrySelectKey => CavalrySelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.CavalrySelectKey;
 
-        InputKey ISettings.GroundSelectKey
-            => GroundSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.GroundSelectKey;
+        InputKey ISettings.GroundSelectKey => GroundSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.GroundSelectKey;
     }
 
     internal class FormationClassSelection
@@ -439,8 +359,8 @@ namespace FormationSorter
 
     internal static class DropdownHelper
     {
-        internal static Dropdown<FormationClassSelection> FormationClassSelection(
-            FormationClass defaultFormationClass, IEnumerable<FormationClassSelection> formationClasses)
+        internal static Dropdown<FormationClassSelection> FormationClassSelection(FormationClass defaultFormationClass,
+            IEnumerable<FormationClassSelection> formationClasses)
         {
             Dropdown<FormationClassSelection> dropdown = new Dropdown<FormationClassSelection>(formationClasses, 0);
             dropdown.SelectedIndex = dropdown.FindIndex(s => s.FormationClass == defaultFormationClass);
@@ -454,8 +374,7 @@ namespace FormationSorter
             foreach (string name in Enum.GetNames(typeof(FormationClass)))
                 if (!name.StartsWith("NumberOf") && Enum.TryParse(name, false, out FormationClass formationClass)
                                                  && formationClass < FormationClass.NumberOfRegularFormations)
-                    yield return
-                        new FormationClassSelection(formationClass, Regex.Replace(name, "[A-Z]", " $0").Trim());
+                    yield return new FormationClassSelection(formationClass, Regex.Replace(name, "[A-Z]", " $0").Trim());
         }
 
         internal static Dropdown<KeySelection> KeySelection(InputKey defaultKey, IEnumerable<KeySelection> keys)
