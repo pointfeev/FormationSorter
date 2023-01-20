@@ -41,7 +41,7 @@ internal static class Order
         if (Mission.OrderItemVM is null)
         {
             Mission.OrderItemVM
-                = new(OrderSubType.None, OrderSetType.None, new(OrderText), (vm, b) => { }) { ShortcutKey = Mission.InputKeyItemVM, IsTitle = true };
+                = new(OrderSubType.None, OrderSetType.None, new(OrderText), (_, _) => { }) { ShortcutKey = Mission.InputKeyItemVM, IsTitle = true };
             Mission.OrderItemVM.IsTitle = true;
             Mission.OrderItemVM.TooltipText = OrderText;
             Mission.OrderItemVM.OrderIconID = OrderIcon;
@@ -57,7 +57,7 @@ internal static class Order
                                                  typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
                                              }).Invoke(new object[]
                                              {
-                                                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((o, or, b) => { }), false
+                                                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((_, _, _) => { }), false
                                              });
             Mission.OrderSetVM.TitleText = OrderText;
             Mission.OrderSetVM.TitleOrderKey = Mission.InputKeyItemVM;
@@ -240,7 +240,7 @@ internal static class Order
             if (formation.IsAIControlled)
                 continue;
             readAgents.AddRange(((List<Agent>)typeof(Formation).GetCachedField("_detachedUnits").GetValue(formation)).FindAll(agent => agent.IsHuman));
-            readAgents.AddRange(from unit in formation.Arrangement.GetAllUnits() where unit is Agent agent && agent.IsHuman select unit as Agent);
+            readAgents.AddRange(from unit in formation.Arrangement.GetAllUnits() where unit is Agent { IsHuman: true } select unit as Agent);
         }
         List<Agent> agents = new();
         foreach (Agent agent in readAgents.Where(agent => agent != Mission.PlayerAgent).Where(agent => !agents.Contains(agent)))
