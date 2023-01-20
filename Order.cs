@@ -35,7 +35,7 @@ namespace FormationSorter
                 RemoveOrderVMs();
             if (Mission.InputKeyItemVM is null)
             {
-                Mission.InputKeyItemVM = InputKeyItemVM.CreateFromForcedID(keyId, new TextObject(key));
+                Mission.InputKeyItemVM = InputKeyItemVM.CreateFromForcedID(keyId, new TextObject(key), false);
                 Mission.InputKeyItemVM.SetForcedVisibility(true);
                 Mission.InputKeyItemVM.OnFinalize();
             }
@@ -101,8 +101,8 @@ namespace FormationSorter
                 {
                     if (numUnitsSorted > 0)
                     {
-                        if (Mission.Current.IsOrderShoutingAllowed())
-                            Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                        //if (Mission.Current.IsOrderShoutingAllowed()) // may need replacement for v1.1.0
+                        Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                         InformationManager.DisplayMessage(new InformationMessage(
                             $"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.White,
                             "FormationSorter"));
@@ -261,31 +261,31 @@ namespace FormationSorter
             if (!Mission.IsCurrentValid() || agent is null || desiredFormation is null || agent.Formation == desiredFormation)
                 return false;
             agent.Formation = desiredFormation;
-            if (Mission.Current.IsOrderShoutingAllowed())
-                switch (FormationClassUtils.GetFormationClass(desiredFormation))
-                {
-                    // units will yell out the formation they change to, because why not?
-                    case FormationClass.Infantry:
-                    case FormationClass.HeavyInfantry:
-                        agent.MakeVoice(SkinVoiceManager.VoiceType.Infantry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                        break;
-                    case FormationClass.Ranged:
-                    case FormationClass.Skirmisher:
-                        agent.MakeVoice(SkinVoiceManager.VoiceType.Archers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                        break;
-                    case FormationClass.Cavalry:
-                    case FormationClass.LightCavalry:
-                    case FormationClass.HeavyCavalry:
-                        agent.MakeVoice(SkinVoiceManager.VoiceType.Cavalry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                        break;
-                    case FormationClass.HorseArcher:
-                        agent.MakeVoice(SkinVoiceManager.VoiceType.HorseArchers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                        break;
-                    default:
-                        agent.MakeVoice(SkinVoiceManager.VoiceType.MpAffirmative, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                        // best fallback I can find
-                        break;
-                }
+            //if (Mission.Current.IsOrderShoutingAllowed()) // may need replacement for v1.1.0
+            switch (FormationClassUtils.GetFormationClass(desiredFormation))
+            {
+                // units will yell out the formation they change to, because why not?
+                case FormationClass.Infantry:
+                case FormationClass.HeavyInfantry:
+                    agent.MakeVoice(SkinVoiceManager.VoiceType.Infantry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                    break;
+                case FormationClass.Ranged:
+                case FormationClass.Skirmisher:
+                    agent.MakeVoice(SkinVoiceManager.VoiceType.Archers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                    break;
+                case FormationClass.Cavalry:
+                case FormationClass.LightCavalry:
+                case FormationClass.HeavyCavalry:
+                    agent.MakeVoice(SkinVoiceManager.VoiceType.Cavalry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                    break;
+                case FormationClass.HorseArcher:
+                    agent.MakeVoice(SkinVoiceManager.VoiceType.HorseArchers, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                    break;
+                default:
+                    agent.MakeVoice(SkinVoiceManager.VoiceType.MpAffirmative, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                    // best fallback I can find
+                    break;
+            }
             return true;
         }
     }

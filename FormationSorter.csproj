@@ -60,7 +60,7 @@
       <Version>5.5.5</Version>
     </PackageReference>
     <PackageReference Include="Bannerlord.ReferenceAssemblies">
-      <Version>1.0.3.9055</Version>
+      <Version>1.1.0.9638-beta</Version>
     </PackageReference>
     <PackageReference Include="Lib.Harmony">
       <Version>2.2.2</Version>
@@ -123,7 +123,7 @@ echo 	^&lt;Version value="v@(Version)"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule
 echo 	^&lt;DefaultModule value="true"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
 echo 	^&lt;ModuleCategory value="Singleplayer"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
 echo 	^&lt;ModuleType value="Community"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
-echo 	^&lt;Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/3304"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
+echo 	^&lt;Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/3320"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
 echo 	^&lt;DependedModules^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
 echo 		^&lt;DependedModule Id="Bannerlord.Harmony" DependentVersion="v2.2.2" Optional="false"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
 echo 		^&lt;DependedModule Id="Bannerlord.MBOptionScreen" DependentVersion="v@(MCMVersion)" Optional="true"/^&gt;&gt;&gt;"$(TargetDir)..\..\SubModule.xml"
