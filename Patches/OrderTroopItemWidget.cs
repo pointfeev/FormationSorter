@@ -8,8 +8,7 @@ namespace FormationSorter.Patches;
 [HarmonyPatch(typeof(OrderTroopItemBrushWidget))]
 public static class PatchOrderTroopItemWidget
 {
-    [HarmonyPatch("UpdateBackgroundState")]
-    [HarmonyPostfix]
+    [HarmonyPatch("UpdateBackgroundState"), HarmonyPostfix]
     public static void UpdateBackgroundState(OrderTroopItemBrushWidget __instance)
     {
         try

@@ -30,7 +30,7 @@ public static class PatchInformationManager
             lastCheckedMission = mission;
             ignoredMessages.Clear();
             if (!mission.IsInventoryAccessAllowed && HotKeys.IsGameKeyBound("InventoryWindow"))
-                ignoredMessages.Add(GameTexts.FindText(mission.Mode == MissionMode.Battle || mission.Mode == MissionMode.Duel
+                ignoredMessages.Add(GameTexts.FindText(mission.Mode is MissionMode.Battle or MissionMode.Duel
                     ? "str_cannot_reach_inventory_during_battle"
                     : "str_cannot_reach_inventory")?.ToString() ?? "");
             if (!mission.IsQuestScreenAccessAllowed && HotKeys.IsGameKeyBound("QuestsWindow"))
@@ -39,7 +39,7 @@ public static class PatchInformationManager
                 ignoredMessages.Add(GameTexts.FindText("str_cannot_open_party")?.ToString() ?? "");
             if (!mission.IsEncyclopediaWindowAccessAllowed && HotKeys.IsGameKeyBound("EncyclopediaWindow"))
                 ignoredMessages.Add(GameTexts.FindText("str_cannot_open_encyclopedia")?.ToString() ?? "");
-            if ((!mission.IsKingdomWindowAccessAllowed || (!Hero.MainHero?.MapFaction?.IsKingdomFaction).GetValueOrDefault(false))
+            if ((!mission.IsKingdomWindowAccessAllowed || (!Hero.MainHero?.MapFaction.IsKingdomFaction).GetValueOrDefault(false))
              && HotKeys.IsGameKeyBound("KingdomWindow"))
                 ignoredMessages.Add(GameTexts.FindText("str_cannot_open_kingdom")?.ToString() ?? "");
             if (!mission.IsClanWindowAccessAllowed && HotKeys.IsGameKeyBound("ClanWindow"))
@@ -53,8 +53,7 @@ public static class PatchInformationManager
         }
     }
 
-    [HarmonyPatch("DisplayMessage")]
-    [HarmonyPrefix]
+    [HarmonyPatch("DisplayMessage"), HarmonyPrefix]
     public static bool DisplayMessage(InformationMessage message)
     {
         try

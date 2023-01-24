@@ -105,10 +105,10 @@ internal static class FormationClassUtils
     internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false, bool useCompanions = false)
     {
         agent.UpdateCachedAndFormationValues(false, false);
-        if (useCompanions && agent.IsHero && !(Settings.Instance.CompanionFormation is FormationClass.Unset))
+        if (useCompanions && agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
             return Settings.Instance.CompanionFormation;
         Agent mount = agent.MountAgent;
-        return !(mount is null) && mount.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount)
+        return mount is not null && mount.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount)
             ? agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry
             : agent.IsRangedCached
                 ? FormationClass.Ranged

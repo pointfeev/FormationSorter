@@ -37,6 +37,7 @@ public static class Selection
             previousSelections.Clear();
         SetFormationSelections();
         List<Formation> selections = new();
+        formationClasses = formationClasses?.ToList();
         foreach (Formation formation in previousSelections)
         {
             bool isCorrectFormation = formationClasses is null || FormationClassUtils.IsFormationOneOfFormationClasses(formation, formationClasses);
@@ -54,13 +55,12 @@ public static class Selection
             bool isCorrectFormation = formationClasses is null || FormationClassUtils.IsFormationOneOfFormationClasses(formation, formationClasses);
             bool wasPreviouslySelected = previousSelections.Contains(formation);
             bool shouldInvertSelection = Settings.Instance.InverseSelectKey.IsDefinedAndDown() && wasPreviouslySelected;
-            if (isCorrectFormation)
-            {
-                if (shouldInvertSelection)
-                    invertedSelections.Add(formation);
-                else
-                    selections.Add(formation);
-            }
+            if (!isCorrectFormation)
+                continue;
+            if (shouldInvertSelection)
+                invertedSelections.Add(formation);
+            else
+                selections.Add(formation);
         }
         if (invertedSelections.Any() || selections.Any(f => f.CountOfUnits > 0))
             InformationManager.DisplayMessage(new($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.White,
@@ -109,7 +109,7 @@ public static class Selection
             orderTroopItemVM = new(formation,
                 item => typeof(MissionOrderTroopControllerVM).GetCachedMethod("OnSelectFormation").Invoke(troopController, new object[] { item }),
                 _formation => (int)typeof(MissionOrderTroopControllerVM).GetCachedMethod("GetFormationMorale")
-                                                                        .Invoke(troopController, new object[] { _formation }));
+                   .Invoke(troopController, new object[] { _formation }));
             troopController.TroopList.Add(orderTroopItemVM);
             SortOrderTroopItemVMs();
         }
@@ -118,8 +118,8 @@ public static class Selection
             if (Mission.IsCurrentValid() && selectable)
             {
                 _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetTroopActiveOrders")
-                                                         .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
-                orderTroopItemVM.IsSelectable = selectable;
+                   .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
+                orderTroopItemVM.IsSelectable = true;
                 orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && Mission.MissionOrderVM.OrderController.IsFormationListening(formation);
                 _ = orderTroopItemVM.SetFormationClassFromFormation(formation);
             }

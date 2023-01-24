@@ -30,7 +30,7 @@ public static class Mission
         if (interactionComponent is null)
             return false;
         IFocusable currentInteractableObject = (IFocusable)typeof(MissionMainAgentInteractionComponent).GetCachedField("_currentInteractableObject")
-                                                                                                       .GetValue(interactionComponent);
+           .GetValue(interactionComponent);
         if (currentInteractableObject is null)
             return false;
         Agent agent = currentInteractableObject as Agent;
@@ -40,7 +40,7 @@ public static class Mission
     public static bool IsCurrentValid()
     {
         TaleWorlds.MountAndBlade.Mission current = Current;
-        if (current is null || !(current.Mode is MissionMode.Battle) && !(current.Mode is MissionMode.Stealth) || MissionOrderVM is null)
+        if (current is null || current.Mode is not MissionMode.Battle && current.Mode is not MissionMode.Stealth || MissionOrderVM is null)
             return false;
         try
         {

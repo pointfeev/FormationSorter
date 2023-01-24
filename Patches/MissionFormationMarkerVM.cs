@@ -9,8 +9,7 @@ namespace FormationSorter.Patches;
 [HarmonyPatch(typeof(MissionFormationMarkerVM))]
 public static class PatchMissionFormationMarkerVM
 {
-    [HarmonyPatch("RefreshFormationPositions")]
-    [HarmonyPrefix]
+    [HarmonyPatch("RefreshFormationPositions"), HarmonyPrefix]
     public static bool RefreshFormationPositions(MissionFormationMarkerVM __instance)
     {
         try

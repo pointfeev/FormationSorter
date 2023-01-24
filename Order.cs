@@ -52,13 +52,8 @@ internal static class Order
         if (Mission.OrderSetVM is null)
         {
             Mission.OrderSetVM = (OrderSetVM)typeof(OrderSetVM)
-                                            .GetCachedConstructor(new[]
-                                             {
-                                                 typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool)
-                                             }).Invoke(new object[]
-                                             {
-                                                 OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((_, _, _) => { }), false
-                                             });
+               .GetCachedConstructor(new[] { typeof(OrderSubType), typeof(int), typeof(Action<OrderItemVM, OrderSetType, bool>), typeof(bool) })
+               .Invoke(new object[] { OrderSubType.None, 0, (Action<OrderItemVM, OrderSetType, bool>)((_, _, _) => { }), false });
             Mission.OrderSetVM.TitleText = OrderText;
             Mission.OrderSetVM.TitleOrderKey = Mission.InputKeyItemVM;
             Mission.OrderSetVM.TitleOrder = Mission.OrderItemVM;
@@ -88,25 +83,23 @@ internal static class Order
         int numUnitsSorted = SortAgentsBetweenFormations(formations, tierSort);
         switch (numUnitsSorted)
         {
-            case -1:
+            case (int)SortAgentsSpecialResult.Ignored:
                 return;
-            case -2:
+            case (int)SortAgentsSpecialResult.AIControlled:
                 InformationManager.DisplayMessage(new("Formations controlled by AI cannot be sorted", Colors.White, "FormationSorter"));
                 return;
-            default:
-            {
-                if (numUnitsSorted > 0)
-                {
-                    //if (Mission.Current.IsOrderShoutingAllowed()) // may need replacement for v1.1.0
-                    Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                    InformationManager.DisplayMessage(new(
-                        $"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations", Colors.White,
-                        "FormationSorter"));
-                }
-                else if (tierSort)
+            case 0:
+                if (tierSort)
                     InformationManager.DisplayMessage(new("No troops need tier sorting", Colors.White, "FormationSorter"));
                 else
                     InformationManager.DisplayMessage(new("No troops need sorting between the selected formations", Colors.White, "FormationSorter"));
+                return;
+            default:
+            {
+                //if (Mission.Current.IsOrderShoutingAllowed()) // may need replacement for v1.1.0
+                Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
+                    Colors.White, "FormationSorter"));
                 break;
             }
         }
@@ -131,9 +124,9 @@ internal static class Order
     private static int SortAgentsBetweenFormations(List<Formation> formations, bool tierSort = false)
     {
         if (!Mission.IsCurrentValid() || formations is null || formations.Count < 2)
-            return -1;
+            return (int)SortAgentsSpecialResult.Ignored;
         if (formations.All(f => f.IsAIControlled))
-            return -2;
+            return (int)SortAgentsSpecialResult.AIControlled;
         int numAgentsSorted = 0;
         List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
         if (tierSort)
@@ -283,4 +276,6 @@ internal static class Order
         }
         return true;
     }
+
+    private enum SortAgentsSpecialResult { AIControlled = -2, Ignored = -1 }
 }

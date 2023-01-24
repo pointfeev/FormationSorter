@@ -11,14 +11,13 @@ namespace FormationSorter.Patches;
 [HarmonyPatch(typeof(MissionOrderVM))]
 public static class PatchMissionOrderVM
 {
-    [HarmonyPatch(MethodType.Constructor)]
-    [HarmonyPatch(new[]
-    {
-        typeof(Camera), typeof(List<DeploymentPoint>), typeof(Action<bool>), typeof(bool), typeof(GetOrderFlagPositionDelegate),
-        typeof(OnRefreshVisualsDelegate), typeof(ToggleOrderPositionVisibilityDelegate), typeof(OnToggleActivateOrderStateDelegate),
-        typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate), typeof(OnBeforeOrderDelegate), typeof(bool)
-    })]
-    [HarmonyPostfix]
+    [HarmonyPatch(MethodType.Constructor),
+     HarmonyPatch(new[]
+     {
+         typeof(Camera), typeof(List<DeploymentPoint>), typeof(Action<bool>), typeof(bool), typeof(GetOrderFlagPositionDelegate),
+         typeof(OnRefreshVisualsDelegate), typeof(ToggleOrderPositionVisibilityDelegate), typeof(OnToggleActivateOrderStateDelegate),
+         typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate), typeof(OnBeforeOrderDelegate), typeof(bool)
+     }), HarmonyPostfix]
     public static void MissionOrderVM(MissionOrderVM __instance)
     {
         try
@@ -32,15 +31,12 @@ public static class PatchMissionOrderVM
         }
     }
 
-    [HarmonyPatch("OnTransferFinished")]
-    [HarmonyPostfix]
+    [HarmonyPatch("OnTransferFinished"), HarmonyPostfix]
     public static void OnTransferFinished() => Selection.UpdateAllFormationOrderTroopItemVMs();
 
-    [HarmonyPatch("SetActiveOrders")]
-    [HarmonyPostfix]
+    [HarmonyPatch("SetActiveOrders"), HarmonyPostfix]
     public static void SetActiveOrders() => Selection.UpdateAllFormationOrderTroopItemVMs();
 
-    [HarmonyPatch("OnOrder")]
-    [HarmonyPostfix]
+    [HarmonyPatch("OnOrder"), HarmonyPostfix]
     public static void OnOrder() => Selection.UpdateAllFormationOrderTroopItemVMs();
 }
