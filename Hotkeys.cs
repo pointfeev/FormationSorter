@@ -31,8 +31,7 @@ public static class HotKeys
 
     private static void ProcessKey(InputKey inputKey, Action action)
     {
-        if (pressedLastTick is null)
-            pressedLastTick = new();
+        pressedLastTick ??= new();
         if (inputKey.IsDefinedAndDown())
         {
             if (pressedLastTick.TryGetValue(inputKey, out bool b) && b)

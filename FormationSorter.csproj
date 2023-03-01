@@ -52,7 +52,7 @@
       <Version>5.5.5</Version>
     </PackageReference>
     <PackageReference Include="Bannerlord.ReferenceAssemblies">
-      <Version>1.1.0.10414-beta</Version>
+      <Version>1.1.0.12734</Version>
     </PackageReference>
     <PackageReference Include="Lib.Harmony">
       <Version>2.2.2</Version>

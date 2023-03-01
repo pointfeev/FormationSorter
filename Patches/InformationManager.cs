@@ -22,8 +22,7 @@ public static class PatchInformationManager
     {
         get
         {
-            if (ignoredMessages is null)
-                ignoredMessages = new();
+            ignoredMessages ??= new();
             TaleWorlds.MountAndBlade.Mission mission = Mission.Current;
             if (lastCheckedMission == mission)
                 return ignoredMessages;
