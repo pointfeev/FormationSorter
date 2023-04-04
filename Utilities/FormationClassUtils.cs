@@ -64,7 +64,7 @@ internal static class FormationClassUtils
         yield return FormationClass.Skirmisher;
     }
 
-    internal static FormationClass GetFormationClass(Formation formation)
+    internal static FormationClass GetFormationClass(this Formation formation)
     {
         FormationClass formationClass = formation.FormationIndex;
         if (!Settings.Instance.UserDefinedFormationClasses)

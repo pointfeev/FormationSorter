@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
+using TaleWorlds.Engine;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
@@ -118,7 +119,7 @@ internal static class Order
         List<Formation> formations = Mission.Current?.PlayerTeam?.PlayerOrderController?.SelectedFormations?.ToList();
         if (formations is null)
             return null;
-        _ = formations.RemoveAll(f => FormationClassUtils.GetFormationClass(f) > FormationClass.NumberOfRegularFormations);
+        _ = formations.RemoveAll(f => f.GetFormationClass() > FormationClass.NumberOfRegularFormations);
         return !formations.Any() ? null : formations;
     }
 
@@ -128,7 +129,11 @@ internal static class Order
             return (int)SortAgentsSpecialResult.Ignored;
         if (formations.All(f => f.IsAIControlled))
             return (int)SortAgentsSpecialResult.AIControlled;
+        OrderController orderController = Mission.MissionOrderVM.OrderController;
+        _ = typeof(OrderController).GetCachedMethod("BeforeSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
         formations.ForEach(f => f.OnMassUnitTransferStart());
+        List<Formation> emptyFormations = formations.Where(f => f.CountOfUnits == 0).ToList();
+        List<Formation> filledFormations = formations.Except(emptyFormations).ToList();
         int numAgentsSorted = 0;
         IEnumerable<Agent> agents = EnumerateAgentsInFormations(formations);
         if (tierSort)
@@ -230,7 +235,28 @@ internal static class Order
                 }
             }
         }
-        formations.ForEach(f => f.OnMassUnitTransferEnd());
+        if (filledFormations.Count > 0)
+            emptyFormations.ForEach(f =>
+            {
+                FormationClass formationClass = f.GetFormationClass();
+                Formation bestFormationForCopy = filledFormations.FirstOrDefault(f => f.GetFormationClass() == formationClass)
+                                              ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().FallbackClass() == formationClass.FallbackClass())
+                                              ?? filledFormations.FirstOrDefault(f
+                                                     => f.GetFormationClass().AlternativeClass() == formationClass.AlternativeClass())
+                                              ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().SiegeClass() == formationClass.SiegeClass())
+                                              ?? filledFormations.FirstOrDefault();
+                if (bestFormationForCopy is null)
+                    return;
+                _ = typeof(Formation).GetCachedMethod("CopyOrdersFrom").Invoke(f, new object[] { bestFormationForCopy });
+                f.SetPositioning(bestFormationForCopy.CreateNewOrderWorldPosition(WorldPosition.WorldPositionEnforcedCache.None),
+                    bestFormationForCopy.Direction, bestFormationForCopy.UnitSpacing);
+            });
+        formations.ForEach(f =>
+        {
+            f.Team.TriggerOnFormationsChanged(f);
+            f.OnMassUnitTransferEnd();
+        });
+        _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
         return numAgentsSorted;
     }
 
@@ -263,7 +289,7 @@ internal static class Order
         agent.Formation = desiredFormation;
         if (!Mission.Current.IsOrderGesturesEnabled())
             return true;
-        switch (FormationClassUtils.GetFormationClass(desiredFormation)) // units will yell out the formation they change to, because why not?
+        switch (desiredFormation.GetFormationClass()) // units will yell out the formation they change to, because why not?
         {
             case FormationClass.Infantry:
             case FormationClass.HeavyInfantry:
