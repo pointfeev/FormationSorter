@@ -136,37 +136,40 @@ internal static class Order
             {
                 FormationClass bestFormationClass = FormationClassUtils.GetBestFormationClassForAgent(agent);
                 int tier = agent.GetTier();
-                int index;
-                switch (bestFormationClass)
+                int index = bestFormationClass switch
                 {
-                    case FormationClass.Ranged:
-                        index = 3;
-                        break;
-                    case FormationClass.HorseArcher:
-                        index = 7;
-                        break;
-                    case FormationClass.Infantry:
-                    case FormationClass.HeavyInfantry:
-                    case FormationClass.Skirmisher:
-                        index = tier <= 2
-                            ? 0
-                            : tier <= 4
-                                ? 1
-                                : 2;
-                        break;
-                    case FormationClass.Cavalry:
-                    case FormationClass.LightCavalry:
-                    case FormationClass.HeavyCavalry:
-                        index = tier <= 2
-                            ? 4
-                            : tier <= 4
-                                ? 5
-                                : 6;
-                        break;
-                    default:
-                        index = 8;
-                        break;
-                }
+                    FormationClass.Ranged => 3, FormationClass.HorseArcher => 7, FormationClass.Infantry => tier <= 2
+                        ? 0
+                        : tier <= 4
+                            ? 1
+                            : 2,
+                    FormationClass.HeavyInfantry => tier <= 2
+                        ? 0
+                        : tier <= 4
+                            ? 1
+                            : 2,
+                    FormationClass.Skirmisher => tier <= 2
+                        ? 0
+                        : tier <= 4
+                            ? 1
+                            : 2,
+                    FormationClass.Cavalry => tier <= 2
+                        ? 4
+                        : tier <= 4
+                            ? 5
+                            : 6,
+                    FormationClass.LightCavalry => tier <= 2
+                        ? 4
+                        : tier <= 4
+                            ? 5
+                            : 6,
+                    FormationClass.HeavyCavalry => tier <= 2
+                        ? 4
+                        : tier <= 4
+                            ? 5
+                            : 6,
+                    _ => 8
+                };
                 if (TrySetAgentFormation(agent, formations.Find(f => f.Index == index)))
                     numAgentsSorted++;
             }
