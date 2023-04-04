@@ -239,17 +239,16 @@ internal static class Order
             emptyFormations.ForEach(f =>
             {
                 FormationClass formationClass = f.GetFormationClass();
-                Formation bestFormationForCopy = filledFormations.FirstOrDefault(f => f.GetFormationClass() == formationClass)
-                                              ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().FallbackClass() == formationClass.FallbackClass())
-                                              ?? filledFormations.FirstOrDefault(f
-                                                     => f.GetFormationClass().AlternativeClass() == formationClass.AlternativeClass())
-                                              ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().SiegeClass() == formationClass.SiegeClass())
-                                              ?? filledFormations.FirstOrDefault();
-                if (bestFormationForCopy is null)
+                Formation forCopy = filledFormations.FirstOrDefault(f => f.GetFormationClass() == formationClass)
+                                 ?? filledFormations.FirstOrDefault(f => f.PrimaryClass == formationClass)
+                                 ?? filledFormations.FirstOrDefault(f => f.SecondaryClasses.Contains(formationClass))
+                                 ?? filledFormations.FirstOrDefault(f => f.InitialClass == formationClass)
+                                 ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().FallbackClass() == formationClass.FallbackClass())
+                                 ?? filledFormations.FirstOrDefault();
+                if (forCopy is null)
                     return;
-                _ = typeof(Formation).GetCachedMethod("CopyOrdersFrom").Invoke(f, new object[] { bestFormationForCopy });
-                f.SetPositioning(bestFormationForCopy.CreateNewOrderWorldPosition(WorldPosition.WorldPositionEnforcedCache.None),
-                    bestFormationForCopy.Direction, bestFormationForCopy.UnitSpacing);
+                _ = typeof(Formation).GetCachedMethod("CopyOrdersFrom").Invoke(f, new object[] { forCopy });
+                f.SetPositioning(forCopy.CreateNewOrderWorldPosition(WorldPosition.WorldPositionEnforcedCache.None), forCopy.Direction, forCopy.UnitSpacing);
             });
         formations.ForEach(f =>
         {
