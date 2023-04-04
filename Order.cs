@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
@@ -96,8 +97,8 @@ internal static class Order
                 return;
             default:
             {
-                //if (Mission.Current.IsOrderShoutingAllowed()) // may need replacement for v1.1.0
-                Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                if (Mission.Current.IsOrderGesturesEnabled())
+                    Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                 InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
                     Colors.White, "FormationSorter"));
                 break;
@@ -109,7 +110,7 @@ internal static class Order
     private static List<Formation> GetAllRegularFormations()
     {
         List<Formation> formations = Mission.Current?.PlayerTeam?.FormationsIncludingEmpty?.ToList();
-        return formations is null || !formations.Any() ? null : formations;
+        return formations?.Any() != true ? null : formations;
     }
 
     private static List<Formation> GetSelectedRegularFormations()
@@ -127,8 +128,9 @@ internal static class Order
             return (int)SortAgentsSpecialResult.Ignored;
         if (formations.All(f => f.IsAIControlled))
             return (int)SortAgentsSpecialResult.AIControlled;
+        formations.ForEach(f => f.OnMassUnitTransferStart());
         int numAgentsSorted = 0;
-        List<Agent> agents = GetAllPlayerControlledHumanAgentsInFormations(formations);
+        IEnumerable<Agent> agents = EnumerateAgentsInFormations(formations);
         if (tierSort)
             foreach (Agent agent in agents)
             {
@@ -173,48 +175,59 @@ internal static class Order
             bool useShields = Settings.Instance.ShieldSortKey.IsDefinedAndDown();
             bool useSkirmishers = Settings.Instance.SkirmisherSortKey.IsDefinedAndDown();
             const bool useCompanions = true;
-            if (Settings.Instance.EqualSortKey.IsDefinedAndDown())
+            Dictionary<int, List<Agent>> agentsInFormationClasses = new();
+            foreach (Agent agent in agents)
             {
-                Dictionary<FormationClass, List<Agent>> agentsInFormationClasses = new();
-                foreach (Agent agent in agents)
+                FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, useCompanions);
+                if (agentsInFormationClasses.TryGetValue((int)formationClass, out List<Agent> agentsInFormationClass))
+                    agentsInFormationClass.Add(agent);
+                else
+                    agentsInFormationClasses.Add((int)formationClass, new() { agent });
+            }
+            bool equalSort = Settings.Instance.EqualSortKey.IsDefinedAndDown();
+            foreach (KeyValuePair<int, List<Agent>> keyValuePair in agentsInFormationClasses)
+            {
+                List<Agent> agentsInFormationClass = keyValuePair.Value;
+                List<Formation> classFormations = null;
+                int numAgentsPerFormation, numAgentsLeftOver;
+                if (equalSort)
                 {
-                    FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, useCompanions);
-                    if (agentsInFormationClasses.TryGetValue(formationClass, out List<Agent> agentsInFormationClass))
-                        agentsInFormationClass.Add(agent);
-                    else
-                        agentsInFormationClasses.Add(formationClass, new() { agent });
+                    numAgentsPerFormation = agentsInFormationClass.Count / formations.Count;
+                    numAgentsLeftOver = agentsInFormationClass.Count % formations.Count;
                 }
-                foreach (KeyValuePair<FormationClass, List<Agent>> keyValuePair in agentsInFormationClasses)
+                else
                 {
-                    List<Agent> agentsInFormationClass = keyValuePair.Value;
-                    int numAgentsPerFormation = agentsInFormationClass.Count / formations.Count;
-                    int numAgentsLeftOver = agentsInFormationClass.Count % formations.Count;
-                    foreach (Formation formation in formations)
+                    FormationClass formationClass = (FormationClass)keyValuePair.Key;
+                    classFormations = FormationClassUtils.GetFormationsForFormationClass(formations, formationClass).ToList();
+                    if (classFormations.Count == 0)
                     {
-                        int numAgentsToMove = numAgentsPerFormation;
-                        if (numAgentsLeftOver > 0)
-                        {
-                            numAgentsToMove++;
-                            numAgentsLeftOver--;
-                        }
-                        if (numAgentsToMove < 1)
-                            break;
-                        List<Agent> agentsToMove = agentsInFormationClass.GetRange(0, numAgentsToMove);
-                        agentsInFormationClass.RemoveRange(0, numAgentsToMove);
-                        if (!agentsToMove.Any())
-                            break;
-                        numAgentsSorted += agentsToMove.Count(agent => TrySetAgentFormation(agent, formation));
+                        _ = MessageBox.Show(
+                            $"You are missing a set formation for the formation class '{formationClass.GetGameTextString()}' within mod settings! Sorting will not act as expected!",
+                            "Formation Sorter encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        continue;
                     }
+                    numAgentsPerFormation = agentsInFormationClass.Count / classFormations.Count;
+                    numAgentsLeftOver = agentsInFormationClass.Count % classFormations.Count;
+                }
+                foreach (Formation formation in classFormations ?? formations)
+                {
+                    int numAgentsToMove = numAgentsPerFormation;
+                    if (numAgentsLeftOver > 0)
+                    {
+                        numAgentsToMove++;
+                        numAgentsLeftOver--;
+                    }
+                    if (numAgentsToMove < 1)
+                        break;
+                    List<Agent> agentsToMove = agentsInFormationClass.GetRange(0, numAgentsToMove);
+                    agentsInFormationClass.RemoveRange(0, numAgentsToMove);
+                    if (agentsToMove.Count < 1)
+                        break;
+                    numAgentsSorted += agentsToMove.Count(agent => TrySetAgentFormation(agent, formation));
                 }
             }
-            else
-                foreach (Agent agent in agents)
-                {
-                    FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, useCompanions);
-                    if (TrySetAgentFormation(agent, FormationClassUtils.GetFormationForFormationClass(formations, formationClass)))
-                        numAgentsSorted++;
-                }
         }
+        formations.ForEach(f => f.OnMassUnitTransferEnd());
         return numAgentsSorted;
     }
 
@@ -223,36 +236,32 @@ internal static class Order
             ? 0
             : MathF.Min(MathF.Max(MathF.Ceiling((agent.Character.Level - 5f) / 5f), 0), 7); // from Helpers.CharacterHelper.GetCharacterTier
 
-    private static List<Agent> GetAllPlayerControlledHumanAgentsInFormations(List<Formation> formations)
+    private static IEnumerable<Agent> EnumerateAgentsInFormations(IEnumerable<Formation> formations)
     {
-        List<Agent> readAgents = new();
         if (!Mission.IsCurrentValid())
-            return readAgents;
-        foreach (Formation formation in formations)
+            yield break;
+        foreach (Formation formation in formations.Where(formation => !formation.IsAIControlled))
         {
-            if (formation.IsAIControlled)
-                continue;
-            readAgents.AddRange(((List<Agent>)typeof(Formation).GetCachedField("_detachedUnits").GetValue(formation)).FindAll(agent => agent.IsHuman));
-            readAgents.AddRange(from unit in formation.Arrangement.GetAllUnits() where unit is Agent { IsHuman: true } select unit as Agent);
+            foreach (Agent agent in formation.DetachedUnits.Where(CheckAgent))
+                yield return agent;
+            foreach (Agent agent in formation.Arrangement.GetAllUnits().Cast<Agent>().Where(CheckAgent))
+                yield return agent;
         }
-        List<Agent> agents = new();
-        foreach (Agent agent in readAgents.Where(agent => agent != Mission.PlayerAgent).Where(agent => !agents.Contains(agent)))
-        {
-            agents.Add(agent);
-            agent.StopUsingGameObject(); // to prevent siege engine issues
-        }
-        return agents;
     }
+
+    private static bool CheckAgent(Agent agent) => agent != Mission.PlayerAgent && agent.IsHuman;
 
     private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
     {
-        if (!Mission.IsCurrentValid() || agent is null || desiredFormation is null || agent.Formation == desiredFormation)
+        Formation currentFormation = agent?.Formation;
+        if (!Mission.IsCurrentValid() || agent is null || desiredFormation is null || currentFormation == desiredFormation)
             return false;
+        agent.StopUsingGameObject(); // to prevent siege engine issues
         agent.Formation = desiredFormation;
-        //if (Mission.Current.IsOrderShoutingAllowed()) // may need replacement for v1.1.0
-        switch (FormationClassUtils.GetFormationClass(desiredFormation))
+        if (!Mission.Current.IsOrderGesturesEnabled())
+            return true;
+        switch (FormationClassUtils.GetFormationClass(desiredFormation)) // units will yell out the formation they change to, because why not?
         {
-            // units will yell out the formation they change to, because why not?
             case FormationClass.Infantry:
             case FormationClass.HeavyInfantry:
                 agent.MakeVoice(SkinVoiceManager.VoiceType.Infantry, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
@@ -271,7 +280,6 @@ internal static class Order
                 break;
             default:
                 agent.MakeVoice(SkinVoiceManager.VoiceType.MpAffirmative, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                // best fallback I can find
                 break;
         }
         return true;

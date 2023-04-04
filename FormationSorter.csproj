@@ -35,10 +35,9 @@
     <Compile Include="Settings.cs" />
     <Compile Include="HotKeys.cs" />
     <Compile Include="Patches\MissionFormationMarkerVM.cs" />
-    <Compile Include="Patches\UsableMachine.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="Patches\OrderController.cs" />
-    <Compile Include="Patches\OrderTroopItemWidget.cs" />
+    <Compile Include="Patches\OrderTroopItemBrushWidget.cs" />
     <Compile Include="Patches\MissionOrderVM.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="SubModule.cs" />
@@ -49,10 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Bannerlord.MCM">
-      <Version>5.5.5</Version>
+      <Version>5.7.1</Version>
     </PackageReference>
     <PackageReference Include="Bannerlord.ReferenceAssemblies">
-      <Version>1.1.0.12734</Version>
+      <Version>1.1.2.14580</Version>
     </PackageReference>
     <PackageReference Include="Lib.Harmony">
       <Version>2.2.2</Version>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FormationSorter.Utilities;
 using HarmonyLib;
 using TaleWorlds.Engine;
 using TaleWorlds.MountAndBlade;
@@ -18,25 +17,5 @@ public static class PatchMissionOrderVM
          typeof(OnRefreshVisualsDelegate), typeof(ToggleOrderPositionVisibilityDelegate), typeof(OnToggleActivateOrderStateDelegate),
          typeof(OnToggleActivateOrderStateDelegate), typeof(OnToggleActivateOrderStateDelegate), typeof(OnBeforeOrderDelegate), typeof(bool)
      }), HarmonyPostfix]
-    public static void MissionOrderVM(MissionOrderVM __instance)
-    {
-        try
-        {
-            Mission.MissionOrderVM = __instance;
-            Selection.UpdateAllFormationOrderTroopItemVMs();
-        }
-        catch (Exception e)
-        {
-            OutputUtils.DoOutputForException(e);
-        }
-    }
-
-    [HarmonyPatch("OnTransferFinished"), HarmonyPostfix]
-    public static void OnTransferFinished() => Selection.UpdateAllFormationOrderTroopItemVMs();
-
-    [HarmonyPatch("SetActiveOrders"), HarmonyPostfix]
-    public static void SetActiveOrders() => Selection.UpdateAllFormationOrderTroopItemVMs();
-
-    [HarmonyPatch("OnOrder"), HarmonyPostfix]
-    public static void OnOrder() => Selection.UpdateAllFormationOrderTroopItemVMs();
+    public static void MissionOrderVM(MissionOrderVM __instance) => Mission.MissionOrderVM = __instance;
 }

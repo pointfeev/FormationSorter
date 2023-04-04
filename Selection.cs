@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using FormationSorter.Patches;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
@@ -14,22 +12,6 @@ namespace FormationSorter;
 public static class Selection
 {
     private static List<Formation> previousSelections = new();
-
-    public static void UpdateAllFormationOrderTroopItemVMs()
-    {
-        try
-        {
-            if (ReflectionUtils.IsMethodInCallStack(MethodBase.GetCurrentMethod()) || !Mission.IsCurrentValid())
-                return;
-            foreach (Formation formation in Mission.Current.PlayerTeam.FormationsIncludingEmpty)
-                _ = GetOrderTroopItemVM(formation);
-            SortOrderTroopItemVMs();
-        }
-        catch (Exception e)
-        {
-            OutputUtils.DoOutputForException(e);
-        }
-    }
 
     public static void SelectFormations(IEnumerable<FormationClass> formationClasses = null, string feedback = null)
     {
@@ -79,7 +61,7 @@ public static class Selection
     {
         Mission.MissionOrderVM.OrderController.ClearSelectedFormations();
         _ = Mission.MissionOrderVM.TryCloseToggleOrder();
-        if (selections is null || !selections.Any(f => f.CountOfUnits > 0))
+        if (selections?.Any(f => f.CountOfUnits > 0) != true)
             return;
         Mission.MissionOrderVM.OpenToggleOrder(false);
         MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
@@ -96,50 +78,8 @@ public static class Selection
             if (orderTroopItemVM is not null)
                 _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("AddSelectedFormation").Invoke(troopController, new object[] { orderTroopItemVM });
         }
-        SortOrderTroopItemVMs();
     }
 
     private static OrderTroopItemVM GetOrderTroopItemVM(Formation formation)
-    {
-        MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
-        bool selectable = Mission.MissionOrderVM.OrderController.IsFormationSelectable(formation);
-        OrderTroopItemVM orderTroopItemVM = troopController.TroopList.SingleOrDefault(t => t.Formation == formation);
-        if (orderTroopItemVM is null && Mission.IsCurrentValid() && selectable)
-        {
-            orderTroopItemVM = new(formation,
-                item => typeof(MissionOrderTroopControllerVM).GetCachedMethod("OnSelectFormation").Invoke(troopController, new object[] { item }),
-                _formation => (int)typeof(MissionOrderTroopControllerVM).GetCachedMethod("GetFormationMorale")
-                   .Invoke(troopController, new object[] { _formation }));
-            troopController.TroopList.Add(orderTroopItemVM);
-            SortOrderTroopItemVMs();
-        }
-        if (orderTroopItemVM is not null)
-        {
-            if (Mission.IsCurrentValid() && selectable)
-            {
-                _ = typeof(MissionOrderTroopControllerVM).GetCachedMethod("SetTroopActiveOrders")
-                   .Invoke(Mission.MissionOrderVM.TroopController, new object[] { orderTroopItemVM });
-                orderTroopItemVM.IsSelectable = true;
-                orderTroopItemVM.IsSelected = orderTroopItemVM.IsSelectable && Mission.MissionOrderVM.OrderController.IsFormationListening(formation);
-                _ = orderTroopItemVM.SetFormationClassFromFormation(formation);
-            }
-            else
-            {
-                _ = troopController.TroopList.Remove(orderTroopItemVM);
-                SortOrderTroopItemVMs();
-            }
-        }
-        return orderTroopItemVM;
-    }
-
-    private static void SortOrderTroopItemVMs()
-    {
-        MissionOrderTroopControllerVM troopController = Mission.MissionOrderVM.TroopController;
-        if (!troopController.TroopList.Any())
-            return;
-        List<OrderTroopItemVM> sorted = troopController.TroopList.OrderBy(item => item.Formation.Index).ToList();
-        troopController.TroopList.Clear();
-        for (int i = 0; i < sorted.Count; i++)
-            troopController.TroopList.Insert(i, sorted[i]);
-    }
+        => Mission.MissionOrderVM?.TroopController?.TroopList?.SingleOrDefault(t => t.Formation == formation);
 }

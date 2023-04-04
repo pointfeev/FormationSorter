@@ -20,7 +20,7 @@ internal static class OutputUtils
             if (output.Length > 0)
                 _ = output.Append("\n\n");
             string[] stackTrace = e.StackTrace?.Split('\n');
-            if (stackTrace is not null && stackTrace.Length > 0)
+            if (stackTrace?.Length > 0)
             {
                 _ = output.Append(e.GetType() + (e.Message is not null ? ": " + e.Message : ""));
                 foreach (string line in stackTrace)

@@ -34,7 +34,7 @@ public static class Mission
         if (currentInteractableObject is null)
             return false;
         Agent agent = currentInteractableObject as Agent;
-        return agent is null || agent.IsMount;
+        return agent?.IsMount != false;
     }
 
     public static bool IsCurrentValid()

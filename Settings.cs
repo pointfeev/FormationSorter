@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
+using FormationSorter.Utilities;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -113,7 +114,8 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
 {
     public override string Id => "FormationSorter";
 
-    public override string DisplayName => "Formation Sorter " + typeof(CustomSettings).Assembly.GetName().Version.ToString(3);
+    public override string DisplayName
+        => "Formation Sorter " + new Version(FileVersionInfo.GetVersionInfo(typeof(CustomSettings).Assembly.Location).FileVersion).ToString(3);
 
     public override string FolderName => "FormationSorter";
     public override string FormatType => "xml";
@@ -327,13 +329,13 @@ internal class FormationClassSelection
     internal readonly FormationClass? FormationClass;
     internal readonly string Name;
 
-    internal FormationClassSelection(FormationClass? formationClass, string name)
+    internal FormationClassSelection(FormationClass? formationClass, string name = null)
     {
         FormationClass = formationClass;
         Name = name;
     }
 
-    public override string ToString() => Name;
+    public override string ToString() => Name ?? (FormationClass is null ? "None" : FormationClass.Value.GetGameTextString());
 }
 
 internal class KeySelection
@@ -360,7 +362,7 @@ internal static class DropdownHelper
         foreach (string name in Enum.GetNames(typeof(FormationClass)))
             if (!name.StartsWith("NumberOf") && Enum.TryParse(name, false, out FormationClass formationClass)
                                              && formationClass < FormationClass.NumberOfRegularFormations)
-                yield return new(formationClass, Regex.Replace(name, "[A-Z]", " $0").Trim());
+                yield return new(formationClass);
     }
 
     internal static Dropdown<KeySelection> KeySelection(InputKey defaultKey, IEnumerable<KeySelection> keys)

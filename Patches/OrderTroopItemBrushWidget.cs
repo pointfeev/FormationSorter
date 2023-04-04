@@ -6,7 +6,7 @@ using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Order;
 namespace FormationSorter.Patches;
 
 [HarmonyPatch(typeof(OrderTroopItemBrushWidget))]
-public static class PatchOrderTroopItemWidget
+public static class PatchOrderTroopItemBrushWidget
 {
     [HarmonyPatch("UpdateBackgroundState"), HarmonyPostfix]
     public static void UpdateBackgroundState(OrderTroopItemBrushWidget __instance)
