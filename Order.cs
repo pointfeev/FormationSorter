@@ -125,9 +125,12 @@ internal static class Order
 
     private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Formation> captainSetFormations)
     {
+        Formation currentFormation = agent.Formation;
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
+                if (currentFormation?.Captain == agent)
+                    currentFormation.Captain = null;
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
@@ -135,6 +138,8 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
+                if (currentFormation?.Captain == agent)
+                    currentFormation.Captain = null;
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
@@ -142,6 +147,8 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
+                if (currentFormation?.Captain == agent)
+                    currentFormation.Captain = null;
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
@@ -179,6 +186,9 @@ internal static class Order
             numAgentsSorted++;
             assignedCaptains.Add(agent);
         }
+        if (assignedCaptains.Any())
+            foreach (OrderTroopItemVM troopItem in Mission.MissionOrderVM.TroopController.TroopList)
+                _ = typeof(OrderTroopItemVM).GetCachedMethod("UpdateCommanderInfo").Invoke(troopItem, new object[] { });
         if (tierSort)
             foreach (Agent agent in agents)
             {
