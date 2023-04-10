@@ -125,12 +125,13 @@ internal static class Order
 
     private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Formation> captainSetFormations)
     {
-        Formation currentFormation = agent.Formation;
+        List<Formation> allFormations = Mission.Current?.PlayerTeam?.FormationsIncludingSpecialAndEmpty;
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
-                if (currentFormation?.Captain == agent)
-                    currentFormation.Captain = null;
+                if (allFormations is not null)
+                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
+                        formation.Captain = null;
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
@@ -138,8 +139,9 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
-                if (currentFormation?.Captain == agent)
-                    currentFormation.Captain = null;
+                if (allFormations is not null)
+                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
+                        formation.Captain = null;
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
@@ -147,8 +149,9 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
-                if (currentFormation?.Captain == agent)
-                    currentFormation.Captain = null;
+                if (allFormations is not null)
+                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
+                        formation.Captain = null;
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
@@ -309,9 +312,12 @@ internal static class Order
             });
         formations.ForEach(f =>
         {
-            f.Team.TriggerOnFormationsChanged(f);
+            if (numAgentsSorted > 0)
+                f.Team.TriggerOnFormationsChanged(f);
             f.OnMassUnitTransferEnd();
         });
+        if (numAgentsSorted > 0)
+            Mission.MissionOrderVM.OnOrderLayoutTypeChanged();
         bool? gesturesEnabled = null;
         if (numAgentsSorted == 0)
             gesturesEnabled = orderController.BackupAndDisableGesturesEnabled();
