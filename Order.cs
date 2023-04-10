@@ -123,13 +123,14 @@ internal static class Order
         return !formations.Any() ? null : formations;
     }
 
-    private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations,
+    private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Agent> assignedCaptains,
         ref List<Formation> captainChangedFormations, ref List<Formation> captainSetFormations)
     {
         List<Formation> allFormations = Mission.Current?.PlayerTeam?.FormationsIncludingSpecialAndEmpty;
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
+                assignedCaptains.Add(agent);
                 captainSetFormations.Add(classFormation);
                 if (classFormation.Captain == agent)
                     return false;
@@ -146,6 +147,7 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
+                assignedCaptains.Add(agent);
                 captainSetFormations.Add(classFormation);
                 if (classFormation.Captain == agent)
                     return false;
@@ -162,6 +164,7 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
+                assignedCaptains.Add(agent);
                 captainSetFormations.Add(classFormation);
                 if (classFormation.Captain == agent)
                     return false;
@@ -202,14 +205,9 @@ internal static class Order
            .Invoke(Mission.Current.MissionBehaviors.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic), parameters);
         prospectiveCaptains = (List<Agent>)parameters[1];
         List<Agent> assignedCaptains = new();
-        int numAgentsSorted = 0;
-        foreach (Agent agent in prospectiveCaptains.Where(agent => TrySetCaptainFormation(agent,
-                     FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers), formations, ref captainChangedFormations,
-                     ref captainSetFormations)))
-        {
-            numAgentsSorted++;
-            assignedCaptains.Add(agent);
-        }
+        int numAgentsSorted = prospectiveCaptains.Count(agent => TrySetCaptainFormation(agent,
+            FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers), formations, ref assignedCaptains,
+            ref captainChangedFormations, ref captainSetFormations));
         if (captainChangedFormations.Any())
             foreach (OrderTroopItemVM troopItem in Mission.MissionOrderVM.TroopController.TroopList)
                 if (captainChangedFormations.Contains(troopItem.Formation))
