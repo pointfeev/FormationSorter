@@ -188,7 +188,8 @@ internal static class Order
         if (formations.All(f => f.IsAIControlled))
             return (int)SortAgentsSpecialResult.AIControlled;
         OrderController orderController = Mission.MissionOrderVM.OrderController;
-        _ = typeof(OrderController).GetCachedMethod("BeforeSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
+        if (orderController is not null)
+            _ = typeof(OrderController).GetCachedMethod("BeforeSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
         formations.ForEach(f => f.OnMassUnitTransferStart());
         List<string> classesWithMissingFormations = new();
         List<Formation> emptyFormations = formations.Where(f => f.CountOfUnits == 0).ToList();
@@ -339,6 +340,8 @@ internal static class Order
         if (numAgentsSorted > 0)
             Mission.MissionOrderVM.OnOrderLayoutTypeChanged();
         bool? gesturesEnabled = null;
+        if (orderController is null)
+            return numAgentsSorted;
         if (numAgentsSorted == 0)
             gesturesEnabled = orderController.BackupAndDisableGesturesEnabled();
         _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
