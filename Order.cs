@@ -130,52 +130,49 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
-                if (classFormation.Captain != agent)
-                {
-                    if (allFormations is not null)
-                        foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
-                        {
-                            formation.Captain = null;
-                            captainChangedFormations.Add(classFormation);
-                        }
-                    classFormation.Captain = agent;
-                    captainChangedFormations.Add(classFormation);
-                }
                 captainSetFormations.Add(classFormation);
+                if (classFormation.Captain == agent)
+                    return false;
+                if (allFormations is not null)
+                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
+                    {
+                        formation.Captain = null;
+                        captainChangedFormations.Add(classFormation);
+                    }
+                classFormation.Captain = agent;
+                captainChangedFormations.Add(classFormation);
                 return true;
             }
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
-                if (classFormation.Captain != agent)
-                {
-                    if (allFormations is not null)
-                        foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
-                        {
-                            formation.Captain = null;
-                            captainChangedFormations.Add(classFormation);
-                        }
-                    classFormation.Captain = agent;
-                    captainChangedFormations.Add(classFormation);
-                }
                 captainSetFormations.Add(classFormation);
+                if (classFormation.Captain == agent)
+                    return false;
+                if (allFormations is not null)
+                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
+                    {
+                        formation.Captain = null;
+                        captainChangedFormations.Add(classFormation);
+                    }
+                classFormation.Captain = agent;
+                captainChangedFormations.Add(classFormation);
                 return true;
             }
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
             if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
-                if (classFormation.Captain != agent)
-                {
-                    if (allFormations is not null)
-                        foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
-                        {
-                            formation.Captain = null;
-                            captainChangedFormations.Add(classFormation);
-                        }
-                    classFormation.Captain = agent;
-                    captainChangedFormations.Add(classFormation);
-                }
                 captainSetFormations.Add(classFormation);
+                if (classFormation.Captain == agent)
+                    return false;
+                if (allFormations is not null)
+                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
+                    {
+                        formation.Captain = null;
+                        captainChangedFormations.Add(classFormation);
+                    }
+                classFormation.Captain = agent;
+                captainChangedFormations.Add(classFormation);
                 return true;
             }
         return false;
