@@ -184,7 +184,9 @@ internal static class Order
         List<Agent> assignedCaptains = new();
         int numAgentsSorted = 0;
         foreach (Agent agent in prospectiveCaptains.Where(agent => TrySetCaptainFormation(agent,
-                     FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers), formations, ref captainSetFormations)))
+                                                                       FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers),
+                                                                       formations, ref captainSetFormations)
+                                                                && agent != Mission.PlayerAgent))
         {
             numAgentsSorted++;
             assignedCaptains.Add(agent);
