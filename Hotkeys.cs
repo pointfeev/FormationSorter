@@ -16,8 +16,11 @@ public static class HotKeys
     {
         if (!Mission.IsCurrentValid())
             return;
-        ProcessKey(Settings.Instance.OrderKey, () => Order.OnOrder());
-        ProcessKey(Settings.Instance.TierSortKey, () => Order.OnOrder(true));
+        bool equalSort = Settings.Instance.EqualSortKey.IsDefinedAndDown();
+        bool useShields = Settings.Instance.ShieldSortKey.IsDefinedAndDown();
+        bool useSkirmishers = Settings.Instance.SkirmisherSortKey.IsDefinedAndDown();
+        ProcessKey(Settings.Instance.OrderKey, () => Order.OnOrder(false, equalSort, useShields, useSkirmishers));
+        ProcessKey(Settings.Instance.TierSortKey, () => Order.OnOrder(true, equalSort, useShields, useSkirmishers));
         ProcessKey(Settings.Instance.AllSelectKey, () => Selection.SelectFormations());
         ProcessKey(Settings.Instance.CavalryMeleeSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateCavalryMelee(), "melee cavalry "));
         ProcessKey(Settings.Instance.CavalryRangedSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateCavalryRanged(), "ranged cavalry "));

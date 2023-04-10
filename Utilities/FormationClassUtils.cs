@@ -84,9 +84,9 @@ internal static class FormationClassUtils
     internal static IEnumerable<Formation> GetFormationsForFormationClass(IEnumerable<Formation> formations, FormationClass formationClass)
         => formations.Where(formation => GetFormationClass(formation) == formationClass);
 
-    internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false, bool useCompanions = false)
+    internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false)
     {
-        if (useCompanions && agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
+        if (agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
             return Settings.Instance.CompanionFormation;
         Agent mount = agent.MountAgent;
         return mount?.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount)

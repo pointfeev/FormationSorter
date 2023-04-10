@@ -75,14 +75,14 @@ internal static class Order
         RefreshOrderVMs();
     }
 
-    internal static void OnOrder(bool tierSort = false)
+    internal static void OnOrder(bool tierSort = false, bool equalSort = false, bool useShields = false, bool useSkirmishers = false, bool uiFeedback = true)
     {
-        if (!Mission.IsCurrentValid())
-            return;
         List<Formation> formations = tierSort ? GetAllRegularFormations() : GetSelectedRegularFormations();
         if (formations is null)
             return;
-        int numUnitsSorted = SortAgentsBetweenFormations(formations, tierSort);
+        int numUnitsSorted = SortAgentsBetweenFormations(formations, tierSort, equalSort, useShields, useSkirmishers);
+        if (!uiFeedback)
+            return;
         switch (numUnitsSorted)
         {
             case (int)SortAgentsSpecialResult.Ignored:
@@ -123,22 +123,67 @@ internal static class Order
         return !formations.Any() ? null : formations;
     }
 
-    private static int SortAgentsBetweenFormations(List<Formation> formations, bool tierSort = false)
+    private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Formation> captainSetFormations)
     {
-        if (!Mission.IsCurrentValid() || formations is null || formations.Count < 2)
+        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
+            if (!captainSetFormations.Contains(classFormation) && TrySetAgentFormation(agent, classFormation))
+            {
+                classFormation.Captain = agent;
+                captainSetFormations.Add(classFormation);
+                return true;
+            }
+        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
+            if (!captainSetFormations.Contains(classFormation) && TrySetAgentFormation(agent, classFormation))
+            {
+                classFormation.Captain = agent;
+                captainSetFormations.Add(classFormation);
+                return true;
+            }
+        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
+            if (!captainSetFormations.Contains(classFormation) && TrySetAgentFormation(agent, classFormation))
+            {
+                classFormation.Captain = agent;
+                captainSetFormations.Add(classFormation);
+                return true;
+            }
+        return false;
+    }
+
+    private static int SortAgentsBetweenFormations(List<Formation> formations, bool tierSort, bool equalSort, bool useShields, bool useSkirmishers)
+    {
+        if (formations is null || formations.Count < 2)
             return (int)SortAgentsSpecialResult.Ignored;
         if (formations.All(f => f.IsAIControlled))
             return (int)SortAgentsSpecialResult.AIControlled;
         OrderController orderController = Mission.MissionOrderVM.OrderController;
         _ = typeof(OrderController).GetCachedMethod("BeforeSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
         formations.ForEach(f => f.OnMassUnitTransferStart());
+        List<string> classesWithMissingFormations = new();
         List<Formation> emptyFormations = formations.Where(f => f.CountOfUnits == 0).ToList();
         List<Formation> filledFormations = formations.Except(emptyFormations).ToList();
+        List<Formation> captainSetFormations = new();
+        List<Agent> agents = EnumerateAgentsInFormations(formations).ToList();
+        List<Agent> prospectiveCaptains = (Settings.Instance.AssignNewFormationCaptains
+            ? agents.Where(a => a.IsHero)
+            : formations.Where(f => f.Captain is not null).Select(f => f.Captain)).ToList();
+        Team team = formations.FirstOrDefault()?.Team;
+        object[] parameters = { team, prospectiveCaptains };
+        _ = typeof(GeneralsAndCaptainsAssignmentLogic).GetCachedMethod("SortCaptainsByPriority")
+           .Invoke(Mission.Current.MissionBehaviors.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic), parameters);
+        prospectiveCaptains = (List<Agent>)parameters[1];
+        List<Agent> assignedCaptains = new();
         int numAgentsSorted = 0;
-        IEnumerable<Agent> agents = EnumerateAgentsInFormations(formations);
+        foreach (Agent agent in prospectiveCaptains.Where(agent => TrySetCaptainFormation(agent,
+                     FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers), formations, ref captainSetFormations)))
+        {
+            numAgentsSorted++;
+            assignedCaptains.Add(agent);
+        }
         if (tierSort)
             foreach (Agent agent in agents)
             {
+                if (assignedCaptains.Contains(agent))
+                    continue;
                 FormationClass bestFormationClass = FormationClassUtils.GetBestFormationClassForAgent(agent);
                 int tier = agent.GetTier();
                 int index = bestFormationClass switch
@@ -180,19 +225,17 @@ internal static class Order
             }
         else
         {
-            bool useShields = Settings.Instance.ShieldSortKey.IsDefinedAndDown();
-            bool useSkirmishers = Settings.Instance.SkirmisherSortKey.IsDefinedAndDown();
-            const bool useCompanions = true;
             Dictionary<int, List<Agent>> agentsInFormationClasses = new();
             foreach (Agent agent in agents)
             {
-                FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, useCompanions);
+                if (assignedCaptains.Contains(agent))
+                    continue;
+                FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers);
                 if (agentsInFormationClasses.TryGetValue((int)formationClass, out List<Agent> agentsInFormationClass))
                     agentsInFormationClass.Add(agent);
                 else
                     agentsInFormationClasses.Add((int)formationClass, new() { agent });
             }
-            bool equalSort = Settings.Instance.EqualSortKey.IsDefinedAndDown();
             foreach (KeyValuePair<int, List<Agent>> keyValuePair in agentsInFormationClasses)
             {
                 List<Agent> agentsInFormationClass = keyValuePair.Value;
@@ -209,9 +252,7 @@ internal static class Order
                     classFormations = FormationClassUtils.GetFormationsForFormationClass(formations, formationClass).ToList();
                     if (classFormations.Count == 0)
                     {
-                        _ = MessageBox.Show(
-                            $"You are missing a set formation for the formation class '{formationClass.GetGameTextString()}' within mod settings! Sorting will not act as expected!",
-                            "Formation Sorter encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        classesWithMissingFormations.Add(formationClass.GetGameTextString());
                         continue;
                     }
                     numAgentsPerFormation = agentsInFormationClass.Count / classFormations.Count;
@@ -235,6 +276,12 @@ internal static class Order
                 }
             }
         }
+        if (classesWithMissingFormations.Count > 0)
+            _ = MessageBox.Show(
+                $"You are missing {(classesWithMissingFormations.Count > 1 ? "set formations" : "a set formation")}"
+              + $" for the formation {(classesWithMissingFormations.Count > 1 ? "classes" : "class")}"
+              + $" '{string.Join(", ", classesWithMissingFormations)}' within mod settings; sorting will not act as expected!",
+                "Formation Sorter encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         if (filledFormations.Count > 0)
             emptyFormations.ForEach(f =>
             {
@@ -255,7 +302,12 @@ internal static class Order
             f.Team.TriggerOnFormationsChanged(f);
             f.OnMassUnitTransferEnd();
         });
+        bool? gesturesEnabled = null;
+        if (numAgentsSorted == 0)
+            gesturesEnabled = orderController.BackupAndDisableGesturesEnabled();
         _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
+        if (gesturesEnabled.HasValue)
+            orderController.RestoreGesturesEnabled(gesturesEnabled.Value);
         return numAgentsSorted;
     }
 
@@ -266,8 +318,6 @@ internal static class Order
 
     private static IEnumerable<Agent> EnumerateAgentsInFormations(IEnumerable<Formation> formations)
     {
-        if (!Mission.IsCurrentValid())
-            yield break;
         foreach (Formation formation in formations.Where(formation => !formation.IsAIControlled))
         {
             foreach (Agent agent in formation.DetachedUnits.Where(CheckAgent))
@@ -282,7 +332,7 @@ internal static class Order
     private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
     {
         Formation currentFormation = agent?.Formation;
-        if (!Mission.IsCurrentValid() || agent is null || desiredFormation is null || currentFormation == desiredFormation)
+        if (agent is null || desiredFormation is null || currentFormation == desiredFormation)
             return false;
         agent.StopUsingGameObject(); // to prevent siege engine issues
         agent.Formation = desiredFormation;

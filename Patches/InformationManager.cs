@@ -57,10 +57,9 @@ public static class PatchInformationManager
     {
         try
         {
-            if (Mission.IsCurrentValid())
-                if (IgnoredMessages.Contains(message.Information) || SuppressSelectAllFormations
-                 && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me").ToString())
-                    return false;
+            if (Mission.IsCurrentValid() && (IgnoredMessages.Contains(message.Information) || SuppressSelectAllFormations
+                 && message.Information == new TextObject("{=xTv4tCbZ}Everybody!! Listen to me").ToString()))
+                return false;
         }
         catch (Exception e)
         {

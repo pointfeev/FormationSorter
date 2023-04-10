@@ -14,6 +14,7 @@ namespace FormationSorter;
 
 internal interface ISettings
 {
+    bool AssignNewFormationCaptains { get; }
     bool UserDefinedFormationClasses { get; }
     FormationClass CompanionFormation { get; }
     FormationClass Formation1 { get; }
@@ -50,6 +51,7 @@ internal class Settings : ISettings
 
     internal static Settings Instance => instance ??= new();
 
+    public bool AssignNewFormationCaptains => provider.AssignNewFormationCaptains;
     public bool UserDefinedFormationClasses => provider.UserDefinedFormationClasses;
     public FormationClass CompanionFormation => provider.CompanionFormation;
     public FormationClass Formation1 => provider.Formation1;
@@ -83,6 +85,7 @@ internal class DefaultSettings : ISettings
 
     internal static ISettings Instance => instance ??= new DefaultSettings();
 
+    bool ISettings.AssignNewFormationCaptains => true;
     bool ISettings.UserDefinedFormationClasses => true;
     FormationClass ISettings.CompanionFormation => FormationClass.Unset;
     FormationClass ISettings.Formation1 => 0;
@@ -269,6 +272,11 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
     [SettingPropertyBool("S6", Order = 21, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
      SettingPropertyGroup("Spacers", GroupOrder = 4)]
     private bool S6 { get => false; set { } }
+
+    [SettingPropertyBool("Assign New Formation Captains", Order = 0, RequireRestart = false,
+         HintText = "Whether or not to freely assign the best heroes/companions as captains, or to only use the captains assigned during deployment."),
+     SettingPropertyGroup("General", GroupOrder = 0)]
+    public bool AssignNewFormationCaptains { get; set; } = DefaultSettings.Instance.AssignNewFormationCaptains;
 
     [SettingPropertyBool("User-Defined Formation Classes", IsToggle = true, Order = 1, RequireRestart = false,
          HintText = "Whether or not to use the user-defined formation classes below in place of the default dynamic formation classes. (highly recommended)"),

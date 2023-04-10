@@ -37,10 +37,10 @@ public static class Mission
         return agent?.IsMount != false;
     }
 
-    public static bool IsCurrentValid()
+    public static bool IsCurrentValid(bool uiFeedback = false)
     {
         TaleWorlds.MountAndBlade.Mission current = Current;
-        if (current is null || current.Mode is not MissionMode.Battle && current.Mode is not MissionMode.Stealth || MissionOrderVM is null)
+        if (current is null || current.Mode is MissionMode.Deployment || MissionOrderVM is null)
             return false;
         try
         {
@@ -51,6 +51,6 @@ public static class Mission
         {
             return false;
         }
-        return true;
+        return (bool)typeof(MissionOrderVM).GetCachedMethod("CheckCanBeOpened").Invoke(MissionOrderVM, new object[] { uiFeedback });
     }
 }
