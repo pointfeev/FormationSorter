@@ -126,21 +126,21 @@ internal static class Order
     private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Formation> captainSetFormations)
     {
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
-            if (!captainSetFormations.Contains(classFormation) && TrySetAgentFormation(agent, classFormation))
+            if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
             }
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
-            if (!captainSetFormations.Contains(classFormation) && TrySetAgentFormation(agent, classFormation))
+            if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
                 return true;
             }
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
-            if (!captainSetFormations.Contains(classFormation) && TrySetAgentFormation(agent, classFormation))
+            if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
             {
                 classFormation.Captain = agent;
                 captainSetFormations.Add(classFormation);
@@ -182,7 +182,7 @@ internal static class Order
         if (tierSort)
             foreach (Agent agent in agents)
             {
-                if (assignedCaptains.Contains(agent))
+                if (agent == Mission.PlayerAgent || assignedCaptains.Contains(agent))
                     continue;
                 FormationClass bestFormationClass = FormationClassUtils.GetBestFormationClassForAgent(agent);
                 int tier = agent.GetTier();
@@ -228,7 +228,7 @@ internal static class Order
             Dictionary<int, List<Agent>> agentsInFormationClasses = new();
             foreach (Agent agent in agents)
             {
-                if (assignedCaptains.Contains(agent))
+                if (agent == Mission.PlayerAgent || assignedCaptains.Contains(agent))
                     continue;
                 FormationClass formationClass = FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers);
                 if (agentsInFormationClasses.TryGetValue((int)formationClass, out List<Agent> agentsInFormationClass))
@@ -316,8 +316,9 @@ internal static class Order
             ? 0
             : MathF.Min(MathF.Max(MathF.Ceiling((agent.Character.Level - 5f) / 5f), 0), 7); // from Helpers.CharacterHelper.GetCharacterTier
 
-    private static IEnumerable<Agent> EnumerateAgentsInFormations(IEnumerable<Formation> formations)
+    private static IEnumerable<Agent> EnumerateAgentsInFormations(List<Formation> formations)
     {
+        yield return Mission.PlayerAgent;
         foreach (Formation formation in formations.Where(formation => !formation.IsAIControlled))
         {
             foreach (Agent agent in formation.DetachedUnits.Where(CheckAgent))

@@ -274,7 +274,8 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
     private bool S6 { get => false; set { } }
 
     [SettingPropertyBool("Assign New Formation Captains", Order = 0, RequireRestart = false,
-         HintText = "Whether or not to freely assign the best heroes/companions as captains, or to only use the captains assigned during deployment."),
+         HintText
+             = "Whether or not to freely assign the best heroes/companions as captains, or to only use the captains assigned during deployment. NOTE: Companion Formation must be set to Default (or User-Defined Formation Classes turned off) for this to work properly."),
      SettingPropertyGroup("General", GroupOrder = 0)]
     public bool AssignNewFormationCaptains { get; set; } = DefaultSettings.Instance.AssignNewFormationCaptains;
 
