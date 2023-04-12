@@ -130,7 +130,8 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations,
                      FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, true), true, true))
             if (classFormation.CountOfUnits > 0 && captainSetFormations.Add(classFormation) && assignedCaptains.Add(agent) && (classFormation.Captain == agent
-                 || agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation, ref changedFormations)))
+                 || (FormationClass)agent.Formation.Index >= FormationClass.NumberOfRegularFormations
+                 || TrySetAgentFormation(agent, classFormation, ref changedFormations)))
             {
                 if (classFormation.Captain == agent)
                     return false;
@@ -180,8 +181,8 @@ internal static class Order
             prospectiveCaptainsEnumerable = prospectiveCaptainsEnumerable.OrderByDescending(c => c.Character.GetPower());
             prospectiveCaptains = prospectiveCaptainsEnumerable.ToHashSet();
         }
-        numAgentsSorted += SortAgentsBetweenFormationsInternal(agents.Except(prospectiveCaptains), formations, tierSort, equalSort, useShields, useSkirmishers,
-            ref classesWithMissingFormations, ref changedFormations);
+        SortAgentsBetweenFormationsInternal(agents.Except(prospectiveCaptains), formations, tierSort, equalSort, useShields, useSkirmishers,
+            ref numAgentsSorted, ref classesWithMissingFormations, ref changedFormations);
         if (filledFormations.Count > 0)
             foreach (Formation formation in emptyFormations)
             {
@@ -207,8 +208,8 @@ internal static class Order
                 foreach (OrderTroopItemVM troopItem in Mission.MissionOrderVM.TroopController.TroopList)
                     if (captainChangedFormations.Contains(troopItem.Formation))
                         _ = typeof(OrderTroopItemVM).GetCachedMethod("UpdateCommanderInfo").Invoke(troopItem, new object[] { });
-            numAgentsSorted += SortAgentsBetweenFormationsInternal(prospectiveCaptains.Except(assignedCaptains), formations, tierSort, equalSort, useShields,
-                useSkirmishers, ref classesWithMissingFormations, ref changedFormations);
+            SortAgentsBetweenFormationsInternal(prospectiveCaptains.Except(assignedCaptains), formations, tierSort, equalSort, useShields, useSkirmishers,
+                ref numAgentsSorted, ref classesWithMissingFormations, ref changedFormations);
         }
         foreach (Formation formation in changedFormations)
             formation.Team.TriggerOnFormationsChanged(formation);
@@ -232,10 +233,10 @@ internal static class Order
         return numAgentsSorted;
     }
 
-    private static int SortAgentsBetweenFormationsInternal(IEnumerable<Agent> agents, HashSet<Formation> formations, bool tierSort, bool equalSort,
-        bool useShields, bool useSkirmishers, ref HashSet<string> classesWithMissingFormations, ref HashSet<Formation> changedFormations)
+    private static void SortAgentsBetweenFormationsInternal(IEnumerable<Agent> agents, HashSet<Formation> formations, bool tierSort, bool equalSort,
+        bool useShields, bool useSkirmishers, ref int numAgentsSorted, ref HashSet<string> classesWithMissingFormations,
+        ref HashSet<Formation> changedFormations)
     {
-        int numAgentsSorted = 0;
         if (tierSort)
             foreach (Agent agent in agents)
             {
@@ -331,7 +332,6 @@ internal static class Order
                 }
             }
         }
-        return numAgentsSorted;
     }
 
     private static int GetTier(this IAgent agent)
@@ -354,7 +354,7 @@ internal static class Order
 
     private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation, ref HashSet<Formation> changedFormations)
     {
-        if (agent is null || desiredFormation is null)
+        if (agent is null || (FormationClass)agent.Formation.Index >= FormationClass.NumberOfRegularFormations || desiredFormation is null)
             return false;
         Formation currentFormation = agent.Formation;
         if (currentFormation == desiredFormation)
