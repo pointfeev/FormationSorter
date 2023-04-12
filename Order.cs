@@ -126,9 +126,11 @@ internal static class Order
     private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Agent> assignedCaptains,
         ref List<Formation> captainChangedFormations, ref List<Formation> captainSetFormations)
     {
+        if (assignedCaptains.Contains(agent))
+            return false;
         List<Formation> allFormations = Mission.Current?.PlayerTeam?.FormationsIncludingSpecialAndEmpty;
-        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass))
-            if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
+        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass, true))
+            if (!captainSetFormations.Contains(classFormation))
             {
                 assignedCaptains.Add(agent);
                 captainSetFormations.Add(classFormation);
@@ -138,44 +140,12 @@ internal static class Order
                     foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
                     {
                         formation.Captain = null;
-                        captainChangedFormations.Add(classFormation);
+                        if (!captainChangedFormations.Contains(classFormation))
+                            captainChangedFormations.Add(classFormation);
                     }
                 classFormation.Captain = agent;
-                captainChangedFormations.Add(classFormation);
-                return true;
-            }
-        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.FallbackClass()))
-            if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
-            {
-                assignedCaptains.Add(agent);
-                captainSetFormations.Add(classFormation);
-                if (classFormation.Captain == agent)
-                    return false;
-                if (allFormations is not null)
-                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
-                    {
-                        formation.Captain = null;
-                        captainChangedFormations.Add(classFormation);
-                    }
-                classFormation.Captain = agent;
-                captainChangedFormations.Add(classFormation);
-                return true;
-            }
-        foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass.AlternativeClass()))
-            if (!captainSetFormations.Contains(classFormation) && agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
-            {
-                assignedCaptains.Add(agent);
-                captainSetFormations.Add(classFormation);
-                if (classFormation.Captain == agent)
-                    return false;
-                if (allFormations is not null)
-                    foreach (Formation formation in allFormations.Where(formation => formation.Captain == agent))
-                    {
-                        formation.Captain = null;
-                        captainChangedFormations.Add(classFormation);
-                    }
-                classFormation.Captain = agent;
-                captainChangedFormations.Add(classFormation);
+                if (!captainChangedFormations.Contains(classFormation))
+                    captainChangedFormations.Add(classFormation);
                 return true;
             }
         return false;
@@ -371,8 +341,10 @@ internal static class Order
 
     private static bool TrySetAgentFormation(Agent agent, Formation desiredFormation)
     {
-        Formation currentFormation = agent?.Formation;
-        if (agent is null || desiredFormation is null || currentFormation == desiredFormation)
+        if (agent is null || desiredFormation is null)
+            return false;
+        Formation currentFormation = agent.Formation;
+        if (currentFormation == desiredFormation)
             return false;
         agent.StopUsingGameObject(); // to prevent siege engine issues
         agent.Formation = desiredFormation;

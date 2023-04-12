@@ -81,8 +81,17 @@ internal static class FormationClassUtils
     internal static bool IsFormationOneOfFormationClasses(Formation formation, IEnumerable<FormationClass> formationClasses)
         => formationClasses.Contains(GetFormationClass(formation));
 
-    internal static IEnumerable<Formation> GetFormationsForFormationClass(IEnumerable<Formation> formations, FormationClass formationClass)
-        => formations.Where(formation => GetFormationClass(formation) == formationClass);
+    internal static IEnumerable<Formation> GetFormationsForFormationClass(List<Formation> formations, FormationClass formationClass, bool fallback = false)
+    {
+        foreach (Formation formation in formations.Where(formation => GetFormationClass(formation) == formationClass))
+            yield return formation;
+        if (!fallback)
+            yield break;
+        foreach (Formation formation in formations.Where(formation => GetFormationClass(formation).FallbackClass() == formationClass))
+            yield return formation;
+        foreach (Formation formation in formations.Where(formation => GetFormationClass(formation).AlternativeClass() == formationClass))
+            yield return formation;
+    }
 
     internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false)
     {
