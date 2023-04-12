@@ -10,6 +10,9 @@ using MCM.Common;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 
+// ReSharper disable UnusedMember.Local
+// ReSharper disable ValueParameterNotUsed
+
 namespace FormationSorter;
 
 internal interface ISettings
