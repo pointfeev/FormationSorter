@@ -200,10 +200,10 @@ internal static class Order
               + $" '{string.Join(", ", classesWithMissingFormations)}' within mod settings; sorting will not act as expected!",
                 "Formation Sorter encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         bool? gesturesEnabled = null;
-        if (orderController is not null)
-            _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
         if (numAgentsSorted == 0)
             gesturesEnabled = orderController.BackupAndDisableGesturesEnabled();
+        if (orderController is not null)
+            _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
         if (gesturesEnabled.HasValue)
             orderController.RestoreGesturesEnabled(gesturesEnabled.Value);
         return numAgentsSorted;
