@@ -255,30 +255,6 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
     public Dropdown<KeySelection> GroundSelectKeyDropdown { get; set; }
         = DropdownHelper.KeySelection(DefaultSettings.Instance.GroundSelectKey, DropdownHelper.EnumerateKeys());
 
-    [SettingPropertyBool("S1", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
-     SettingPropertyGroup("Spacers", GroupOrder = 4)]
-    private bool S1 { get => false; set { } }
-
-    [SettingPropertyBool("S2", Order = 17, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
-     SettingPropertyGroup("Spacers", GroupOrder = 4)]
-    private bool S2 { get => false; set { } }
-
-    [SettingPropertyBool("S3", Order = 18, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
-     SettingPropertyGroup("Spacers", GroupOrder = 4)]
-    private bool S3 { get => false; set { } }
-
-    [SettingPropertyBool("S4", Order = 19, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
-     SettingPropertyGroup("Spacers", GroupOrder = 4)]
-    private bool S4 { get => false; set { } }
-
-    [SettingPropertyBool("S5", Order = 20, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
-     SettingPropertyGroup("Spacers", GroupOrder = 4)]
-    private bool S5 { get => false; set { } }
-
-    [SettingPropertyBool("S6", Order = 21, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
-     SettingPropertyGroup("Spacers", GroupOrder = 4)]
-    private bool S6 { get => false; set { } }
-
     [SettingPropertyBool("Assign Formation Captains", IsToggle = true, Order = 0, RequireRestart = false,
          HintText = "Whether or not to assign the best companions as captains over formations."),
      SettingPropertyGroup("Assign Formation Captains", GroupOrder = 0)]
@@ -347,6 +323,28 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
     InputKey ISettings.CavalrySelectKey => CavalrySelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.CavalrySelectKey;
 
     InputKey ISettings.GroundSelectKey => GroundSelectKeyDropdown.SelectedValue?.Key ?? DefaultSettings.Instance.GroundSelectKey;
+
+#pragma warning disable IDE0051
+    [SettingPropertyBool("S1", Order = 16, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
+     SettingPropertyGroup("Spacers", GroupOrder = 4)]
+    private bool S1 { get => false; set { } }
+
+    [SettingPropertyBool("S2", Order = 17, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
+     SettingPropertyGroup("Spacers", GroupOrder = 4)]
+    private bool S2 { get => false; set { } }
+
+    [SettingPropertyBool("S3", Order = 18, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
+     SettingPropertyGroup("Spacers", GroupOrder = 4)]
+    private bool S3 { get => false; set { } }
+
+    [SettingPropertyBool("S4", Order = 19, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
+     SettingPropertyGroup("Spacers", GroupOrder = 4)]
+    private bool S4 { get => false; set { } }
+
+    [SettingPropertyBool("S5", Order = 20, RequireRestart = false, HintText = "Spacer for dropdown menus. Blame Aragasas."),
+     SettingPropertyGroup("Spacers", GroupOrder = 4)]
+    private bool S5 { get => false; set { } }
+#pragma warning restore IDE0051
 }
 
 internal class FormationClassSelection

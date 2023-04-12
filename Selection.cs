@@ -52,7 +52,7 @@ public static class Selection
         if (!missionOrder.IsToggleOrderShown || !Settings.Instance.InverseSelectKey.IsDefinedAndDown())
             previousSelections.Clear();
         SetFormationSelections();
-        formationClasses = formationClasses?.ToList();
+        formationClasses = formationClasses?.ToHashSet();
         List<Formation> selections = formationClasses is null
             ? new()
             : previousSelections.Where(formation => !FormationClassUtils.IsFormationOneOfFormationClasses(formation, formationClasses)).ToList();
@@ -91,7 +91,7 @@ public static class Selection
         _ = typeof(MissionOrderVM).GetCachedMethod("SetActiveOrders").Invoke(missionOrder, new object[] { });
     }
 
-    private static void SetFormationSelections(IReadOnlyList<Formation> selections = null)
+    private static void SetFormationSelections(List<Formation> selections = null)
     {
         MissionOrderVM missionOrder = Mission.MissionOrderVM;
         OrderController orderController = missionOrder?.OrderController;

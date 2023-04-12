@@ -10,7 +10,7 @@ internal enum OutputType { Initialization, Exception, FinalizerException }
 
 internal static class OutputUtils
 {
-    private static readonly List<string> Outputs = new();
+    private static readonly HashSet<string> Outputs = new();
 
     internal static void DoOutput(StringBuilder output, OutputType outputType = OutputType.Exception)
     {
@@ -36,9 +36,8 @@ internal static class OutputUtils
         }
         output = output.AppendLine().AppendLine().Append("NOTE: This is not a game crash; press OK to continue playing.");
         string outputString = output.ToString();
-        if (Outputs.Contains(outputString))
+        if (!Outputs.Add(outputString))
             return;
-        Outputs.Add(outputString);
         _ = MessageBox.Show(outputString,
             "Formation Sorter" + outputType switch
             {

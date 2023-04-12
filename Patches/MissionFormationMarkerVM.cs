@@ -15,7 +15,7 @@ public static class PatchMissionFormationMarkerVM
         try
         {
             if (Mission.IsCurrentValid())
-                foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToList().Where(target => target.Formation.CountOfUnits == 0))
+                foreach (MissionFormationMarkerTargetVM target in __instance.Targets.ToHashSet().Where(target => target.Formation.CountOfUnits == 0))
                 {
                     target.ScreenPosition = new(-10000f, -10000f);
                     _ = __instance.Targets.Remove(target);

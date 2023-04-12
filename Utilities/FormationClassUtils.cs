@@ -81,7 +81,7 @@ internal static class FormationClassUtils
     internal static bool IsFormationOneOfFormationClasses(Formation formation, IEnumerable<FormationClass> formationClasses)
         => formationClasses.Contains(GetFormationClass(formation));
 
-    internal static IEnumerable<Formation> GetFormationsForFormationClass(List<Formation> formations, FormationClass formationClass, bool fallback = false)
+    internal static IEnumerable<Formation> GetFormationsForFormationClass(HashSet<Formation> formations, FormationClass formationClass, bool fallback = false)
     {
         foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass))
             yield return formation;
