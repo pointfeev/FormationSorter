@@ -16,6 +16,7 @@ internal interface ISettings
 {
     bool AssignFormationCaptains { get; }
     bool AssignNewFormationCaptains { get; }
+    bool AssignPlayerFormationCaptain { get; }
     bool UserDefinedFormationClasses { get; }
     FormationClass CompanionFormation { get; }
     FormationClass Formation1 { get; }
@@ -54,6 +55,7 @@ internal class Settings : ISettings
 
     public bool AssignFormationCaptains => provider.AssignFormationCaptains;
     public bool AssignNewFormationCaptains => provider.AssignNewFormationCaptains;
+    public bool AssignPlayerFormationCaptain => provider.AssignPlayerFormationCaptain;
     public bool UserDefinedFormationClasses => provider.UserDefinedFormationClasses;
     public FormationClass CompanionFormation => provider.CompanionFormation;
     public FormationClass Formation1 => provider.Formation1;
@@ -89,6 +91,7 @@ internal class DefaultSettings : ISettings
 
     bool ISettings.AssignFormationCaptains => true;
     bool ISettings.AssignNewFormationCaptains => true;
+    bool ISettings.AssignPlayerFormationCaptain => true;
     bool ISettings.UserDefinedFormationClasses => true;
     FormationClass ISettings.CompanionFormation => FormationClass.Unset;
     FormationClass ISettings.Formation1 => 0;
@@ -285,6 +288,11 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
          HintText = "Whether or not to freely assign the best companions as captains, or to only use the captains assigned during deployment."),
      SettingPropertyGroup("Assign Formation Captains", GroupOrder = 0)]
     public bool AssignNewFormationCaptains { get; set; } = DefaultSettings.Instance.AssignNewFormationCaptains;
+
+    [SettingPropertyBool("Assign Player Formation Captain", Order = 0, RequireRestart = false,
+         HintText = "Whether or not to include the player in the list of prospective formation captains."),
+     SettingPropertyGroup("Assign Formation Captains", GroupOrder = 0)]
+    public bool AssignPlayerFormationCaptain { get; set; } = DefaultSettings.Instance.AssignPlayerFormationCaptain;
 
     [SettingPropertyBool("User-Defined Formation Classes", IsToggle = true, Order = 1, RequireRestart = false,
          HintText = "Whether or not to use the user-defined formation classes below in place of the default dynamic formation classes. (highly recommended)"),

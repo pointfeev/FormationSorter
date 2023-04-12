@@ -123,14 +123,13 @@ internal static class Order
         return !formations.Any() ? null : formations;
     }
 
-    private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, ref List<Agent> assignedCaptains,
-        ref List<Formation> captainChangedFormations, ref List<Formation> captainSetFormations)
+    private static bool TrySetCaptainFormation(Agent agent, FormationClass formationClass, List<Formation> formations, List<Formation> allFormations,
+        ref List<Agent> assignedCaptains, ref List<Formation> captainChangedFormations, ref List<Formation> captainSetFormations)
     {
         if (assignedCaptains.Contains(agent))
             return false;
-        List<Formation> allFormations = Mission.Current?.PlayerTeam?.FormationsIncludingSpecialAndEmpty;
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass, true))
-            if (!captainSetFormations.Contains(classFormation))
+            if ((agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation)) && !captainSetFormations.Contains(classFormation))
             {
                 captainSetFormations.Add(classFormation);
                 assignedCaptains.Add(agent);
@@ -167,20 +166,26 @@ internal static class Order
         List<Agent> agents = EnumerateAgentsInFormations(formations).ToList();
         List<Agent> assignedCaptains = new();
         int numAgentsSorted = 0;
-        if (Settings.Instance.AssignFormationCaptains)
+        if (Settings.Instance.AssignFormationCaptains
+         && Mission.Current?.MissionBehaviors?.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic) is GeneralsAndCaptainsAssignmentLogic
+                captainAssignmentLogic)
         {
+            List<Formation> allFormations = Mission.Current.PlayerTeam.FormationsIncludingSpecialAndEmpty;
             List<Agent> prospectiveCaptains = (Settings.Instance.AssignNewFormationCaptains
                 ? agents.Where(a => a.IsHero)
                 : formations.Where(f => f.Captain is not null).Select(f => f.Captain)).ToList();
+            if (Settings.Instance.AssignPlayerFormationCaptain && (formations.Any(f => f.Captain == Mission.PlayerAgent)
+                                                                || Settings.Instance.AssignNewFormationCaptains
+                                                                && allFormations.All(f => f.Captain != Mission.PlayerAgent)))
+                prospectiveCaptains.Add(Mission.PlayerAgent);
             Team team = formations.FirstOrDefault()?.Team;
             object[] parameters = { team, prospectiveCaptains };
-            _ = typeof(GeneralsAndCaptainsAssignmentLogic).GetCachedMethod("SortCaptainsByPriority")
-               .Invoke(Mission.Current.MissionBehaviors.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic), parameters);
+            _ = typeof(GeneralsAndCaptainsAssignmentLogic).GetCachedMethod("SortCaptainsByPriority").Invoke(captainAssignmentLogic, parameters);
             prospectiveCaptains = (List<Agent>)parameters[1];
             List<Formation> captainSetFormations = new();
             List<Formation> captainChangedFormations = new();
             numAgentsSorted += prospectiveCaptains.Count(agent => TrySetCaptainFormation(agent,
-                FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, true), formations, ref assignedCaptains,
+                FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, true), formations, allFormations, ref assignedCaptains,
                 ref captainChangedFormations, ref captainSetFormations));
             if (captainChangedFormations.Any())
                 foreach (OrderTroopItemVM troopItem in Mission.MissionOrderVM.TroopController.TroopList)
@@ -327,9 +332,8 @@ internal static class Order
             ? 0
             : MathF.Min(MathF.Max(MathF.Ceiling((agent.Character.Level - 5f) / 5f), 0), 7); // from Helpers.CharacterHelper.GetCharacterTier
 
-    private static IEnumerable<Agent> EnumerateAgentsInFormations(List<Formation> formations)
+    private static IEnumerable<Agent> EnumerateAgentsInFormations(IEnumerable<Formation> formations)
     {
-        yield return Mission.PlayerAgent;
         foreach (Formation formation in formations.Where(formation => !formation.IsAIControlled))
         {
             foreach (Agent agent in formation.DetachedUnits.Where(CheckAgent))
