@@ -21,15 +21,15 @@ public static class HotKeys
         bool useSkirmishers = Settings.Instance.SkirmisherSortKey.IsDefinedAndDown();
         ProcessKey(Settings.Instance.OrderKey, () => Order.OnOrder(false, equalSort, useShields, useSkirmishers));
         ProcessKey(Settings.Instance.TierSortKey, () => Order.OnOrder(true, equalSort, useShields, useSkirmishers));
-        ProcessKey(Settings.Instance.AllSelectKey, () => Selection.SelectFormations());
-        ProcessKey(Settings.Instance.CavalryMeleeSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateCavalryMelee(), "melee cavalry "));
-        ProcessKey(Settings.Instance.CavalryRangedSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateCavalryRanged(), "ranged cavalry "));
-        ProcessKey(Settings.Instance.GroundMeleeSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateGroundMelee(), "melee ground "));
-        ProcessKey(Settings.Instance.GroundRangedSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateGroundRanged(), "ranged ground "));
-        ProcessKey(Settings.Instance.MeleeSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateMelee(), "melee "));
-        ProcessKey(Settings.Instance.RangedSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateRanged(), "ranged "));
-        ProcessKey(Settings.Instance.GroundSelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateGround(), "ground "));
-        ProcessKey(Settings.Instance.CavalrySelectKey, () => Selection.SelectFormations(FormationClassUtils.EnumerateCavalry(), "cavalry "));
+        ProcessKey(Settings.Instance.AllSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.Everyone));
+        ProcessKey(Settings.Instance.CavalryMeleeSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.Cavalry, FormationClassUtils.EnumerateCavalryMelee(), "melee cavalry "));
+        ProcessKey(Settings.Instance.CavalryRangedSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.HorseArchers, FormationClassUtils.EnumerateCavalryRanged(), "ranged cavalry "));
+        ProcessKey(Settings.Instance.GroundMeleeSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.Infantry, FormationClassUtils.EnumerateGroundMelee(), "melee ground "));
+        ProcessKey(Settings.Instance.GroundRangedSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.Archers, FormationClassUtils.EnumerateGroundRanged(), "ranged ground "));
+        ProcessKey(Settings.Instance.MeleeSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.MixedFormation, FormationClassUtils.EnumerateMelee(), "melee "));
+        ProcessKey(Settings.Instance.RangedSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.Archers, FormationClassUtils.EnumerateRanged(), "ranged "));
+        ProcessKey(Settings.Instance.GroundSelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.MixedFormation, FormationClassUtils.EnumerateGround(), "ground "));
+        ProcessKey(Settings.Instance.CavalrySelectKey, () => Selection.SelectFormations(SkinVoiceManager.VoiceType.Cavalry, FormationClassUtils.EnumerateCavalry(), "cavalry "));
     }
 
     private static void ProcessKey(InputKey inputKey, Action action)

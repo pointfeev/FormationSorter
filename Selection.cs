@@ -43,7 +43,8 @@ public static class Selection
         }
     }
 
-    public static void SelectFormations(IEnumerable<FormationClass> formationClasses = null, string feedback = null, bool uiFeedback = true)
+    public static void SelectFormations(SkinVoiceManager.SkinVoiceType voiceFeedback, IEnumerable<FormationClass> formationClasses = null,
+        string feedback = null, bool uiFeedback = true)
     {
         MissionOrderVM missionOrder = Mission.MissionOrderVM;
         if (missionOrder is null)
@@ -80,15 +81,16 @@ public static class Selection
                 InformationManager.DisplayMessage(new($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.White,
                     "FormationSorter"));
             else
-                InformationManager.DisplayMessage(new(
-                    $"There are no troops to be selected in any {(feedback == null ? string.Empty : feedback.Replace("and", "or"))}formations", Colors.White,
-                    "FormationSorter"));
+                InformationManager.DisplayMessage(new($"There are no troops to be selected in any {feedback}formations", Colors.White, "FormationSorter"));
         }
         PatchInformationManager.SuppressSelectAllFormations = true;
         SetFormationSelections(selections);
         PatchInformationManager.SuppressSelectAllFormations = false;
         previousSelections = selections;
         _ = typeof(MissionOrderVM).GetCachedMethod("SetActiveOrders").Invoke(missionOrder, new object[] { });
+        if (selections.Count == 0 || !Mission.Current.IsOrderGesturesEnabled())
+            return;
+        Mission.PlayerAgent.MakeVoice(voiceFeedback, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
     }
 
     private static void SetFormationSelections(List<Formation> selections = null)
