@@ -290,7 +290,8 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
     public bool AssignNewFormationCaptains { get; set; } = DefaultSettings.Instance.AssignNewFormationCaptains;
 
     [SettingPropertyBool("Assign Player Formation Captain", Order = 0, RequireRestart = false,
-         HintText = "Whether or not to include the player in the list of prospective formation captains."),
+         HintText = "Whether or not to include the player in the list of prospective formation captains."
+                  + "\nNOTE: The 'Assign New Formation Captains' setting is still taken into account for the player!"),
      SettingPropertyGroup("Assign Formation Captains", GroupOrder = 0)]
     public bool AssignPlayerFormationCaptain { get; set; } = DefaultSettings.Instance.AssignPlayerFormationCaptain;
 

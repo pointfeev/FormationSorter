@@ -87,9 +87,9 @@ internal static class FormationClassUtils
             yield return formation;
         if (!fallback)
             yield break;
-        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass().FallbackClass() == formationClass))
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass.FallbackClass()))
             yield return formation;
-        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass().AlternativeClass() == formationClass))
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass.AlternativeClass()))
             yield return formation;
     }
 

@@ -129,7 +129,8 @@ internal static class Order
         if (assignedCaptains.Contains(agent))
             return false;
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass, true))
-            if ((agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation)) && !captainSetFormations.Contains(classFormation))
+            if (classFormation.CountOfUnits > 0 && (agent == Mission.PlayerAgent || TrySetAgentFormation(agent, classFormation))
+                                                && !captainSetFormations.Contains(classFormation))
             {
                 captainSetFormations.Add(classFormation);
                 assignedCaptains.Add(agent);
@@ -299,10 +300,10 @@ internal static class Order
             emptyFormations.ForEach(f =>
             {
                 FormationClass formationClass = f.GetFormationClass();
-                Formation forCopy = filledFormations.FirstOrDefault(f => f.GetFormationClass() == formationClass)
-                                 ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().FallbackClass() == formationClass)
-                                 ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().AlternativeClass() == formationClass)
-                                 ?? filledFormations.FirstOrDefault();
+                Formation forCopy = filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass)
+                                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass.FallbackClass())
+                                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass.AlternativeClass())
+                                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0);
                 if (forCopy is null)
                     return;
                 _ = typeof(Formation).GetCachedMethod("CopyOrdersFrom").Invoke(f, new object[] { forCopy });
