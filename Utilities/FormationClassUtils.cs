@@ -81,16 +81,25 @@ internal static class FormationClassUtils
     internal static bool IsFormationOneOfFormationClasses(Formation formation, IEnumerable<FormationClass> formationClasses)
         => formationClasses.Contains(GetFormationClass(formation));
 
-    internal static IEnumerable<Formation> GetFormationsForFormationClass(HashSet<Formation> formations, FormationClass formationClass, bool fallback = false)
+    internal static HashSet<Formation> GetFormationsForFormationClass(HashSet<Formation> formations, FormationClass formationClass, bool fallback = false,
+        bool alternative = false, bool siege = false)
     {
+        HashSet<Formation> formationsFor = new();
         foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass))
-            yield return formation;
+            _ = formationsFor.Add(formation);
         if (!fallback)
-            yield break;
-        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass.FallbackClass()))
-            yield return formation;
+            return formationsFor;
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass().FallbackClass() == formationClass.FallbackClass()))
+            _ = formationsFor.Add(formation);
+        if (!alternative)
+            return formationsFor;
         foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass.AlternativeClass()))
-            yield return formation;
+            _ = formationsFor.Add(formation);
+        if (!siege)
+            return formationsFor;
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass.SiegeClass()))
+            _ = formationsFor.Add(formation);
+        return formationsFor;
     }
 
     internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false,
