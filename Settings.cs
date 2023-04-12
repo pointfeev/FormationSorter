@@ -185,7 +185,7 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
 
     [SettingPropertyDropdown("Shield Sorting Modifier Key", Order = 3, RequireRestart = false,
          HintText
-             = "When combined with the Order Key shielded infantry and skirmishers get put into the Infantry formation while unshielded infantry and skirmishers get put into the Skirmisher formation."),
+             = "When combined with the Order Key shielded infantry get put into the Infantry formation while unshielded infantry get put into the Heavy Infantry formation."),
      SettingPropertyGroup("Order", GroupOrder = 2)]
     public Dropdown<KeySelection> ShieldSortKeyDropdown { get; set; }
         = DropdownHelper.KeySelection(DefaultSettings.Instance.ShieldSortKey, DropdownHelper.EnumerateModifiers());
