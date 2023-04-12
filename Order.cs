@@ -132,8 +132,8 @@ internal static class Order
         foreach (Formation classFormation in FormationClassUtils.GetFormationsForFormationClass(formations, formationClass, true))
             if (!captainSetFormations.Contains(classFormation))
             {
-                assignedCaptains.Add(agent);
                 captainSetFormations.Add(classFormation);
+                assignedCaptains.Add(agent);
                 if (classFormation.Captain == agent)
                     return false;
                 if (allFormations is not null)
@@ -164,25 +164,29 @@ internal static class Order
         List<string> classesWithMissingFormations = new();
         List<Formation> emptyFormations = formations.Where(f => f.CountOfUnits == 0).ToList();
         List<Formation> filledFormations = formations.Except(emptyFormations).ToList();
-        List<Formation> captainSetFormations = new();
-        List<Formation> captainChangedFormations = new();
         List<Agent> agents = EnumerateAgentsInFormations(formations).ToList();
-        List<Agent> prospectiveCaptains = (Settings.Instance.AssignNewFormationCaptains
-            ? agents.Where(a => a.IsHero)
-            : formations.Where(f => f.Captain is not null).Select(f => f.Captain)).ToList();
-        Team team = formations.FirstOrDefault()?.Team;
-        object[] parameters = { team, prospectiveCaptains };
-        _ = typeof(GeneralsAndCaptainsAssignmentLogic).GetCachedMethod("SortCaptainsByPriority")
-           .Invoke(Mission.Current.MissionBehaviors.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic), parameters);
-        prospectiveCaptains = (List<Agent>)parameters[1];
         List<Agent> assignedCaptains = new();
-        int numAgentsSorted = prospectiveCaptains.Count(agent => TrySetCaptainFormation(agent,
-            FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers), formations, ref assignedCaptains,
-            ref captainChangedFormations, ref captainSetFormations));
-        if (captainChangedFormations.Any())
-            foreach (OrderTroopItemVM troopItem in Mission.MissionOrderVM.TroopController.TroopList)
-                if (captainChangedFormations.Contains(troopItem.Formation))
-                    _ = typeof(OrderTroopItemVM).GetCachedMethod("UpdateCommanderInfo").Invoke(troopItem, new object[] { });
+        int numAgentsSorted = 0;
+        if (Settings.Instance.AssignFormationCaptains)
+        {
+            List<Agent> prospectiveCaptains = (Settings.Instance.AssignNewFormationCaptains
+                ? agents.Where(a => a.IsHero)
+                : formations.Where(f => f.Captain is not null).Select(f => f.Captain)).ToList();
+            Team team = formations.FirstOrDefault()?.Team;
+            object[] parameters = { team, prospectiveCaptains };
+            _ = typeof(GeneralsAndCaptainsAssignmentLogic).GetCachedMethod("SortCaptainsByPriority")
+               .Invoke(Mission.Current.MissionBehaviors.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic), parameters);
+            prospectiveCaptains = (List<Agent>)parameters[1];
+            List<Formation> captainSetFormations = new();
+            List<Formation> captainChangedFormations = new();
+            numAgentsSorted += prospectiveCaptains.Count(agent => TrySetCaptainFormation(agent,
+                FormationClassUtils.GetBestFormationClassForAgent(agent, useShields, useSkirmishers, true), formations, ref assignedCaptains,
+                ref captainChangedFormations, ref captainSetFormations));
+            if (captainChangedFormations.Any())
+                foreach (OrderTroopItemVM troopItem in Mission.MissionOrderVM.TroopController.TroopList)
+                    if (captainChangedFormations.Contains(troopItem.Formation))
+                        _ = typeof(OrderTroopItemVM).GetCachedMethod("UpdateCommanderInfo").Invoke(troopItem, new object[] { });
+        }
         if (tierSort)
             foreach (Agent agent in agents)
             {
@@ -291,10 +295,8 @@ internal static class Order
             {
                 FormationClass formationClass = f.GetFormationClass();
                 Formation forCopy = filledFormations.FirstOrDefault(f => f.GetFormationClass() == formationClass)
-                                 ?? filledFormations.FirstOrDefault(f => f.PrimaryClass == formationClass)
-                                 ?? filledFormations.FirstOrDefault(f => f.SecondaryClasses.Contains(formationClass))
-                                 ?? filledFormations.FirstOrDefault(f => f.InitialClass == formationClass)
-                                 ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().FallbackClass() == formationClass.FallbackClass())
+                                 ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().FallbackClass() == formationClass)
+                                 ?? filledFormations.FirstOrDefault(f => f.GetFormationClass().AlternativeClass() == formationClass)
                                  ?? filledFormations.FirstOrDefault();
                 if (forCopy is null)
                     return;

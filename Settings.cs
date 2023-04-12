@@ -14,6 +14,7 @@ namespace FormationSorter;
 
 internal interface ISettings
 {
+    bool AssignFormationCaptains { get; }
     bool AssignNewFormationCaptains { get; }
     bool UserDefinedFormationClasses { get; }
     FormationClass CompanionFormation { get; }
@@ -51,6 +52,7 @@ internal class Settings : ISettings
 
     internal static Settings Instance => instance ??= new();
 
+    public bool AssignFormationCaptains => provider.AssignFormationCaptains;
     public bool AssignNewFormationCaptains => provider.AssignNewFormationCaptains;
     public bool UserDefinedFormationClasses => provider.UserDefinedFormationClasses;
     public FormationClass CompanionFormation => provider.CompanionFormation;
@@ -85,6 +87,7 @@ internal class DefaultSettings : ISettings
 
     internal static ISettings Instance => instance ??= new DefaultSettings();
 
+    bool ISettings.AssignFormationCaptains => true;
     bool ISettings.AssignNewFormationCaptains => true;
     bool ISettings.UserDefinedFormationClasses => true;
     FormationClass ISettings.CompanionFormation => FormationClass.Unset;
@@ -273,10 +276,14 @@ internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettin
      SettingPropertyGroup("Spacers", GroupOrder = 4)]
     private bool S6 { get => false; set { } }
 
+    [SettingPropertyBool("Assign Formation Captains", IsToggle = true, Order = 0, RequireRestart = false,
+         HintText = "Whether or not to assign the best companions as captains over formations."),
+     SettingPropertyGroup("Assign Formation Captains", GroupOrder = 0)]
+    public bool AssignFormationCaptains { get; set; } = DefaultSettings.Instance.AssignFormationCaptains;
+
     [SettingPropertyBool("Assign New Formation Captains", Order = 0, RequireRestart = false,
-         HintText
-             = "Whether or not to freely assign the best heroes/companions as captains, or to only use the captains assigned during deployment. NOTE: User-Defined Companions formation is still taken into account if enabled and not set to Default!"),
-     SettingPropertyGroup("General", GroupOrder = 0)]
+         HintText = "Whether or not to freely assign the best companions as captains, or to only use the captains assigned during deployment."),
+     SettingPropertyGroup("Assign Formation Captains", GroupOrder = 0)]
     public bool AssignNewFormationCaptains { get; set; } = DefaultSettings.Instance.AssignNewFormationCaptains;
 
     [SettingPropertyBool("User-Defined Formation Classes", IsToggle = true, Order = 1, RequireRestart = false,

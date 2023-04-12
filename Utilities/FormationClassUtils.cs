@@ -83,19 +83,20 @@ internal static class FormationClassUtils
 
     internal static IEnumerable<Formation> GetFormationsForFormationClass(List<Formation> formations, FormationClass formationClass, bool fallback = false)
     {
-        foreach (Formation formation in formations.Where(formation => GetFormationClass(formation) == formationClass))
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass() == formationClass))
             yield return formation;
         if (!fallback)
             yield break;
-        foreach (Formation formation in formations.Where(formation => GetFormationClass(formation).FallbackClass() == formationClass))
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass().FallbackClass() == formationClass))
             yield return formation;
-        foreach (Formation formation in formations.Where(formation => GetFormationClass(formation).AlternativeClass() == formationClass))
+        foreach (Formation formation in formations.Where(formation => formation.GetFormationClass().AlternativeClass() == formationClass))
             yield return formation;
     }
 
-    internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false)
+    internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false,
+        bool ignoreCompanionFormation = false)
     {
-        if (agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
+        if (!ignoreCompanionFormation && agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
             return Settings.Instance.CompanionFormation;
         Agent mount = agent.MountAgent;
         return mount?.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount)
