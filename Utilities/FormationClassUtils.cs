@@ -89,13 +89,16 @@ internal static class FormationClassUtils
     {
         if (!ignoreCompanionFormation && agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
             return Settings.Instance.CompanionFormation;
+        agent.UpdateCachedAndFormationValues(false, false);
         Agent mount = agent.MountAgent;
         return mount?.Health > 0 && mount.IsActive() && (agent.CanReachAgent(mount) || agent.GetTargetAgent() == mount)
             ? agent.IsRangedCached ? FormationClass.HorseArcher : FormationClass.Cavalry
             : agent.IsRangedCached
                 ? FormationClass.Ranged
-                : useSkirmishers && agent.HasThrownCached || useShields && !agent.HasShieldCached
+                : useSkirmishers && agent.HasThrownCached
                     ? FormationClass.Skirmisher
-                    : FormationClass.Infantry;
+                    : useShields && !agent.HasShieldCached
+                        ? FormationClass.HeavyInfantry
+                        : FormationClass.Infantry;
     }
 }
