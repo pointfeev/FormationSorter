@@ -55,7 +55,7 @@ public static class Selection
         formationClasses = formationClasses?.ToHashSet();
         List<Formation> selections = formationClasses is null
             ? new()
-            : previousSelections.Where(formation => !FormationClassUtils.IsFormationOneOfFormationClasses(formation, formationClasses)).ToList();
+            : previousSelections.Where(formation => !formation.IsOneOfFormationClasses(formationClasses)).ToList();
         Team playerTeam = Mission.Current?.PlayerTeam;
         if (playerTeam == null)
             return;
@@ -64,7 +64,7 @@ public static class Selection
         {
             if (formation is null)
                 continue;
-            bool isCorrectFormation = formationClasses is null || FormationClassUtils.IsFormationOneOfFormationClasses(formation, formationClasses);
+            bool isCorrectFormation = formationClasses is null || formation.IsOneOfFormationClasses(formationClasses);
             bool wasPreviouslySelected = previousSelections.Contains(formation);
             bool shouldInvertSelection = Settings.Instance.InverseSelectKey.IsDefinedAndDown() && wasPreviouslySelected;
             if (!isCorrectFormation)

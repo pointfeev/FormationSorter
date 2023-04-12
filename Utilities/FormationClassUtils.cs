@@ -78,10 +78,10 @@ internal static class FormationClassUtils
         return formationClass;
     }
 
-    internal static bool IsFormationOneOfFormationClasses(Formation formation, IEnumerable<FormationClass> formationClasses)
+    internal static bool IsOneOfFormationClasses(this Formation formation, IEnumerable<FormationClass> formationClasses)
         => formationClasses.Contains(GetFormationClass(formation));
 
-    internal static HashSet<Formation> GetFormationsForFormationClass(HashSet<Formation> formations, FormationClass formationClass, bool fallback = false,
+    internal static HashSet<Formation> GetFormations(this FormationClass formationClass, HashSet<Formation> formations, bool fallback = false,
         bool alternative = false, bool siege = false)
     {
         HashSet<Formation> formationsFor = new();
@@ -102,7 +102,7 @@ internal static class FormationClassUtils
         return formationsFor;
     }
 
-    internal static FormationClass GetBestFormationClassForAgent(Agent agent, bool useShields = false, bool useSkirmishers = false,
+    internal static FormationClass GetBestFormationClass(this Agent agent, bool useShields = false, bool useSkirmishers = false,
         bool ignoreCompanionFormation = false)
     {
         if (!ignoreCompanionFormation && agent.IsHero && Settings.Instance.CompanionFormation is not FormationClass.Unset)
