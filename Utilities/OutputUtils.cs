@@ -14,7 +14,7 @@ internal static class OutputUtils
 
     private static void DoOutput(StringBuilder output, OutputType outputType = OutputType.Exception)
     {
-        output = output.AppendLine().AppendLine().Append("Module version: " + ModuleHelper.GetModuleInfo("FormationSorter").Version);
+        output = output.AppendLine().AppendLine().Append("Module version: " + ModuleHelper.GetModuleInfo(SubModule.Id).Version);
         output = output.AppendLine().Append("Game version: " + ModuleHelper.GetModuleInfo("Native").Version);
         switch (outputType)
         {
