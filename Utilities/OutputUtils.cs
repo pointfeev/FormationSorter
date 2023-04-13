@@ -12,7 +12,7 @@ internal static class OutputUtils
 {
     private static readonly HashSet<string> Outputs = new();
 
-    internal static void DoOutput(StringBuilder output, OutputType outputType = OutputType.Exception)
+    private static void DoOutput(StringBuilder output, OutputType outputType = OutputType.Exception)
     {
         output = output.AppendLine().AppendLine().Append("Module version: " + ModuleHelper.GetModuleInfo("FormationSorter").Version);
         output = output.AppendLine().Append("Game version: " + ModuleHelper.GetModuleInfo("Native").Version);
@@ -28,26 +28,24 @@ internal static class OutputUtils
                 break;
             case OutputType.FinalizerException:
                 output = output.AppendLine().AppendLine()
-                   .Append("BUG REPORTING: This exception was caught from a finalizer, which likely means it was not caused by Formation Sorter itself, ")
+                   .Append("BUG REPORTING: This exception was caught from a finalizer, which likely means it was not caused by " + SubModule.Name + " itself, ")
                    .Append(" but more likely caused instead by either a different mod, a bad mod interaction, or the game itself.");
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(outputType), outputType, "Bad output type");
         }
         output = output.AppendLine().AppendLine().Append("NOTE: This is not a game crash; press OK to continue playing.");
-        string outputString = output.ToString();
-        if (!Outputs.Add(outputString))
+        string builtOutput = output.ToString();
+        if (!Outputs.Add(builtOutput))
             return;
-        _ = MessageBox.Show(outputString,
-            "Formation Sorter" + outputType switch
+        _ = MessageBox.Show(builtOutput,
+            SubModule.Name + outputType switch
             {
                 OutputType.Initialization => " failed to initialize", OutputType.Exception => " encountered an exception",
                 OutputType.FinalizerException => " caught an exception from a finalizer",
                 _ => throw new ArgumentOutOfRangeException(nameof(outputType), outputType, "Bad output type")
             }, MessageBoxButtons.OK, outputType is OutputType.Exception ? MessageBoxIcon.Error : MessageBoxIcon.Warning);
     }
-
-    internal static void DoOutput(string output, OutputType outputType = OutputType.Exception) => DoOutput(new StringBuilder(output), outputType);
 
     private static StringBuilder GetOutputForException(Exception e)
     {
@@ -67,7 +65,7 @@ internal static class OutputUtils
                 {
                     int atNum = line.IndexOf("at ", StringComparison.Ordinal);
                     int inNum = line.IndexOf("in ", StringComparison.Ordinal);
-                    int siNum = line.LastIndexOf(@"FormationSorter\", StringComparison.Ordinal);
+                    int siNum = line.LastIndexOf(SubModule.Id + @"\", StringComparison.Ordinal);
                     int lineNum = line.LastIndexOf(":line ", StringComparison.Ordinal);
                     if (atNum != -1)
                         _ = output.Append("\n    " + (inNum != -1 ? line.Substring(atNum, inNum - atNum) : line.Substring(atNum)) + (inNum != -1

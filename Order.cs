@@ -88,20 +88,20 @@ internal static class Order
             case (int)SortAgentsSpecialResult.Ignored:
                 return;
             case (int)SortAgentsSpecialResult.AIControlled:
-                InformationManager.DisplayMessage(new("Formations controlled by AI cannot be sorted", Colors.White, "FormationSorter"));
+                InformationManager.DisplayMessage(new("Formations controlled by AI cannot be sorted", Colors.White, SubModule.Id));
                 return;
             case 0:
                 if (tierSort)
-                    InformationManager.DisplayMessage(new("No troops need tier sorting", Colors.White, "FormationSorter"));
+                    InformationManager.DisplayMessage(new("No troops need tier sorting", Colors.White, SubModule.Id));
                 else
-                    InformationManager.DisplayMessage(new("No troops need sorting between the selected formations", Colors.White, "FormationSorter"));
+                    InformationManager.DisplayMessage(new("No troops need sorting between the selected formations", Colors.White, SubModule.Id));
                 return;
             default:
             {
                 if (Mission.Current.IsOrderGesturesEnabled())
                     Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                 InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
-                    Colors.White, "FormationSorter"));
+                    Colors.White, SubModule.Id));
                 break;
             }
         }
@@ -198,7 +198,7 @@ internal static class Order
                 $"You are missing {(classesWithMissingFormations.Count > 1 ? "set formations" : "a set formation")}"
               + $" for the formation {(classesWithMissingFormations.Count > 1 ? "classes" : "class")}"
               + $" '{string.Join(", ", classesWithMissingFormations)}' within mod settings; sorting will not act as expected!",
-                "Formation Sorter encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SubModule.Name + " encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         bool? gesturesEnabled = null;
         if (numAgentsSorted == 0)
             gesturesEnabled = orderController.BackupAndDisableGesturesEnabled();
