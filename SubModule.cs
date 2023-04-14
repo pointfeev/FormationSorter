@@ -26,7 +26,7 @@ public class SubModule : MBSubModuleBase
                 return;
             initialized = true;
             new Harmony("pointfeev." + Id.ToLower()).PatchAll();
-            InformationManager.DisplayMessage(new(Name + " initialized", Colors.Cyan, Id));
+            //InformationManager.DisplayMessage(new(Name + " initialized", Colors.Cyan, Id));
         }
         catch (Exception e)
         {
