@@ -1,7 +1,6 @@
 ﻿using System;
 using FormationSorter.Utilities;
 using HarmonyLib;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
 namespace FormationSorter;
