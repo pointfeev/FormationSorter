@@ -1,4 +1,8 @@
-﻿using FormationSorter.Utilities;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using FormationSorter.Utilities;
+using HarmonyLib;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.View.MissionViews;
@@ -19,6 +23,29 @@ public static class Mission
     public static Agent PlayerAgent => Current?.MainAgent;
 
     private static MissionMainAgentController PlayerAgentController => Current?.GetMissionBehavior<MissionMainAgentController>();
+
+    internal static bool IsOrderShoutingAllowed()
+    {
+        MethodInfo shoutingAllowed = typeof(TaleWorlds.MountAndBlade.Mission).GetCachedMethod("IsOrderShoutingAllowed")
+                                  ?? typeof(TaleWorlds.MountAndBlade.Mission).GetCachedMethod("IsOrderGesturesEnabled");
+        return Current is not null && shoutingAllowed?.Invoke(Current, new object[] { }) is true;
+    }
+
+    internal static bool IsCaptainAssignmentAllowed()
+    {
+        Type assignmentLogicType = AccessTools.TypeByName("GeneralsAndCaptainsAssignmentLogic") ?? AccessTools.TypeByName("AutoCaptainAssignmentLogic");
+        return assignmentLogicType is not null && Current?.MissionBehaviors?.Any(b =>
+        {
+            try
+            {
+                return Convert.ChangeType(b, assignmentLogicType) is not null;
+            }
+            catch
+            {
+                return false;
+            }
+        }) is true;
+    }
 
     public static bool CanPlayerInteract()
     {

@@ -88,7 +88,7 @@ public static class Selection
         PatchInformationManager.SuppressSelectAllFormations = false;
         previousSelections = selections;
         _ = typeof(MissionOrderVM).GetCachedMethod("SetActiveOrders").Invoke(missionOrder, new object[] { });
-        if (selections.Count == 0 || !Mission.Current.IsOrderGesturesEnabled())
+        if (selections.Count == 0 || !Mission.IsOrderShoutingAllowed())
             return;
         Mission.PlayerAgent.MakeVoice(voiceFeedback, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
     }

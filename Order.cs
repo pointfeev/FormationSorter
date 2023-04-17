@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
 using TaleWorlds.Engine;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Input;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Order;
@@ -36,9 +38,15 @@ internal static class Order
             RemoveOrderVMs();
         if (Mission.InputKeyItemVM is null)
         {
-            Mission.InputKeyItemVM = InputKeyItemVM.CreateFromForcedID(keyId, new(key), false);
-            Mission.InputKeyItemVM.SetForcedVisibility(true);
-            Mission.InputKeyItemVM.OnFinalize();
+            MethodInfo createFromForcedID = typeof(InputKeyItemVM).GetCachedMethod("CreateFromForcedID");
+            Mission.InputKeyItemVM = (createFromForcedID.GetParameters().Length == 3
+                ? createFromForcedID.Invoke(null, new object[] { keyId, new TextObject(key), false })
+                : createFromForcedID.Invoke(null, new object[] { keyId, new TextObject(key) })) as InputKeyItemVM;
+            if (Mission.InputKeyItemVM is not null)
+            {
+                Mission.InputKeyItemVM.SetForcedVisibility(true);
+                Mission.InputKeyItemVM.OnFinalize();
+            }
         }
         if (Mission.OrderItemVM is null)
         {
@@ -98,7 +106,7 @@ internal static class Order
                 return;
             default:
             {
-                if (Mission.Current.IsOrderGesturesEnabled())
+                if (Mission.IsOrderShoutingAllowed())
                     Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                 InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
                     Colors.White, SubModule.Id));
@@ -142,8 +150,7 @@ internal static class Order
         HashSet<Agent> agents = EnumerateAgentsInFormations(formations).ToHashSet();
         List<Formation> allFormations = null;
         HashSet<Agent> prospectiveCaptains = new();
-        if (Settings.Instance.AssignFormationCaptains
-         && Mission.Current?.MissionBehaviors?.FirstOrDefault(b => b is GeneralsAndCaptainsAssignmentLogic) is not null)
+        if (Settings.Instance.AssignFormationCaptains && Mission.IsCaptainAssignmentAllowed())
         {
             allFormations = Mission.Current.PlayerTeam.FormationsIncludingSpecialAndEmpty;
             Agent playerAgent = Mission.PlayerAgent;
@@ -173,13 +180,18 @@ internal static class Order
             SortAgentsBetweenFormationsInternal(prospectiveCaptains.Except(assignedCaptains), formations, tierSort, equalSort, useShields, useSkirmishers,
                 ref numAgentsSorted, ref classesWithMissingFormations, ref changedFormations);
         }
+        MethodInfo alternativeClass = typeof(ModuleExtensions).GetCachedMethod("AlternativeClass"); // only v1.1.0+
         if (filledFormations.Count > 0)
             foreach (Formation formation in emptyFormations)
             {
                 FormationClass formationClass = formation.GetFormationClass();
                 Formation forCopy = filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass)
                                  ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass.FallbackClass())
-                                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass.AlternativeClass())
+                                 ?? (alternativeClass is null
+                                        ? null
+                                        : filledFormations.FirstOrDefault(f
+                                            => f.CountOfUnits > 0 && f.GetFormationClass()
+                                         == (FormationClass)alternativeClass.Invoke(null, new object[] { formationClass })))
                                  ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0);
                 if (forCopy is null)
                     continue;
@@ -199,13 +211,16 @@ internal static class Order
               + $" for the formation {(classesWithMissingFormations.Count > 1 ? "classes" : "class")}"
               + $" '{string.Join(", ", classesWithMissingFormations)}' within mod settings; sorting will not act as expected!",
                 SubModule.Name + " encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        if (orderController is null)
+            return numAgentsSorted;
+        MethodInfo backupAndDisableGesturesEnabled = typeof(OrderController).GetCachedMethod("BackupAndDisableGesturesEnabled");
+        MethodInfo restoreGesturesEnabled = typeof(OrderController).GetCachedMethod("RestoreGesturesEnabled"); // only v1.1.0+
         bool? gesturesEnabled = null;
-        if (numAgentsSorted == 0)
-            gesturesEnabled = orderController.BackupAndDisableGesturesEnabled();
-        if (orderController is not null)
-            _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
-        if (gesturesEnabled.HasValue)
-            orderController.RestoreGesturesEnabled(gesturesEnabled.Value);
+        if (backupAndDisableGesturesEnabled is not null && numAgentsSorted == 0)
+            gesturesEnabled = (bool)backupAndDisableGesturesEnabled.Invoke(orderController, new object[] { });
+        _ = typeof(OrderController).GetCachedMethod("AfterSetOrder").Invoke(orderController, new object[] { OrderType.Transfer });
+        if (restoreGesturesEnabled is not null && gesturesEnabled.HasValue)
+            _ = restoreGesturesEnabled.Invoke(orderController, new object[] { gesturesEnabled.Value });
         return numAgentsSorted;
     }
 
@@ -368,7 +383,7 @@ internal static class Order
         agent.Formation = desiredFormation;
         _ = changedFormations.Add(currentFormation);
         _ = changedFormations.Add(desiredFormation);
-        if (!Mission.Current.IsOrderGesturesEnabled())
+        if (!Mission.IsOrderShoutingAllowed())
             return true;
         switch (desiredFormation.GetFormationClass()) // units will yell out the formation they change to, because why not?
         {
