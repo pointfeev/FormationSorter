@@ -17,7 +17,7 @@ using FormationSorter;
 [assembly: ModuleType(ModuleTypeValue.Community)]
 [assembly: ModuleUrl("https://www.nexusmods.com/mountandblade2bannerlord/mods/3320")]
 [assembly: ModuleDependency("Bannerlord.Harmony", "v2.2.2")]
-[assembly: ModuleDependency("Bannerlord.MBOptionScreen", "v5.7.1")]
+[assembly: ModuleDependency("Bannerlord.MBOptionScreen", "v5.7.1", true)]
 [assembly: ModuleDependency("Native", "v" + SubModule.MinimumGameVersion)]
 [assembly: ModuleDependency("SandBoxCore", "v" + SubModule.MinimumGameVersion)]
 [assembly: ModuleDependency("Sandbox", "v" + SubModule.MinimumGameVersion)]
