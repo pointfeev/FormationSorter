@@ -7,12 +7,10 @@ namespace FormationSorter;
 
 public class SubModule : MBSubModuleBase
 {
+    internal const string Id = "FormationSorter";
     internal const string Name = "Formation Sorter";
     internal const string Version = "3.3.0";
-    internal const string Url = "https://www.nexusmods.com/mountandblade2bannerlord/mods/3320";
-    internal const string Copyright = "2021, pointfeev (https://github.com/pointfeev)";
     internal const string MinimumGameVersion = "1.0.0";
-    internal static readonly string Id = typeof(SubModule).Namespace;
 
     private bool initialized;
 
