@@ -1,4 +1,5 @@
 ﻿using System;
+using FormationSorter.Properties;
 using FormationSorter.Utilities;
 using HarmonyLib;
 using TaleWorlds.MountAndBlade;
@@ -7,11 +8,6 @@ namespace FormationSorter;
 
 public class SubModule : MBSubModuleBase
 {
-    internal const string Id = "FormationSorter";
-    internal const string Name = "Formation Sorter";
-    internal const string Version = "3.3.0";
-    internal const string MinimumGameVersion = "1.0.0";
-
     private bool initialized;
 
     protected override void OnBeforeInitialModuleScreenSetAsRoot()
@@ -22,7 +18,7 @@ public class SubModule : MBSubModuleBase
             if (initialized)
                 return;
             initialized = true;
-            new Harmony("pointfeev." + Id.ToLower()).PatchAll();
+            new Harmony("pointfeev." + AssemblyInfo.Id.ToLower()).PatchAll();
             //InformationManager.DisplayMessage(new(Name + " initialized", Colors.Cyan, Id));
         }
         catch (Exception e)

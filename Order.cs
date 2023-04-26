@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+
+using FormationSorter.Properties;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
 using TaleWorlds.Engine;
@@ -95,20 +97,20 @@ internal static class Order
             case (int)SortAgentsSpecialResult.Ignored:
                 return;
             case (int)SortAgentsSpecialResult.AIControlled:
-                InformationManager.DisplayMessage(new("Formations controlled by AI cannot be sorted", Colors.White, SubModule.Id));
+                InformationManager.DisplayMessage(new("Formations controlled by AI cannot be sorted", Colors.White, AssemblyInfo.Id));
                 return;
             case 0:
                 if (tierSort)
-                    InformationManager.DisplayMessage(new("No troops need tier sorting", Colors.White, SubModule.Id));
+                    InformationManager.DisplayMessage(new("No troops need tier sorting", Colors.White, AssemblyInfo.Id));
                 else
-                    InformationManager.DisplayMessage(new("No troops need sorting between the selected formations", Colors.White, SubModule.Id));
+                    InformationManager.DisplayMessage(new("No troops need sorting between the selected formations", Colors.White, AssemblyInfo.Id));
                 return;
             default:
             {
                 if (Mission.IsOrderShoutingAllowed())
                     Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
                 InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
-                    Colors.White, SubModule.Id));
+                    Colors.White, AssemblyInfo.Id));
                 break;
             }
         }
@@ -209,7 +211,7 @@ internal static class Order
                 $"You are missing {(classesWithMissingFormations.Count > 1 ? "set formations" : "a set formation")}"
               + $" for the formation {(classesWithMissingFormations.Count > 1 ? "classes" : "class")}"
               + $" '{string.Join(", ", classesWithMissingFormations)}' within mod settings; sorting will not act as expected!",
-                SubModule.Name + " encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                AssemblyInfo.Name + " encountered an issue", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         if (orderController is null)
             return numAgentsSorted;
         MethodInfo backupAndDisableGesturesEnabled = typeof(OrderController).GetCachedMethod("BackupAndDisableGesturesEnabled");
