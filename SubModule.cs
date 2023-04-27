@@ -8,18 +8,17 @@ namespace FormationSorter;
 
 public class SubModule : MBSubModuleBase
 {
-    private bool initialized;
+    private static bool patched;
 
     protected override void OnBeforeInitialModuleScreenSetAsRoot()
     {
         base.OnBeforeInitialModuleScreenSetAsRoot();
         try
         {
-            if (initialized)
+            if (patched)
                 return;
-            initialized = true;
+            patched = true;
             new Harmony("pointfeev." + AssemblyInfo.Id.ToLower()).PatchAll();
-            //InformationManager.DisplayMessage(new(Name + " initialized", Colors.Cyan, Id));
         }
         catch (Exception e)
         {
