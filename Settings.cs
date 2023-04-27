@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
 using FormationSorter.Properties;
 using FormationSorter.Utilities;
 using MCM.Abstractions.Attributes;

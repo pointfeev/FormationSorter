@@ -1,9 +1,8 @@
-﻿using FormationSorter.Properties;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using FormationSorter.Properties;
 using TaleWorlds.ModuleManager;
 
 namespace FormationSorter.Utilities;
@@ -30,8 +29,8 @@ internal static class OutputUtils
                 break;
             case OutputType.FinalizerException:
                 output = output.AppendLine().AppendLine()
-                   .Append("BUG REPORTING: This exception was caught from a finalizer, which likely means it was not caused by " + AssemblyInfo.Name + " itself, ")
-                   .Append(" but more likely caused instead by either a different mod, a bad mod interaction, or the game itself.");
+                   .Append("BUG REPORTING: This exception was caught from a finalizer, which likely means it was not caused by " + AssemblyInfo.Name
+                      + " itself, ").Append(" but more likely caused instead by either a different mod, a bad mod interaction, or the game itself.");
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(outputType), outputType, "Bad output type");

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-
 using FormationSorter.Properties;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
