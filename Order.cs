@@ -24,7 +24,7 @@ internal static class Order
     private static void RemoveOrderVMs()
     {
         Mission.InputKeyItemVM = null;
-        _ = Mission.MissionOrderVM.OrderSets?.Remove(Mission.OrderSetVM);
+        _ = Mission.MissionOrderVM?.OrderSets?.Remove(Mission.OrderSetVM);
         Mission.OrderSetVM = null;
         Mission.OrderItemVM = null;
     }
