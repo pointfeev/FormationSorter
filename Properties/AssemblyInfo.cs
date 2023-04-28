@@ -25,6 +25,8 @@ using FormationSorter.Properties;
 [assembly: ModuleDependedModule("CustomBattle", "v" + AssemblyInfo.MinimumGameVersion, true)]
 [assembly: ModuleDependedModule("BirthAndDeath", "v" + AssemblyInfo.MinimumGameVersion, true)]
 [assembly: ModuleSubModule(AssemblyInfo.Id, AssemblyInfo.Id + ".dll", AssemblyInfo.Id + "." + nameof(SubModule))]
+[assembly: ModuleSubModule("MCMv5", "MCMv5.dll", "MCM.MCMSubModule")]
+[assembly: ModuleSubModule("MCMv5 Basic Implementation", "MCMv5.dll", "MCM.Internal.MCMImplementationSubModule")]
 
 namespace FormationSorter.Properties;
 
