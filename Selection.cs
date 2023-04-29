@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FormationSorter.Patches;
-using FormationSorter.Properties;
 using FormationSorter.Utilities;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
@@ -80,9 +79,9 @@ public static class Selection
         {
             if (invertedSelections.Any() || selections.Any(f => f.CountOfUnits > 0))
                 InformationManager.DisplayMessage(new($"{(invertedSelections.Any() ? "Unselected" : "Selected")} all {feedback}formations", Colors.White,
-                    AssemblyInfo.Id));
+                    SubModule.Id));
             else
-                InformationManager.DisplayMessage(new($"There are no troops to be selected in any {feedback}formations", Colors.White, AssemblyInfo.Id));
+                InformationManager.DisplayMessage(new($"There are no troops to be selected in any {feedback}formations", Colors.White, SubModule.Id));
         }
         PatchInformationManager.SuppressSelectAllFormations = true;
         SetFormationSelections(selections);

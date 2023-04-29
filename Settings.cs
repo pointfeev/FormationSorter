@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using FormationSorter.Properties;
 using FormationSorter.Utilities;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
@@ -122,12 +121,12 @@ internal class DefaultSettings : ISettings
 
 internal class CustomSettings : AttributeGlobalSettings<CustomSettings>, ISettings
 {
-    public override string Id => AssemblyInfo.Id;
+    public override string Id => SubModule.Id;
 
     public override string DisplayName
-        => AssemblyInfo.Name + " " + new Version(FileVersionInfo.GetVersionInfo(typeof(CustomSettings).Assembly.Location).FileVersion).ToString(3);
+        => SubModule.Name + " " + new Version(FileVersionInfo.GetVersionInfo(typeof(CustomSettings).Assembly.Location).FileVersion).ToString(3);
 
-    public override string FolderName => AssemblyInfo.Id;
+    public override string FolderName => SubModule.Id;
     public override string FormatType => "xml";
 
     [SettingPropertyDropdown("Companions", Order = 1, RequireRestart = false,

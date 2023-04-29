@@ -15,20 +15,16 @@
 		<Deterministic>true</Deterministic>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-		<Optimize>true</Optimize>
 		<OutputPath>D:\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\$(RootNamespace)\bin\Win64_Shipping_Client</OutputPath>
 		<DefineConstants>TRACE</DefineConstants>
 		<ErrorReport>prompt</ErrorReport>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Optimize>true</Optimize>
 		<DebugType>full</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
 	<ItemGroup>
-		<Reference Include="ASMXML">
-			<HintPath>..\ASMXML.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="System.Windows.Forms" />
@@ -69,6 +65,39 @@
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 	<UsingTask TaskName="ASMXML.AutomaticSubModuleXML" AssemblyFile="..\ASMXML.dll" />
 	<Target Name="AutomaticSubModuleXML" AfterTargets="Build">
-		<AutomaticSubModuleXML Target="$(TargetPath)" />
+		<PropertyGroup>
+			<Id>FormationSorter</Id>
+			<Name>Formation Sorter</Name>
+			<Version>3.3.1</Version>
+			<Default>true</Default>
+			<Category>Singleplayer</Category>
+			<Type>Community</Type>
+			<HarmonyVersion>v2.3.0</HarmonyVersion>
+			<MCMVersion>v5.1.7</MCMVersion>
+			<MinimumGameVersion>v1.0.0</MinimumGameVersion>
+		</PropertyGroup>
+		<ItemGroup>
+			<DependedModules Include="Bannerlord.Harmony;$(HarmonyVersion)" />
+			<DependedModules Include="Bannerlord.MBOptionScreen;$(MCMVersion);true" />
+			<DependedModules Include="Native;$(MinimumGameVersion)" />
+			<DependedModules Include="SandBoxCore;$(MinimumGameVersion)" />
+			<DependedModules Include="Sandbox;$(MinimumGameVersion)" />
+			<DependedModules Include="StoryMode;$(MinimumGameVersion)" />
+			<DependedModules Include="CustomBattle;$(MinimumGameVersion);true" />
+			<DependedModules Include="BirthAndDeath;$(MinimumGameVersion);true" />
+			<SubModules Include="$(Id);$(Id).dll;$(Id).SubModule" />
+			<SubModules Include="MCMv5;MCMv5.dll;MCM.MCMSubModule" />
+			<SubModules Include="MCMv5 Basic Implementation;MCMv5.dll;MCM.Internal.MCMImplementationSubModule" />
+		</ItemGroup>
+		<AutomaticSubModuleXML
+			OutputPath="$(OutputPath)"
+			Id="$(Id)"
+			Name="$(Name)"
+			Version="$(Version)"
+			DefaultModule="$(Default)"
+			ModuleCategory="$(Category)"
+			ModuleType="$(Type)"
+			DependedModules="@(DependedModules)"
+			SubModules="@(SubModules)" />
 	</Target>
 </Project>
