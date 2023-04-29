@@ -68,7 +68,7 @@
 		<PropertyGroup>
 			<Id>FormationSorter</Id>
 			<Name>Formation Sorter</Name>
-			<Version>3.3.1</Version>
+			<Version>v3.3.1</Version>
 			<Default>true</Default>
 			<Category>Singleplayer</Category>
 			<Type>Community</Type>
