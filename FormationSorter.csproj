@@ -54,7 +54,7 @@
 			<IncludeAssets>compile; runtime</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Bannerlord.ReferenceAssemblies">
-			<Version>1.1.3.16165</Version>
+			<Version>1.1.4.17949</Version>
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Lib.Harmony">
@@ -73,7 +73,7 @@
 			<Category>Singleplayer</Category>
 			<Type>Community</Type>
 			<HarmonyVersion>v2.3.0</HarmonyVersion>
-			<MCMVersion>v5.1.7</MCMVersion>
+			<MCMVersion>v5.7.1</MCMVersion>
 			<MinimumGameVersion>v1.0.0</MinimumGameVersion>
 		</PropertyGroup>
 		<ItemGroup>
@@ -89,15 +89,8 @@
 			<SubModules Include="MCMv5, MCMv5.dll, MCM.MCMSubModule" />
 			<SubModules Include="MCMv5 Basic Implementation, MCMv5.dll, MCM.Internal.MCMImplementationSubModule" />
 		</ItemGroup>
-		<AutomaticSubModuleXML
-			OutputPath="$(OutputPath)"
-			Id="$(Id)"
-			Name="$(Name)"
-			Version="$(Version)"
-			DefaultModule="$(Default)"
-			ModuleCategory="$(Category)"
-			ModuleType="$(Type)"
-			DependedModules="@(DependedModules)"
-			SubModules="@(SubModules)" />
+		<AutomaticSubModuleXML OutputPath="$(OutputPath)" Id="$(Id)" Name="$(Name)" Version="$(Version)"
+		                       DefaultModule="$(Default)" ModuleCategory="$(Category)" ModuleType="$(Type)"
+		                       DependedModules="@(DependedModules)" SubModules="@(SubModules)" />
 	</Target>
 </Project>
