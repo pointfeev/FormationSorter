@@ -58,7 +58,7 @@
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Lib.Harmony">
-			<Version>2.3.0-alpha.5</Version>
+			<Version>2.2.2</Version>
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
@@ -72,7 +72,7 @@
 			<Default>true</Default>
 			<Category>Singleplayer</Category>
 			<Type>Community</Type>
-			<HarmonyVersion>v2.3.0</HarmonyVersion>
+			<HarmonyVersion>v2.2.2</HarmonyVersion>
 			<MCMVersion>v5.7.1</MCMVersion>
 			<MinimumGameVersion>v1.0.0</MinimumGameVersion>
 		</PropertyGroup>
