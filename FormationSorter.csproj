@@ -1,96 +1,139 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
-	        Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-	<PropertyGroup>
-		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-		<Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
-		<OutputType>Library</OutputType>
-		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>FormationSorter</RootNamespace>
-		<AssemblyName>$(RootNamespace)</AssemblyName>
-		<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-		<FileAlignment>512</FileAlignment>
-		<Deterministic>true</Deterministic>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-		<OutputPath>D:\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\$(RootNamespace)\bin\Win64_Shipping_Client</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<LangVersion>latest</LangVersion>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<Optimize>true</Optimize>
-		<DebugType>full</DebugType>
-		<DebugSymbols>true</DebugSymbols>
-	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="System.Core" />
-		<Reference Include="System.Windows.Forms" />
-		<Reference Include="System.Xml" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Mission.cs" />
-		<Compile Include="Patches\InformationManager.cs" />
-		<Compile Include="Patches\MissionOrderTroopControllerVM.cs" />
-		<Compile Include="Settings.cs" />
-		<Compile Include="HotKeys.cs" />
-		<Compile Include="Patches\MissionFormationMarkerVM.cs" />
-		<Compile Include="Selection.cs" />
-		<Compile Include="Patches\OrderController.cs" />
-		<Compile Include="Patches\OrderTroopItemBrushWidget.cs" />
-		<Compile Include="Patches\MissionOrderVM.cs" />
-		<Compile Include="Order.cs" />
-		<Compile Include="SubModule.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="Utilities\FormationClassUtils.cs" />
-		<Compile Include="Utilities\ReflectionUtils.cs" />
-		<Compile Include="Utilities\OutputUtils.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Bannerlord.MCM">
-			<Version>5.7.1</Version>
-			<IncludeAssets>compile; runtime</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Bannerlord.ReferenceAssemblies">
-			<Version>1.1.4.17949</Version>
-			<IncludeAssets>compile</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Lib.Harmony">
-			<Version>2.2.2</Version>
-			<IncludeAssets>compile</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-	<UsingTask TaskName="ASMXML.AutomaticSubModuleXML" AssemblyFile="..\ASMXML.dll" />
-	<Target Name="AutomaticSubModuleXML" AfterTargets="Build">
-		<PropertyGroup>
-			<Id>FormationSorter</Id>
-			<Name>Formation Sorter</Name>
-			<Version>v3.3.1</Version>
-			<Default>true</Default>
-			<Category>Singleplayer</Category>
-			<Type>Community</Type>
-			<HarmonyVersion>v2.2.2</HarmonyVersion>
-			<MCMVersion>v5.7.1</MCMVersion>
-			<MinimumGameVersion>v1.0.0</MinimumGameVersion>
-		</PropertyGroup>
-		<ItemGroup>
-			<DependedModules Include="Bannerlord.Harmony, $(HarmonyVersion)" />
-			<DependedModules Include="Bannerlord.MBOptionScreen, $(MCMVersion), true" />
-			<DependedModules Include="Native, $(MinimumGameVersion)" />
-			<DependedModules Include="SandBoxCore, $(MinimumGameVersion)" />
-			<DependedModules Include="Sandbox, $(MinimumGameVersion)" />
-			<DependedModules Include="StoryMode, $(MinimumGameVersion)" />
-			<DependedModules Include="CustomBattle, $(MinimumGameVersion), true" />
-			<DependedModules Include="BirthAndDeath, $(MinimumGameVersion), true" />
-			<SubModules Include="$(Id), $(Id).dll, $(Id).SubModule" />
-			<SubModules Include="MCMv5, MCMv5.dll, MCM.MCMSubModule" />
-			<SubModules Include="MCMv5 Basic Implementation, MCMv5.dll, MCM.Internal.MCMImplementationSubModule" />
-		</ItemGroup>
-		<AutomaticSubModuleXML OutputPath="$(OutputPath)" Id="$(Id)" Name="$(Name)" Version="$(Version)"
-		                       DefaultModule="$(Default)" ModuleCategory="$(Category)" ModuleType="$(Type)"
-		                       DependedModules="@(DependedModules)" SubModules="@(SubModules)" />
-	</Target>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FormationSorter</RootNamespace>
+    <AssemblyName>$(RootNamespace)</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <ProjectGuid>{55C47F30-373C-4C5C-81F1-450E28809134}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>D:\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\$(RootNamespace)\bin\Win64_Shipping_Client</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <LangVersion>latest</LangVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Mission.cs" />
+    <Compile Include="Patches\InformationManager.cs" />
+    <Compile Include="Patches\MissionOrderTroopControllerVM.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="HotKeys.cs" />
+    <Compile Include="Patches\MissionFormationMarkerVM.cs" />
+    <Compile Include="Selection.cs" />
+    <Compile Include="Patches\OrderController.cs" />
+    <Compile Include="Patches\OrderTroopItemBrushWidget.cs" />
+    <Compile Include="Patches\MissionOrderVM.cs" />
+    <Compile Include="Order.cs" />
+    <Compile Include="SubModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\FormationClassUtils.cs" />
+    <Compile Include="Utilities\ReflectionUtils.cs" />
+    <Compile Include="Utilities\OutputUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Bannerlord.MCM">
+      <Version>5.7.1</Version>
+      <IncludeAssets>compile; runtime</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Bannerlord.ReferenceAssemblies">
+      <Version>1.1.4.17949</Version>
+      <IncludeAssets>compile</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lib.Harmony">
+      <Version>2.2.2</Version>
+      <IncludeAssets>compile</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\Bannerlord.Harmony\bin\Win64_Shipping_Client\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="MCMv5">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\FormationSorterFixed\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="TaleWorlds.CampaignSystem">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.CampaignSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.Core">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.DotNet">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.DotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.Engine">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.GauntletUI">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.GauntletUI.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.InputSystem">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.Library">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.Localization">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.ModuleManager">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.ModuleManager.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.GauntletUI.Widgets">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.GauntletUI.Widgets.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.View">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\Native\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.View.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.ViewModelCollection">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.ViewModelCollection.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.ObjectSystem">
+      <HintPath>D:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.ObjectSystem.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <UsingTask TaskName="ASMXML.AutomaticSubModuleXML" AssemblyFile="..\ASMXML.dll" />
+  <Target Name="AutomaticSubModuleXML" AfterTargets="Build">
+    <PropertyGroup>
+      <Id>FormationSorter</Id>
+      <Name>Formation Sorter</Name>
+      <Version>v3.3.1</Version>
+      <Default>true</Default>
+      <Category>Singleplayer</Category>
+      <Type>Community</Type>
+      <HarmonyVersion>v2.2.2</HarmonyVersion>
+      <MCMVersion>v5.7.1</MCMVersion>
+      <MinimumGameVersion>v1.0.0</MinimumGameVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <DependedModules Include="Bannerlord.Harmony, $(HarmonyVersion)" />
+      <DependedModules Include="Bannerlord.MBOptionScreen, $(MCMVersion), true" />
+      <DependedModules Include="Native, $(MinimumGameVersion)" />
+      <DependedModules Include="SandBoxCore, $(MinimumGameVersion)" />
+      <DependedModules Include="Sandbox, $(MinimumGameVersion)" />
+      <DependedModules Include="StoryMode, $(MinimumGameVersion)" />
+      <DependedModules Include="CustomBattle, $(MinimumGameVersion), true" />
+      <DependedModules Include="BirthAndDeath, $(MinimumGameVersion), true" />
+      <SubModules Include="$(Id), $(Id).dll, $(Id).SubModule" />
+      <SubModules Include="MCMv5, MCMv5.dll, MCM.MCMSubModule" />
+      <SubModules Include="MCMv5 Basic Implementation, MCMv5.dll, MCM.Internal.MCMImplementationSubModule" />
+    </ItemGroup>
+    <AutomaticSubModuleXML OutputPath="$(OutputPath)" Id="$(Id)" Name="$(Name)" Version="$(Version)" DefaultModule="$(Default)" ModuleCategory="$(Category)" ModuleType="$(Type)" DependedModules="@(DependedModules)" SubModules="@(SubModules)" />
+  </Target>
 </Project>

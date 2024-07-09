@@ -1,0 +1,7 @@
+D:\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\FormationSorter\bin\Win64_Shipping_Client\FormationSorter.dll
+D:\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\FormationSorter\bin\Win64_Shipping_Client\FormationSorter.pdb
+C:\Users\SPART\Downloads\FormationSorter-main\obj\Release\FormationSorter.csproj.AssemblyReference.cache
+C:\Users\SPART\Downloads\FormationSorter-main\obj\Release\FormationSorter.csproj.CoreCompileInputs.cache
+C:\Users\SPART\Downloads\FormationSorter-main\obj\Release\Formatio.C1FCCC82.Up2Date
+C:\Users\SPART\Downloads\FormationSorter-main\obj\Release\FormationSorter.dll
+C:\Users\SPART\Downloads\FormationSorter-main\obj\Release\FormationSorter.pdb
