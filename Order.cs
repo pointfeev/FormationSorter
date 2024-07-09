@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using FormationSorter.Utilities;
+using HarmonyLib;
 using TaleWorlds.Core;
 using TaleWorlds.Engine;
 using TaleWorlds.InputSystem;
@@ -52,7 +54,7 @@ internal static class Order
             Mission.OrderItemVM
                 = new(OrderSubType.None, OrderSetType.None, new(OrderText), (_, _) => { }) { ShortcutKey = Mission.InputKeyItemVM, IsTitle = true };
             Mission.OrderItemVM.IsTitle = true;
-            Mission.OrderItemVM.TooltipText = OrderText;
+            //Mission.OrderItemVM.TooltipText = OrderText;
             Mission.OrderItemVM.OrderIconID = OrderIcon;
             Mission.OrderItemVM.ShortcutKey = Mission.InputKeyItemVM;
             Mission.OrderItemVM.IsActive = true;
@@ -104,13 +106,13 @@ internal static class Order
                     InformationManager.DisplayMessage(new("No troops need sorting between the selected formations", Colors.White, SubModule.Id));
                 return;
             default:
-            {
-                if (Mission.IsOrderShoutingAllowed())
-                    Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
-                InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
-                    Colors.White, SubModule.Id));
-                break;
-            }
+                {
+                    if (Mission.IsOrderShoutingAllowed())
+                        Mission.PlayerAgent.MakeVoice(SkinVoiceManager.VoiceType.MpRegroup, SkinVoiceManager.CombatVoiceNetworkPredictionType.NoPrediction);
+                    InformationManager.DisplayMessage(new($"Sorted {numUnitsSorted} {(numUnitsSorted == 1 ? "troop" : "troops")} between the selected formations",
+                        Colors.White, SubModule.Id));
+                    break;
+                }
         }
         _ = Mission.MissionOrderVM.TryCloseToggleOrder();
     }
@@ -180,24 +182,36 @@ internal static class Order
                 ref numAgentsSorted, ref classesWithMissingFormations, ref changedFormations);
         }
         MethodInfo alternativeClass = typeof(ModuleExtensions).GetCachedMethod("AlternativeClass"); // only v1.1.0+
+        MethodInfo fallbackClass = typeof(ModuleExtensions).GetCachedMethod("FallbackClass"); // dynamically get FallbackClass
         if (filledFormations.Count > 0)
+        {
             foreach (Formation formation in emptyFormations)
             {
                 FormationClass formationClass = formation.GetFormationClass();
                 Formation forCopy = filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass)
-                                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0 && f.GetFormationClass() == formationClass.FallbackClass())
-                                 ?? (alternativeClass is null
-                                        ? null
-                                        : filledFormations.FirstOrDefault(f
-                                            => f.CountOfUnits > 0 && f.GetFormationClass()
-                                         == (FormationClass)alternativeClass.Invoke(null, new object[] { formationClass })))
-                                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0);
+                 ?? (fallbackClass is null
+                        ? null
+                        : filledFormations.FirstOrDefault(f
+                            => f.CountOfUnits > 0 && f.GetFormationClass()
+                         == (FormationClass)fallbackClass.Invoke(null, new object[] { formationClass })
+                        )
+                    )
+                 ?? (alternativeClass is null
+                        ? null
+                        : filledFormations.FirstOrDefault(f
+                            => f.CountOfUnits > 0 && f.GetFormationClass()
+                         == (FormationClass)alternativeClass.Invoke(null, new object[] { formationClass })
+                        )
+                    )
+                 ?? filledFormations.FirstOrDefault(f => f.CountOfUnits > 0);
+
                 if (forCopy is null)
                     continue;
                 _ = typeof(Formation).GetCachedMethod("CopyOrdersFrom").Invoke(formation, new object[] { forCopy });
                 formation.SetPositioning(forCopy.CreateNewOrderWorldPosition(WorldPosition.WorldPositionEnforcedCache.None), forCopy.Direction,
                     forCopy.UnitSpacing);
             }
+        }
         foreach (Formation formation in changedFormations)
             formation.Team.TriggerOnFormationsChanged(formation);
         foreach (Formation formation in formations)
@@ -263,7 +277,9 @@ internal static class Order
                 int tier = agent.GetTier();
                 int index = bestFormationClass switch
                 {
-                    FormationClass.Ranged => 3, FormationClass.HorseArcher => 7, FormationClass.Infantry => tier <= 2
+                    FormationClass.Ranged => 3,
+                    FormationClass.HorseArcher => 7,
+                    FormationClass.Infantry => tier <= 2
                         ? 0
                         : tier <= 4
                             ? 1
@@ -360,12 +376,22 @@ internal static class Order
 
     private static IEnumerable<Agent> EnumerateAgentsInFormations(IEnumerable<Formation> formations)
     {
+        MethodInfo getAllUnitsMethod = typeof(Formation).GetProperty("Arrangement")?.PropertyType.GetMethod("GetAllUnits"); // dynamically get GetAllUnits
+
         foreach (Formation formation in formations.Where(formation => !formation.IsAIControlled))
         {
             foreach (Agent agent in formation.DetachedUnits.Where(CheckAgent))
                 yield return agent;
-            foreach (Agent agent in formation.Arrangement.GetAllUnits().Cast<Agent>().Where(CheckAgent))
-                yield return agent;
+
+            if (getAllUnitsMethod != null)
+            {
+                IEnumerable allUnits = getAllUnitsMethod.Invoke(formation.Arrangement, null) as IEnumerable;
+                if (allUnits != null)
+                {
+                    foreach (Agent agent in allUnits.Cast<Agent>().Where(CheckAgent))
+                        yield return agent;
+                }
+            }
         }
     }
 
